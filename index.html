@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Гомін — можливості</title>
+<meta name="description" content="Увесь стрім — з одного вікна: чат, сповіщення, озвучення, музика, нагороди, OBS і Discord.">
+<!-- link previews in Discord and Telegram when the site (veekk/homin-site, scripts/make_guide.py --site) is posted -->
+<meta property="og:title" content="Гомін — увесь стрім з одного вікна">
+<meta property="og:description" content="Чат, сповіщення, озвучення, музика із замовленнями глядачів, нагороди, OBS і Discord.">
+<meta property="og:image" content="https://veekk.github.io/homin-site/control.png">
+<meta property="og:url" content="https://veekk.github.io/homin-site/">
+<link rel="icon" href="app-icon.svg">
+<!-- Printed to PDF by scripts/make_guide.py --doc promo; screenshots are next to this page when it is printed.
+     Colours as in uk.html: the new app icon (night blue, teal gem, five-colour ring). -->
+<style>
+  @page { size: A4; margin: 0; }
+  :root { --accent: #0d8597; --accent-2: #6d3fe0; --ink: #161a2e; --muted: #59607a; --line: #e1e5ef;
+          --night: #0b0f24; --c1: #c04dff; --c2: #ff4040; --c3: #4d8bff; --c4: #19c7d6; --c5: #2fd07a;
+          --ring: linear-gradient(90deg, #c04dff, #ff4040, #4d8bff, #3de6ff, #3dff8b); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #fff; color: var(--ink); font-family: "Noto Sans", sans-serif;
+               font-size: 10.5pt; line-height: 1.5; }
+  .page { height: 297mm; padding: 15mm 17mm 12mm; position: relative; overflow: hidden;
+          page-break-after: always; break-after: page; }
+  .page:last-child { page-break-after: auto; }
+  .page:not(.dark) { border-top: 2mm solid transparent; border-image: var(--ring) 1; }
+  h1, h2, h3 { margin: 0; line-height: 1.2; }
+  p { margin: 0 0 2.5mm; }
+  b { font-weight: 600; }
+
+  .kicker { font-size: 10pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent);
+            display: flex; align-items: center; gap: 2.5mm; margin-bottom: 2mm; }
+  .kicker::before { content: ""; width: 8mm; height: 1.2mm; border-radius: 1mm; background: var(--ring); }
+  h2 { font-size: 27pt; color: var(--night); margin-bottom: 3mm; letter-spacing: -.01em; }
+  h2 em { font-style: normal; color: var(--accent-2); }   /* gradient text doesn't survive printing */
+  .lead { font-size: 13pt; line-height: 1.55; color: var(--muted); max-width: 172mm; margin-bottom: 7mm; }
+
+  figure { margin: 0 0 9mm; }
+  figure img { width: 100%; display: block; border-radius: 7px; border: 1px solid #232846;
+               box-shadow: 0 3mm 8mm rgba(11, 15, 36, .25); }
+
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; }
+  .cards.two { grid-template-columns: repeat(2, 1fr); }
+  .card { border: 1px solid var(--line); border-radius: 7px; padding: 5mm 5mm 4.5mm; position: relative;
+          background: #fbfcfe; break-inside: avoid; }
+  .card::before { content: ""; position: absolute; left: 4mm; top: 0; width: 10mm; height: 1.2mm;
+                  border-radius: 0 0 1mm 1mm; background: var(--c, var(--accent)); }
+  .card h3 { font-size: 13pt; margin: 1mm 0 2mm; color: var(--night); }
+  .card p { font-size: 10.5pt; line-height: 1.55; color: #3d4258; margin: 0; }
+  .cards > :nth-child(5n+1) { --c: var(--c1); }
+  .cards > :nth-child(5n+2) { --c: var(--c4); }
+  .cards > :nth-child(5n+3) { --c: var(--c3); }
+  .cards > :nth-child(5n+4) { --c: var(--c5); }
+  .cards > :nth-child(5n+5) { --c: var(--c2); }
+
+  .quote { margin-top: 9mm; padding: 6mm 8mm; border-radius: 8px; color: #fff; font-size: 12.5pt; line-height: 1.55;
+           background: linear-gradient(120deg, #2d1a5e, #151a3a 55%, #0b4f63); }
+  .quote b { color: #9ff4ff; }
+  .pagefoot { position: absolute; left: 17mm; right: 17mm; bottom: 8mm; font-size: 8pt; color: #9aa1b8;
+              display: flex; justify-content: space-between; }
+
+  /* dark pages: cover and the last page */
+  .dark { color: #fff;
+          background: radial-gradient(circle at 78% 14%, rgba(25, 199, 214, .32) 0, transparent 42%),
+                      radial-gradient(circle at 12% 88%, rgba(192, 77, 255, .30) 0, transparent 48%),
+                      radial-gradient(circle at 50% 40%, #2d1a5e 0, #151a3a 60%, #0b0f24 100%); }
+  .cover { padding: 0; }
+  .cover .inner { position: absolute; left: 20mm; right: 20mm; top: 40mm; }
+  .cover img.logo { width: 26mm; height: 26mm; }
+  .cover h1 { font-size: 38pt; margin: 8mm 0 2mm; }
+  .cover .sub { font-size: 19pt; color: #9ff4ff; margin-bottom: 6mm; font-weight: 600; }
+  .ring { height: 1.6mm; width: 60mm; border-radius: 1mm; background: var(--ring); margin: 0 0 8mm; }
+  .cover .lead { color: #dfe6f7; font-size: 12pt; max-width: 150mm; }
+  .cover .tags { display: flex; flex-wrap: wrap; gap: 2.5mm; margin-top: 6mm; }
+  .tag { border: 1px solid rgba(159, 244, 255, .45); color: #d7f9ff; border-radius: 20mm; padding: 1mm 4mm; font-size: 9.5pt; }
+  .cover .shot { position: absolute; left: 20mm; right: 20mm; bottom: 26mm; }
+  .cover .shot img { width: 100%; border-radius: 8px; box-shadow: 0 4mm 12mm rgba(0, 0, 0, .6); border: 1px solid #2c3560; }
+  .cover .foot { position: absolute; left: 20mm; bottom: 12mm; font-size: 9pt; color: #8f9cc4; }
+
+  /* overview tiles */
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin: 2mm 0 5mm; }
+  .tile { border-radius: 8px; padding: 3mm 3.5mm 3.5mm; background: #f5f7fb; border: 1px solid var(--line); break-inside: avoid; }
+  .tile .dot { width: 6mm; height: 6mm; border-radius: 50%; margin-bottom: 2mm;
+               background: radial-gradient(circle at 35% 35%, #fff 0, var(--c, var(--accent)) 45%); }
+  .tile h3 { font-size: 11.5pt; margin-bottom: 1.2mm; }
+  .tile p { font-size: 8.5pt; line-height: 1.38; color: #4a5068; margin: 0; }
+  .tiles > :nth-child(5n+1) { --c: var(--c1); }
+  .tiles > :nth-child(5n+2) { --c: var(--c4); }
+  .tiles > :nth-child(5n+3) { --c: var(--c3); }
+  .tiles > :nth-child(5n+4) { --c: var(--c5); }
+  .tiles > :nth-child(5n+5) { --c: var(--c2); }
+  .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+  .strip div { border-radius: 8px; padding: 3mm 4mm 3.5mm; color: #fff; break-inside: avoid;
+               background: linear-gradient(135deg, #151a3a, #2d1a5e); }
+  .strip b { display: block; font-size: 12pt; color: #9ff4ff; margin-bottom: 1mm; }
+  .strip span { font-size: 9pt; line-height: 1.4; color: #dfe6f7; }
+
+  .last .inner { position: absolute; left: 20mm; right: 20mm; top: 30mm; }
+  .last h2 { color: #fff; font-size: 30pt; }
+  .last .cards { gap: 6mm; margin-top: 4mm; }
+  .last .lead { color: #dfe6f7; }
+  .last .cards .card { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .14); }
+  .last .card h3 { color: #fff; }
+  .last .card p { color: #cfd7ee; }
+  .req { margin-top: 12mm; border-top: 1px solid rgba(255, 255, 255, .18); padding-top: 5mm; font-size: 11pt; color: #cfd7ee; }
+  .req b { color: #fff; }
+  .last .logo-row { position: absolute; left: 20mm; right: 20mm; bottom: 18mm; display: flex; align-items: center; gap: 5mm; }
+  .last .logo-row img { width: 16mm; height: 16mm; }
+  .last .logo-row div { font-size: 15pt; font-weight: 700; }
+  .last .logo-row span { display: block; font-size: 9.5pt; font-weight: 400; color: #9ff4ff; }
+  /* the deck page: two decks drawn by scripts/make_deck_renders.mjs, on a dark stage */
+  .deckstage { position: relative; height: 92mm; margin: 0 0 7mm; border-radius: 8px; overflow: hidden;
+               background: radial-gradient(circle at 25% 20%, rgba(25, 199, 214, .28) 0, transparent 45%),
+                           radial-gradient(circle at 85% 90%, rgba(192, 77, 255, .30) 0, transparent 50%),
+                           radial-gradient(circle at 50% 45%, #2d1a5e 0, #151a3a 60%, #0b0f24 100%); }
+  .deckstage img { position: absolute; display: block; }
+  .deckstage .deck-dials { width: 84mm; left: 4mm; top: 8mm; transform: rotate(-3deg); }
+  .deckstage .deck-keys { width: 80mm; right: 4mm; top: 17mm; transform: rotate(2.5deg); }
+  .deckstage .note { position: absolute; left: 6mm; right: 6mm; bottom: 3.5mm; font-size: 8pt; color: #aab3d0; text-align: center; }
+  /* on a screen (the site): A4 pages one under another; on a phone the pages flow instead of being fixed sheets */
+  .download { display: none; }
+  @media screen {
+    html, body { background: #0b0f24; }
+    .page { max-width: 210mm; margin: 0 auto 6mm; background-color: #fff; }
+    .page.dark { background-color: #0b0f24; }
+    .download { display: block; position: fixed; right: 16px; bottom: 16px; z-index: 10; padding: 10px 18px;
+                border-radius: 24px; background: var(--accent); color: #fff; font-weight: 600; text-decoration: none;
+                box-shadow: 0 4px 14px rgba(0, 0, 0, .4); }
+  }
+  @media screen and (max-width: 800px) {
+    body { font-size: 15px; }
+    .page { height: auto; padding: 28px 16px 24px; margin-bottom: 12px; }
+    .cover, .last { padding: 32px 16px; }
+    .cover .inner, .cover .shot, .cover .foot, .last .inner, .last .logo-row, .pagefoot { position: static; }
+    .cover .shot { margin-top: 24px; }
+    .cover .foot { margin-top: 12px; }
+    .last .logo-row { margin-top: 24px; }
+    .pagefoot { display: none; }
+    h2 { font-size: 26px; }
+    .cover h1 { font-size: 40px; }
+    .cover .sub { font-size: 20px; }
+    .lead, .cover .lead { font-size: 16px; }
+    .cards, .cards.two, .strip { grid-template-columns: 1fr; }
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .card p, .tile p, .strip span { font-size: 14px; }
+    .deckstage { height: auto; padding: 16px 8px 36px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    .deckstage img, .deckstage .deck-dials, .deckstage .deck-keys { position: static; width: 92%; transform: none; }
+    .deckstage .note { position: static; }
+  }
+</style>
+</head>
+<body>
+<a class="download" href="homin-promo-uk.pdf" download>PDF ↓</a>
+
+<!-- ============================================================ cover -->
+<section class="page dark cover">
+  <div class="inner">
+    <img class="logo" src="app-icon.svg" alt="">
+    <h1>Гомін</h1>
+    <div class="sub">Увесь стрім — з одного вікна</div>
+    <div class="ring"></div>
+    <div class="lead">Чат, сповіщення, озвучення, музика із замовленнями глядачів, нагороди за бали каналу, OBS і Discord.
+      Менше вкладок, менше ботів, менше метушні — більше уваги глядачам.</div>
+    <div class="tags">
+      <span class="tag">Українською та англійською</span><span class="tag">Windows і Linux</span>
+      <span class="tag">Працює на вашому комп’ютері</span><span class="tag">Українські голоси TTS</span>
+      <span class="tag">Налаштування крок за кроком</span>
+    </div>
+  </div>
+  <div class="shot"><img src="control.png" alt=""></div>
+  <div class="foot">Гомін (Homin) 1.0 · знімки екрана зроблено з тестовими даними, виконавці й канали вигадані</div>
+</section>
+
+<!-- ============================================================ overview -->
+<section class="page">
+  <div class="kicker">Що всередині</div>
+  <h2>Усе для стріму — <em>в одному вікні</em></h2>
+  <p class="lead" style="margin-bottom: 4mm">Замість десятка вкладок, окремого бота, програвача й панелі OBS — одне вікно,
+    де все працює разом і знає одне про одного.</p>
+  <div class="tiles">
+    <div class="tile"><div class="dot"></div><h3>Центр керування</h3><p>Чат з AutoMod, перегляд стріму, кнопки OBS, лічильники й стрічка подій на одному екрані.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Озвучення</h3><p>Чат і нагороди звучать голосом, зокрема українським, з розумними фільтрами.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Музика</h3><p>YouTube, Spotify і власні файли в одній черзі; глядачі замовляють пісні.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Нагороди та ефекти</h3><p>Бали каналу запускають звуки, GIF, відео, ефекти на весь екран і кроки в OBS.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Події каналу</h3><p>Сповіщення, озвучення, скрипт і привітання рейду для кожної події — в одному місці.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Оверлеї</h3><p>Чат, музика, черга, відлік і сповіщення для OBS — із живим переглядом.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Керування OBS</h3><p>Сцени, джерела, мікшер, запис і попередження про стан трансляції.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Discord</h3><p>Оголошення про стрім, кліпи, мікрофон і навушники прямо з застосунку.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Чат-бот</h3><p>Команди, таймери, цитати, розіграші й привітання рейдерів і новачків.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Кліпи й рейди</h3><p>Момент — одним кліком, кліп — після стріму. Пошук каналу для рейду.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Скрипти</h3><p>Ваші скрипти на нагороду, команду чи подію — з редактором і прикладами.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Майстер налаштування</h3><p>Twitch, OBS, оверлеї й озвучення крок за кроком.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Пульт і телефон</h3><p>Плагін для OpenDeck: живі кнопки й ручки. Телефон у тій самій мережі — теж пульт.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Перенести з інших</h3><p>Команди, таймери, сповіщення й нагороди з інших ботів і застосунків — кількома кліками.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Хайп-потяг і цілі</h3><p>Рівень, внески й ціль каналу — на оверлеї та в стрічці подій.</p></div>
+    <div class="tile"><div class="dot"></div><h3>Лічильники</h3><p>Смерті, чашки чаю — з клавіші, пульта чи команди в чаті, і на екрані стріму.</p></div>
+  </div>
+  <div class="strip">
+    <div><b>Приватно</b><span>Усе працює локально. Входи й ключі — у сховищі паролів системи, а не у файлі.</span></div>
+    <div><b>Українською</b><span>Повністю український інтерфейс і українські голоси для озвучення.</span></div>
+    <div><b>Безпечно для чату</b><span>Текст глядачів ніколи нікого не пінгує в Discord і не ламає оверлеї.</span></div>
+  </div>
+  <div class="pagefoot"><span>Гомін</span><span>2</span></div>
+</section>
+
+<!-- ============================================================ setup wizard -->
+<section class="page">
+  <div class="kicker">Перший запуск</div>
+  <h2>Від встановлення до ефіру — <em>крок за кроком</em></h2>
+  <p class="lead">Майстер налаштування проводить через Twitch, OBS, оверлеї й озвучення. Кожна інструкція — з кнопкою
+    чи полем поруч, а позначка з’являється, щойно застосунок бачить, що все вийшло.</p>
+  <figure><img src="setup-2.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Підказка до кожного поля</h3><p>Форма Twitch показана такою, як її треба заповнити, з кнопками копіювання. Client ID перевіряється в Twitch ще до входу.</p></div>
+    <div class="card"><h3>Сам перевіряє</h3><p>OBS підключено, оверлеї додано в сцену, звук озвучення захоплено — майстер бачить це сам, а якщо ні, пише чому.</p></div>
+    <div class="card"><h3>У вашому темпі</h3><p>Будь-який крок можна відкласти. Майстер відкривається знову з налаштувань і показує, що вже готово.</p></div>
+  </div>
+  <div class="pagefoot"><span>Гомін</span><span>3</span></div>
+</section>
+
+<!-- ============================================================ control -->
+<section class="page">
+  <div class="kicker">Центр керування</div>
+  <h2>Увесь ефір <em>перед очима</em></h2>
+  <p class="lead">Чат, перегляд OBS або Twitch, кнопки трансляції й відліків, назва, категорія та події каналу — на
+    одному екрані. Не треба перемикатися між вікнами, поки ви в ефірі.</p>
+  <figure><img src="control.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Живий чат</h3><p>Емоції, GIF, відповіді й згадки. Перезапустили застосунок посеред ефіру — чат і підсумок продовжуються з того ж місця.</p></div>
+    <div class="card"><h3>Стан трансляції</h3><p>Пропущені кадри, перевантажений кодувальник чи низький бітрейт — застосунок помітить і скаже, що саме не так.</p></div>
+    <div class="card"><h3>Гарячі клавіші й у грі</h3><p>Пауза озвучення, пропуск пісні, лічильник смертей — клавішами навіть посеред гри.</p></div>
+  </div>
+  <div class="quote">Після ефіру — <b>підсумок трансляції</b>: тривалість, глядачі, нові фоловери, підписки, біти й рейди.
+    Його можна скопіювати, надіслати в Discord або взяти з нього <b>розділи для YouTube</b>.</div>
+  <div class="pagefoot"><span>Гомін</span><span>4</span></div>
+</section>
+
+<!-- ============================================================ clips, raids, scripts -->
+<section class="page">
+  <div class="kicker">Кліпи, рейди й скрипти</div>
+  <h2>Найкращі моменти — <em>без поспіху</em></h2>
+  <p class="lead">Під час ефіру — один клік, щоб не загубити момент. Після ефіру — спокійно обрізати, назвати й
+    опублікувати. А наприкінці стріму — знайти, кому передати глядачів.</p>
+  <div class="cards two">
+    <div class="card"><h3>Кліп — після стріму</h3><p>«Створити кліп» зберігає момент. Потім у вікні «Кліпи» задаєте початок, тривалість і назву, переглядаєте фрагмент — і кліп з’являється на Twitch та в Discord уже з правильною назвою.</p></div>
+    <div class="card"><h3>Або одразу, як звикли</h3><p>Кліп одразу на Twitch; обрізаєте там, натискаєте «Готово» — і лише тоді він іде в Discord, з остаточною назвою.</p></div>
+    <div class="card"><h3>Знайти канал для рейду</h3><p>Канали у вашій категорії, вашою мовою й потрібного розміру. Клік — і видно стрім із чатом, де можна привітатися ще до рейду.</p></div>
+    <div class="card"><h3>Красиве завершення</h3><p>Відлік рейду над чатом, «Скоро завершуємо», що закінчується разом із рейдом, і стрім, який зупиниться сам.</p></div>
+    <div class="card"><h3>Скрипти на все</h3><p>Ваш Python, shell чи PowerShell на нагороду, команду чату або подію каналу. Скрипт може відповісти в чат або відмовити й повернути бали.</p></div>
+    <div class="card"><h3>Редактор і приклади</h3><p>Вбудований редактор з підсвіткою й пробним запуском. Готові приклади: лічильник, кубик, журнал нагород, текст для OBS.</p></div>
+  </div>
+  <div class="quote">Рейд приймає <b>посилання з браузера</b>, а якщо інший канал не приймає рейдів, застосунок скаже, що саме
+    заважає.</div>
+  <div class="pagefoot"><span>Гомін</span><span>5</span></div>
+</section>
+
+<!-- ============================================================ tts -->
+<section class="page">
+  <div class="kicker">Озвучення тексту</div>
+  <h2>Чат, що <em>говорить вашою мовою</em></h2>
+  <p class="lead">Повідомлення й нагороди звучать голосом прямо на стрімі — українською чи будь-якою з десятків мов.
+    Ви вирішуєте, що читати, а що ні.</p>
+  <figure><img src="tts.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Голоси на вибір</h3><p>Piper з десятками мов, природний український StyleTTS2 або голоси системи. Усе працює на вашому комп’ютері.</p></div>
+    <div class="card"><h3>Розумні фільтри</h3><p>Без команд, посилань, емоцій і GIF. Видалене модератором чи від забаненого глядача не дочитується. Імена — лише коли змінюється співрозмовник.</p></div>
+    <div class="card"><h3>Правильна вимова</h3><p>Псевдоніми для ніків і слів: «gamer123» звучить як «Сашко», і в згадках, і у відповідях.</p></div>
+  </div>
+  <div class="quote">Черга звучить <b>без пауз</b>: наступна фраза готується, поки звучить попередня. А підписки, біти й рейди
+    оголошуються голосом — кожна подія зі своїм текстом.</div>
+  <div class="pagefoot"><span>Гомін</span><span>6</span></div>
+</section>
+
+<!-- ============================================================ player -->
+<section class="page">
+  <div class="kicker">Музика й замовлення пісень</div>
+  <h2>Глядачі обирають <em>саундтрек стріму</em></h2>
+  <p class="lead">Одна черга для YouTube, Spotify і ваших файлів. Глядачі замовляють пісні за бали каналу, а застосунок
+    сам перевіряє правила й відповідає в чаті.</p>
+  <figure><img src="player.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Чесні правила</h3><p>Максимальна довжина, ліміт на глядача, паузи, заборонені пісні. Не підійшло — бали повертаються самі.</p></div>
+    <div class="card"><h3>Резервний плейлист</h3><p>Немає замовлень — грає ваша музика. З’явилося замовлення — воно м’яко займає своє місце.</p></div>
+    <div class="card"><h3>Платні пісні</h3><p>Замовлення з donatik.ua грають першими, з позначкою ціни в черзі й на оверлеї.</p></div>
+  </div>
+  <div class="quote">Пріоритетні замовлення, пропуск пісні за бали, команди <b>!sr</b> і <b>!skip</b> для модераторів і
+    красиві оверлеї «Зараз грає» та «Черга».</div>
+  <div class="pagefoot"><span>Гомін</span><span>7</span></div>
+</section>
+
+<!-- ============================================================ redeems -->
+<section class="page">
+  <div class="kicker">Нагороди та ефекти</div>
+  <h2>Бали каналу, які <em>справді щось роблять</em></h2>
+  <p class="lead">Кожна нагорода — це сценарій: звук, картинка, відео, ефект на весь екран, повідомлення в чат чи Discord,
+    перемикання сцени в OBS. Дії виконуються одна за одною.</p>
+  <figure><img src="redeems.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Розташування мишкою</h3><p>Картинку чи відео тягнете на маленькому екрані туди, де вони мають з’явитися, і розтягуєте за кут.</p></div>
+    <div class="card"><h3>Спробувати одну дію</h3><p>▶ біля дії показує її одразу, ще до збереження. Дії перетягуються й дублюються.</p></div>
+    <div class="card"><h3>Нічого не губиться</h3><p>Нагороди, обрані, поки застосунок був закритий, виконуються або повертаються.</p></div>
+  </div>
+  <div class="quote">Готові приклади, <b>медіатека</b> для звуків, GIF і відео та вікно «Нагороди на Twitch» для всіх нагород каналу.</div>
+  <div class="pagefoot"><span>Гомін</span><span>8</span></div>
+</section>
+
+<!-- ============================================================ alerts -->
+<section class="page">
+  <div class="kicker">Події каналу</div>
+  <h2>Кожна підтримка — <em>помітна</em></h2>
+  <p class="lead">Фоловери, підписки, подаровані підписки, біти, Power-ups і рейди. Для кожної події — все в одному місці:
+    яскрава картка на стрімі, голосове оголошення, ваш скрипт, а для рейду — привітання в чаті.</p>
+  <figure><img src="events.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Ваш стиль</h3><p>Позиція, анімація, фон, рамка, розмір, будь-який шрифт, колір і обведення тексту.</p></div>
+    <div class="card"><h3>Пресети для ігор</h3><p>Окремий набір сповіщень для кожної гри чи образу. Перемикається сам, коли змінюється категорія.</p></div>
+    <div class="card"><h3>Гучність для кожного</h3><p>Гучний звук рейду тихіше, решта як була. Тестове сповіщення й повтор останніх — одним кліком.</p></div>
+  </div>
+  <div class="quote">Поріг для бітів і рейдів: <b>дрібниці не перебивають</b> важливе, а великі події отримують усю сцену.</div>
+  <div class="pagefoot"><span>Гомін</span><span>9</span></div>
+</section>
+
+<!-- ============================================================ overlays -->
+<section class="page">
+  <div class="kicker">Оверлеї для OBS</div>
+  <h2>Гарний стрім <em>без дизайнера</em></h2>
+  <p class="lead">Сповіщення, чат, нагороди, «Зараз грає», черга пісень, відлік, хайп-потяг і лічильники — готові оверлеї, які додаються в
+    OBS однією кнопкою й одразу потрібного розміру.</p>
+  <figure><img src="overlays.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Живий перегляд</h3><p>Оверлей таким, яким його малює OBS, прямо поруч із налаштуваннями. Змінили — одразу видно.</p></div>
+    <div class="card"><h3>Демо-режим</h3><p>Заповнює всі оверлеї зразками одночасно, щоб налаштувати вигляд до початку стріму.</p></div>
+    <div class="card"><h3>Чистий чат на екрані</h3><p>Без команд, ботів і службових повідомлень. Видалені повідомлення зникають і зі стріму.</p></div>
+  </div>
+  <div class="quote">Відлік <b>«Скоро почнемо»</b>, <b>«Скоро повернусь»</b> і <b>«Скоро завершуємо»</b> сам перемикає сцену,
+    коли час вийшов.</div>
+  <div class="pagefoot"><span>Гомін</span><span>10</span></div>
+</section>
+
+<!-- ============================================================ obs -->
+<section class="page">
+  <div class="kicker">Керування OBS</div>
+  <h2>OBS під рукою, <em>не на передньому плані</em></h2>
+  <p class="lead">Сцени, джерела, мікшер з рівнями звуку, режим студії, стрім і запис — без перемикання в OBS.</p>
+  <figure><img src="obs.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Швидкі перемикачі</h3><p>Сховати камеру, вимкнути мікрофон чи Discord у живій сцені — одним кліком із головного екрана.</p></div>
+    <div class="card"><h3>Знімок екрана</h3><p>Кадр із живої сцени одразу у вашій теці зображень — для прев’ю, соцмереж чи анонсів.</p></div>
+    <div class="card"><h3>Варта стріму</h3><p>Застосунок стежить за цифрами OBS і попереджає про проблеми з мережею, кодувальником чи диском.</p></div>
+  </div>
+  <div class="pagefoot"><span>Гомін</span><span>11</span></div>
+</section>
+
+<!-- ============================================================ deck and phone remote -->
+<section class="page">
+  <div class="kicker">Пульт і телефон</div>
+  <h2>Кнопки під рукою — <em>посеред гри</em></h2>
+  <p class="lead">Плагін для OpenDeck перетворює пульт із кнопками-екранами на панель стріму. Кнопки не просто
+    натискаються — вони показують, що відбувається: час в ефірі, глядачів, пісню, відлік.</p>
+  <div class="deckstage">
+    <img class="deck-dials" src="deck-dials.svg" alt="">
+    <img class="deck-keys" src="deck-keys.svg" alt="">
+    <div class="note">Зображення пультів умовні, кнопки на них намалював сам плагін. Підходять пульти, які підтримує OpenDeck.</div>
+  </div>
+  <div class="cards">
+    <div class="card"><h3>Живі кнопки</h3><p>Ефір, відлік «Скоро повернусь», мікрофон, Discord, лічильник, режими чату. Вимкнене горить червоним — вимкнений мікрофон видно одразу.</p></div>
+    <div class="card"><h3>Ручки</h3><p>Гучність музики й озвучення, перемотка, наступна пісня з обкладинкою, і відлік, який можна подовжити поворотом.</p></div>
+    <div class="card"><h3>Телефон як пульт</h3><p>Ті самі кнопки в браузері телефону — у тій самій мережі Wi-Fi, зі своїм ключем, без застосунків.</p></div>
+  </div>
+  <div class="quote">Плагін іде разом із застосунком: <b>«Встановити в OpenDeck»</b> — і кнопки вже в списку. Мова й колір —
+    як у застосунку.</div>
+  <div class="pagefoot"><span>Гомін</span><span>12</span></div>
+</section>
+
+<!-- ============================================================ discord -->
+<section class="page">
+  <div class="kicker">Discord</div>
+  <h2>Ваша спільнота <em>дізнається першою</em></h2>
+  <p class="lead">Оголошення про початок стріму, нові кліпи й повідомлення з нагород — у ваші канали Discord. Без бота й
+    без окремого сервісу.</p>
+  <figure><img src="discord.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Розумне оголошення</h3><p>Картка з назвою, категорією й картинкою. Оновлюється, коли змінюється назва, і показує тривалість після ефіру.</p></div>
+    <div class="card"><h3>Без зайвих пінгів</h3><p>Стрім обірвався й повернувся — повідомлення те саме. Текст глядачів ніколи нікого не згадує.</p></div>
+    <div class="card"><h3>Голос під рукою</h3><p>Мікрофон, навушники й «натисни й говори» Discord — у верхній панелі застосунку.</p></div>
+  </div>
+  <div class="pagefoot"><span>Гомін</span><span>13</span></div>
+</section>
+
+<!-- ============================================================ chatbot -->
+<section class="page">
+  <div class="kicker">Чат-бот</div>
+  <h2>Бот, що знає <em>ваш стрім</em></h2>
+  <p class="lead">Відповідає від вашого облікового запису й бачить усе, що відбувається: яка пісня грає, скільки триває
+    ефір, коли буде реклама.</p>
+  <figure><img src="chatbot.png" alt=""></figure>
+  <div class="cards">
+    <div class="card"><h3>Команди</h3><p>Свої команди з доступом за ролями й паузами. Шаутаути, запуск нагород і керування музикою з чату.</p></div>
+    <div class="card"><h3>Цитати й розіграші</h3><p>Смішне зі стріму — <code>!quote</code>. Розіграш за словом у чаті з перевіркою, що переможець ще тут.</p></div>
+    <div class="card"><h3>Таймери, рейди й реклама</h3><p>Нагадування лише коли чат живий, привітання рейдерів і новачків, попередження перед рекламою.</p></div>
+  </div>
+  <div class="quote">Нічого не публікується без вашого рішення: <b>усе нове спершу вимкнене</b>.</div>
+  <div class="pagefoot"><span>Гомін</span><span>14</span></div>
+</section>
+
+<!-- ============================================================ closing -->
+<section class="page dark last">
+  <div class="inner">
+    <div class="kicker" style="color:#9ff4ff">Чому Гомін</div>
+    <h2>Зроблено стрімером — <em style="color:#9ff4ff">для стрімерів</em></h2>
+    <p class="lead">Застосунок виріс із реальних ефірів: кожна функція з’явилася, бо її бракувало під час стріму.</p>
+    <div class="cards two">
+      <div class="card"><h3>Ваші дані — ваші</h3><p>Усе працює на вашому комп’ютері. Входи в Twitch, OBS, Spotify і посилання Discord зберігаються у сховищі паролів системи.</p></div>
+      <div class="card"><h3>Українською з першого дня</h3><p>Повністю український інтерфейс, українські голоси й тексти за замовчуванням, які говорять вашою мовою.</p></div>
+      <div class="card"><h3>Одне вікно замість п’яти</h3><p>Бот, сповіщення, програвач, озвучення й панель OBS працюють разом і не сперечаються між собою.</p></div>
+      <div class="card"><h3>Ваш вигляд</h3><p>Темна, чорна для OLED, світла тема або як у системі. Закрили вікно — застосунок працює далі в треї. Налаштування легко перенести на інший комп’ютер.</p></div>
+    </div>
+    <div class="req"><b>Що потрібно:</b> Windows або Linux, OBS Studio, обліковий запис Twitch. Spotify Premium — для пісень зі
+      Spotify. Опитування, прогнози, реклама й бали каналу Twitch надає компаньйонам і партнерам.</div>
+  </div>
+  <div class="logo-row"><img src="app-icon.svg" alt=""><div>Гомін<span>Увесь стрім — з одного вікна</span></div></div>
+</section>
+
+</body>
+</html>
