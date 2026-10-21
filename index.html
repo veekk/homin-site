@@ -221,7 +221,8 @@
   .controls button:hover { background: rgba(255,255,255,.1); border-color: rgba(159,244,255,.35); }
   .controls button:active { transform: scale(.94); }
   .controls button:focus-visible { outline: 2px solid var(--teal); }
-  .controls .mute { padding: 12px 16px; }
+  .controls .mute { padding: 12px 16px; min-width: 92px; }
+  .controls .mute[aria-pressed="true"] { background: rgba(25,199,214,.18); border-color: var(--teal); color: #fff; }
   .hint { color: var(--muted); font-size: 13.5px; text-align: center; }
 
   /* ---------- feature grid */
@@ -429,7 +430,7 @@
         <button type="button" data-ev="redeem"><span>💧</span>Нагорода</button>
         <button type="button" data-ev="song"><span>🎵</span>Пісня</button>
         <button type="button" data-ev="death"><span>💀</span>Смерть</button>
-        <button type="button" class="mute" id="mute" aria-pressed="false" title="Звук сповіщень"><span>🔊</span>Звук</button>
+        <button type="button" class="mute" id="mute" aria-pressed="false" title="Звуки сповіщень"><span>🔇</span><b>Звук вимк.</b></button>
       </div>
       <div class="hint">Сповіщення, чат, «Зараз грає», лічильник і нагорода — п’ять оверлеїв, кожен додається в OBS однією кнопкою.</div>
     </div>
@@ -613,11 +614,14 @@ ov.style.setProperty("--shadow", Array.from({ length: 16 }, (_, i) => {
   return `${(Math.cos(a) * 2).toFixed(2)}px ${(Math.sin(a) * 2).toFixed(2)}px 0 #000`;
 }).join(", "));
 
-let sound = true;
+// off until the visitor turns it on; turning it on plays the follow chime, so it's clear it works
+let sound = false;
 const mute = $("#mute");
 mute.onclick = () => {
-  sound = !sound; mute.setAttribute("aria-pressed", String(!sound));
+  sound = !sound; mute.setAttribute("aria-pressed", String(sound));
   mute.querySelector("span").textContent = sound ? "🔊" : "🔇";
+  mute.querySelector("b").textContent = sound ? "Звук увімк." : "Звук вимк.";
+  play("chime.wav");
 };
 function play(file) {
   if (!sound) return;
