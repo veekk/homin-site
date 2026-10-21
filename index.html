@@ -103,7 +103,7 @@
 
   /* ---------- one window instead of five: the apps fly in and then circle the one window */
   .merge { position: relative; height: 520px; --r0: 330px; --r1: 200px; --size: 112px; }
-  .orbit { position: absolute; left: 50%; top: 46%; width: 0; height: 0; animation: spin 50s linear infinite paused; }
+  .orbit { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: spin 50s linear infinite paused; }
   .merge.in .orbit, .merge.in .app > div { animation-play-state: running; }
   .app { position: absolute; width: var(--size); height: var(--size); left: calc(var(--size) / -2); top: calc(var(--size) / -2);
          border-radius: 22px; border: 1px solid var(--line); background: rgba(21,26,58,.9); display: grid; place-items: center;
@@ -116,14 +116,13 @@
   .orbit > :nth-child(4) { --c: var(--c5); } .orbit > :nth-child(5) { --c: var(--c2); } .orbit > :nth-child(6) { --c: #febc2e; }
   .merge.in .app { transform: rotate(var(--a)) translate(var(--r1)) rotate(calc(-1 * var(--a))) scale(.78);
                    border-color: color-mix(in srgb, var(--c) 55%, transparent); box-shadow: 0 0 28px color-mix(in srgb, var(--c) 30%, transparent); }
-  .merge .one { position: absolute; left: 50%; top: 46%; width: 230px; margin: -115px 0 0 -115px; border-radius: 30px; padding: 26px 20px; text-align: center;
+  .merge .one { position: absolute; left: 50%; top: 50%; width: 230px; margin: -115px 0 0 -115px; border-radius: 30px; padding: 26px 20px; text-align: center;
                 background: linear-gradient(140deg, var(--violet), var(--deep)); border: 1px solid rgba(159,244,255,.25);
                 transform: scale(.4); opacity: 0; transition: transform .9s .9s cubic-bezier(.2,1.4,.4,1), opacity .6s .9s; }
   .merge.in .one { transform: none; opacity: 1; box-shadow: 0 0 80px rgba(109,63,224,.45); }
   .merge .one img { width: 96px; margin: 0 auto 12px; }
   .merge .one b { font-family: var(--display); font-size: 22px; display: block; }
   .merge .one span { color: var(--muted); font-size: 14px; }
-  .merge .redo { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); }
 
   /* ---------- tour */
   .tour { display: grid; grid-template-columns: 300px 1fr; gap: 36px; align-items: start; }
@@ -372,7 +371,6 @@
         <div class="app"><div><svg><use href="#i-discord"/></svg>Discord</div></div>
       </div>
       <div class="one"><img src="app-icon.svg" alt=""><b>Гомін</b><span>усе разом, без конфліктів</span></div>
-      <button class="btn ghost redo" id="redo" type="button">↺ Ще раз</button>
     </div>
   </div>
 </section>
@@ -551,7 +549,6 @@ merge.querySelectorAll(".app").forEach((a, i) => {
 new IntersectionObserver((es, o) => es.forEach(e => {
   if (e.isIntersecting) { setTimeout(() => merge.classList.add("in"), 400); o.disconnect(); }
 }), { threshold: .5 }).observe(merge);
-$("#redo").onclick = () => { merge.classList.remove("in"); setTimeout(() => merge.classList.add("in"), 1400); };
 
 // ---------- the tour
 const tour = [
