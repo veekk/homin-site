@@ -15,7 +15,7 @@
 <link rel="icon" href="app-icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Manrope:wght@400;500;700&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root { --night: #0b0f24; --deep: #151a3a; --violet: #2d1a5e; --ink: #eef1ff; --muted: #a3acd0; --line: rgba(255,255,255,.1);
           --c1: #c04dff; --c2: #ff4040; --c3: #4d8bff; --c4: #3de6ff; --c5: #3dff8b; --teal: #19c7d6;
@@ -91,7 +91,7 @@
   .toast b { display: block; font-size: 14px; } .toast small { color: var(--muted); font-size: 12.5px; }
 
   /* ---------- sections */
-  section { position: relative; padding: 110px 0; }
+  section { position: relative; padding: 110px 0; overflow-x: clip; }   /* the orbiting tiles start outside a phone's width */
   .kicker { font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--teal);
             display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
   .kicker::before { content: ""; width: 30px; height: 4px; border-radius: 4px; background: var(--ring); }
@@ -149,65 +149,79 @@
   .chip:nth-child(2) { animation-delay: .08s; } .chip:nth-child(3) { animation-delay: .16s; }
   @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.9); } }
 
-  /* ---------- live demo */
-  .demo { display: grid; grid-template-columns: 1.6fr 1fr; gap: 28px; align-items: stretch; }
-  .screen { position: relative; width: 100%; align-self: center; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; border: 1px solid #2c3560;
-            background: radial-gradient(circle at 30% 30%, #233063, #10142c 70%); box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  /* ---------- live demo: the app's own overlays (overlays/alerts, chat, player, counters, redeems)
+     with their default look, drawn on a 1920x1080 layer that is scaled to the screen like OBS does */
+  .demo { display: flex; flex-direction: column; gap: 18px; }
+  .screen { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; border: 1px solid #2c3560;
+            background: #10142c; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
   .screen .game { position: absolute; inset: 0; background:
       linear-gradient(transparent 60%, rgba(0,0,0,.35)),
-      repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 2px, transparent 2px 60px),
       radial-gradient(ellipse at 70% 120%, #1b6b5b 0, transparent 60%),
       radial-gradient(circle at 80% 22%, #ffd57a 0, #ff9a5a 4%, transparent 9%),
       linear-gradient(#2a2f6b, #6b3b7a 55%, #c96a5a); }
   .screen .hills { position: absolute; inset: auto 0 0; height: 40%; background: radial-gradient(ellipse at 20% 100%, #16213f 0 55%, transparent 56%),
       radial-gradient(ellipse at 75% 110%, #0f1730 0 60%, transparent 61%); }
-  .live { position: absolute; left: 14px; top: 12px; display: flex; gap: 8px; align-items: center; font-size: 12px; font-weight: 700; }
-  .live b { background: #e91916; padding: 2px 8px; border-radius: 4px; }
-  .live span { background: rgba(0,0,0,.45); padding: 2px 8px; border-radius: 4px; }
-  .alert { position: absolute; left: 50%; top: 14%; transform: translateX(-50%) scale(.6); opacity: 0; text-align: center; padding: 14px 26px;
-           border-radius: 16px; background: rgba(11,15,36,.85); border: 2px solid var(--c, var(--c1)); min-width: 46%;
-           box-shadow: 0 0 40px var(--c, var(--c1)); transition: transform .5s cubic-bezier(.2,1.5,.4,1), opacity .35s; }
-  .alert.show { transform: translateX(-50%); opacity: 1; }
-  .alert .em { font-size: 34px; line-height: 1; display: block; animation: wob 1s ease-in-out infinite; }
-  @keyframes wob { 50% { transform: rotate(-10deg) scale(1.1); } }
-  .alert b { font-family: var(--display); font-size: clamp(14px, 1.8vw, 20px); display: block; margin-top: 6px; }
-  .alert small { color: #cfd7ee; font-size: 13px; }
-  .np { position: absolute; left: 14px; bottom: 14px; display: flex; gap: 10px; align-items: center; padding: 8px 14px 8px 8px; border-radius: 12px;
-        background: rgba(11,15,36,.78); font-size: 12.5px; max-width: 55%; transition: transform .4s; }
-  .np.bump { transform: scale(1.08); }
-  .np .cover { width: 36px; height: 36px; border-radius: 8px; flex: none; background: linear-gradient(135deg, var(--c1), var(--c3)); transition: filter .4s; }
-  .np b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .eq { display: flex; gap: 2px; align-items: flex-end; height: 14px; margin-left: 4px; }
-  .eq i { width: 3px; background: var(--c5); animation: eq .9s ease-in-out infinite; }
-  .eq i:nth-child(2) { animation-delay: .2s; } .eq i:nth-child(3) { animation-delay: .4s; } .eq i:nth-child(4) { animation-delay: .1s; }
-  @keyframes eq { 0%, 100% { height: 20%; } 50% { height: 100%; } }
-  .counter { position: absolute; right: 14px; top: 12px; padding: 6px 12px; border-radius: 10px; background: rgba(11,15,36,.78); font-size: 13px; }
-  .counter b { font-family: var(--display); color: var(--c2); display: inline-block; }
-  .counter b.bump { animation: bump .4s; }
-  @keyframes bump { 50% { transform: scale(1.6); } }
-  .speech { position: absolute; right: 14px; bottom: 14px; max-width: 42%; padding: 9px 13px; border-radius: 14px 14px 4px 14px; font-size: 13px;
-            background: #fff; color: #161a2e; opacity: 0; transform: translateY(8px); transition: opacity .3s, transform .3s; }
-  .speech.show { opacity: 1; transform: none; }
-  .speech .wave { display: flex; gap: 2px; height: 10px; margin-top: 5px; align-items: center; }
-  .speech .wave i { flex: 1; background: #6d3fe0; border-radius: 2px; animation: eq .6s ease-in-out infinite; }
-  .speech .wave i:nth-child(odd) { animation-delay: .15s; } .speech .wave i:nth-child(3n) { animation-delay: .3s; }
-  .particle { position: absolute; pointer-events: none; font-size: 22px; will-change: transform; }
-  .flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle, rgba(255,255,255,.4), transparent 70%); }
-  .flash.go { animation: flash .7s; }
-  @keyframes flash { 30% { opacity: 1; } }
-  .side { display: flex; flex-direction: column; gap: 14px; }
-  .chat { flex: 1; min-height: 220px; border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.03); padding: 14px;
-          display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; font-size: 14px; position: relative; }
-  .chat::before { content: "Чат"; position: absolute; top: 10px; left: 14px; font-size: 12px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
-  .chat div { padding: 3px 0; animation: pop .35s both; }
-  .chat .sys { color: #9ff4ff; }
-  .buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .buttons button { all: unset; cursor: pointer; text-align: center; padding: 12px 6px; border-radius: 12px; font-size: 13.5px; font-weight: 700;
-                    background: rgba(255,255,255,.05); border: 1px solid var(--line); transition: transform .15s, background .2s, border-color .2s; }
-  .buttons button span { display: block; font-size: 22px; margin-bottom: 3px; }
-  .buttons button:hover { background: rgba(255,255,255,.1); border-color: rgba(159,244,255,.35); }
-  .buttons button:active { transform: scale(.94); }
-  .buttons button:focus-visible { outline: 2px solid var(--teal); }
+  .ov { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; transform: scale(var(--k, .5));
+        font-family: "Inter", "Segoe UI", "Noto Sans", sans-serif; color: #fff; line-height: normal; }
+  .ov canvas { position: absolute; inset: 0; }
+  /* alerts.css (vh = 10.8px) */
+  .ov .stage { position: absolute; inset: 0; display: flex; justify-content: center; align-items: flex-start; padding-top: 65px; pointer-events: none; }
+  .ov .alert { display: flex; flex-direction: column; align-items: center; gap: 13px; max-width: 1152px; padding: 24px 35px; border-radius: 22px;
+               background: rgba(18, 18, 24, .82); box-shadow: 0 11px 43px rgba(0, 0, 0, .45); border: 3px solid var(--accent, #9147ff);
+               opacity: 0; transform: translateY(-32px) scale(.92); transition: opacity .35s ease, transform .35s ease; }
+  .ov .alert.visible { opacity: 1; transform: none; }
+  .ov .alert img { max-height: 216px; max-width: 614px; object-fit: contain; }
+  .ov .alert .title { font-weight: 800; font-size: 45px; text-align: center; text-shadow: var(--shadow); }
+  .ov .alert .message { opacity: .92; font-size: 28px; text-align: center; max-width: 1056px; text-shadow: var(--shadow); }
+  .ov .alert.follow { --accent: #3b9eff; } .ov .alert.subscription { --accent: #9147ff; } .ov .alert.gift { --accent: #ff7eb6; }
+  .ov .alert.cheer { --accent: #f5a623; } .ov .alert.raid { --accent: #2fbf71; }
+  /* chat.css */
+  .ov .chat { position: absolute; left: 22px; bottom: 32px; width: 576px; display: flex; flex-direction: column; justify-content: flex-end; gap: 9px; }
+  .ov .line { max-width: 100%; padding: 9px 15px; border-radius: 13px; background: rgba(18, 18, 24, .6); color: #f1f1f6;
+              font-size: 26px; line-height: 1.35; overflow-wrap: anywhere; text-shadow: 0 1.6px 4.3px rgba(0, 0, 0, .9);
+              opacity: 0; transform: translateX(-22px); transition: opacity .3s ease, transform .3s ease; }
+  .ov .line.visible { opacity: 1; transform: none; }
+  .ov .badge { display: inline-block; margin-right: .5em; padding: .05em .4em; border-radius: .3em; font-size: .68em; font-weight: 800;
+               vertical-align: .12em; color: #fff; text-shadow: none; background: #9147ff; }
+  .ov .badge.moderator { background: #00ad03; } .ov .badge.vip { background: #e005b9; }
+  .ov .name { font-weight: 800; }
+  /* player.css, the default theme */
+  .ov .np { position: absolute; left: 24px; top: 24px; width: 520px; display: flex; gap: 16px; align-items: center; padding: 14px; border-radius: 16px;
+            background: rgba(18, 18, 24, .96); box-shadow: 0 8px 30px rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.06); color: #f2f2f7;
+            transition: opacity .4s ease, transform .4s ease; }
+  .ov .np.hidden { opacity: 0; transform: translateY(-8px); }
+  .ov .artwrap { position: relative; flex: none; }
+  .ov .art { width: 96px; height: 96px; border-radius: 12px; display: grid; place-items: center; font-size: 40px; font-weight: 800; color: rgba(255,255,255,.9); }
+  .ov .src { position: absolute; right: -6px; bottom: -6px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+             border: 3px solid rgb(18, 18, 24); background: #1db954; }
+  .ov .meta { flex: 1; min-width: 0; }
+  .ov .label { font-size: 11px; letter-spacing: .14em; color: #9147ff; font-weight: 700; }
+  .ov .ttl { font-size: 22px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ov .artist { font-size: 16px; color: #a8a8b8; }
+  .ov .requester { font-size: 13px; color: #9147ff; margin-top: 2px; }
+  .ov .progress { margin-top: 8px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; }
+  .ov .bar { height: 100%; width: 0; background: #9147ff; }
+  .ov .times { display: flex; justify-content: space-between; font-size: 12px; color: #a8a8b8; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  /* counters.css, top right */
+  .ov .counters { position: absolute; right: 32px; top: 32px; text-align: right; font-size: 39px; font-weight: 800; text-shadow: var(--shadow); }
+  .ov .counters .name { opacity: .9; font-weight: 800; }
+  .ov .num { display: inline-block; font-variant-numeric: tabular-nums; }
+  .ov .num.pulse { animation: pulse .6s ease; }
+  @keyframes pulse { 40% { transform: scale(1.35); } }
+  /* redeems.css: a picture with its caption in the middle */
+  .ov .media { position: absolute; left: 50%; top: 50%; width: 260px; transform: translate(-50%, -50%); opacity: 0; transition: opacity .4s ease; }
+  .ov .media.visible { opacity: 1; }
+  .ov .media img { width: 100%; display: block; }
+  .ov .caption { position: absolute; left: 50%; transform: translateX(-50%); bottom: -1.6em; white-space: nowrap; font-weight: 800; font-size: 28px;
+                 text-shadow: 0 2px 6px #000, 0 0 2px #000; }
+  .controls { display: grid; grid-template-columns: repeat(8, 1fr) auto; gap: 8px; }
+  .controls button { all: unset; cursor: pointer; text-align: center; padding: 12px 6px; border-radius: 12px; font-size: 13.5px; font-weight: 700;
+                     background: rgba(255,255,255,.05); border: 1px solid var(--line); transition: transform .15s, background .2s, border-color .2s; }
+  .controls button span { display: block; font-size: 22px; margin-bottom: 3px; }
+  .controls button:hover { background: rgba(255,255,255,.1); border-color: rgba(159,244,255,.35); }
+  .controls button:active { transform: scale(.94); }
+  .controls button:focus-visible { outline: 2px solid var(--teal); }
+  .controls .mute { padding: 12px 16px; }
   .hint { color: var(--muted); font-size: 13.5px; text-align: center; }
 
   /* ---------- feature grid */
@@ -274,17 +288,8 @@
     .feat p { display: none; }
     .toast { transform: scale(.85); font-size: 12px; }
     .toast.show { transform: scale(.85); }
-    .buttons { grid-template-columns: repeat(3, 1fr); }
-    .np { max-width: 62%; }
-    .speech { display: none; }
-    .alert { top: 5%; padding: 8px 14px; min-width: 62%; border-radius: 12px; }
-    .alert .em { font-size: 22px; } .alert small { font-size: 11px; }
-    .np { padding: 5px 10px 5px 5px; font-size: 11px; left: 8px; bottom: 8px; } .np .cover { width: 26px; height: 26px; }
-    .counter, .live { font-size: 11px; }
-    .merge { height: 380px; --r0: 190px; --r1: 128px; --size: 74px; }
-    .app { font-size: 10px; border-radius: 16px; } .app svg { width: 24px; height: 24px; margin-bottom: 3px; }
-    .merge .one { width: 150px; margin: -75px 0 0 -75px; padding: 16px 10px; border-radius: 22px; }
-    .merge .one img { width: 56px; margin-bottom: 8px; } .merge .one b { font-size: 17px; } .merge .one span { font-size: 12px; }
+    .controls { grid-template-columns: repeat(4, 1fr); }
+    .controls .mute { grid-column: 1 / -1; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before { animation: none !important; transition: none !important; }
@@ -398,30 +403,35 @@
   <div class="wrap">
     <div class="kicker reveal">Спробувати</div>
     <h2 class="reveal d1">Зробіть <span class="grad">галас</span> на стрімі</h2>
-    <p class="lead2 reveal d2">Натискайте кнопки — так глядачі бачать оверлеї Гоміна в OBS.</p>
+    <p class="lead2 reveal d2">Справжні оверлеї Гоміна з налаштуваннями за замовчуванням — такими їх бачать глядачі в OBS.</p>
     <div class="demo reveal d2">
       <div class="screen" id="screen">
         <div class="game"></div><div class="hills"></div>
-        <div class="live"><b>LIVE</b><span id="viewers">👁 128</span></div>
-        <div class="counter">💀 Смерті: <b id="deaths">3</b></div>
-        <div class="alert" id="alert"><span class="em"></span><b></b><small></small></div>
-        <div class="np" id="np"><div class="cover" id="npCover"></div><div><b id="npTitle">Хвилі — Ніч над містом</b><small style="color:var(--muted)">замовив(-ла) <span id="npBy">sonya_plays</span></small></div>
-          <div class="eq"><i></i><i></i><i></i><i></i></div></div>
-        <div class="speech" id="speech"><span></span><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-        <div class="flash" id="flash"></div>
-      </div>
-      <div class="side">
-        <div class="chat" id="chat"></div>
-        <div class="buttons">
-          <button type="button" data-ev="follow"><span>💜</span>Фоловер</button>
-          <button type="button" data-ev="sub"><span>⭐</span>Підписка</button>
-          <button type="button" data-ev="bits"><span>💎</span>Біти</button>
-          <button type="button" data-ev="raid"><span>🚀</span>Рейд</button>
-          <button type="button" data-ev="song"><span>🎵</span>Пісня</button>
-          <button type="button" data-ev="death"><span>💀</span>Смерть</button>
+        <div class="ov" id="ov">
+          <canvas id="fx" width="1920" height="1080"></canvas>
+          <div class="np" id="np">
+            <div class="artwrap"><div class="art" id="art"></div><span class="src"><svg viewBox="0 0 24 24" width="17" height="17"><path d="M10 17V6l8-2v11M10 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM18 15a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="meta"><div class="label">ЗАРАЗ ГРАЄ</div><div class="ttl" id="npTitle"></div><div class="artist" id="npArtist"></div>
+              <div class="requester" id="npBy"></div><div class="progress"><div class="bar" id="npBar"></div></div>
+              <div class="times"><span id="npAt">0:00</span><span id="npLen">0:00</span></div></div>
+          </div>
+          <div class="counters"><span class="name">Смерті:</span> <span class="num" id="deaths">3</span></div>
+          <div class="chat" id="chat"></div>
+          <div class="stage" id="stage"></div>
         </div>
-        <div class="hint">Пісня — замовлення за бали каналу, смерть — лічильник з клавіші чи пульта.</div>
       </div>
+      <div class="controls">
+        <button type="button" data-ev="follow"><span>💙</span>Фоловер</button>
+        <button type="button" data-ev="subscription"><span>⭐</span>Підписка</button>
+        <button type="button" data-ev="gift"><span>🎁</span>Подарунок</button>
+        <button type="button" data-ev="cheer"><span>💎</span>Біти</button>
+        <button type="button" data-ev="raid"><span>🚀</span>Рейд</button>
+        <button type="button" data-ev="redeem"><span>💧</span>Нагорода</button>
+        <button type="button" data-ev="song"><span>🎵</span>Пісня</button>
+        <button type="button" data-ev="death"><span>💀</span>Смерть</button>
+        <button type="button" class="mute" id="mute" aria-pressed="false" title="Звук сповіщень"><span>🔊</span>Звук</button>
+      </div>
+      <div class="hint">Сповіщення, чат, «Зараз грає», лічильник і нагорода — п’ять оверлеїв, кожен додається в OBS однією кнопкою.</div>
     </div>
   </div>
 </section>
@@ -594,86 +604,144 @@ function show(i) {
 }
 show(0);
 
-// ---------- the live demo
-const chat = $("#chat"), alertBox = $("#alert"), screen = $("#screen"), speech = $("#speech");
-const names = ["sonya_plays", "max_k", "olia_draws", "taras_ua", "nightowl_ua", "kotyk228", "ira.mp3", "bogdan_live"];
-const lines = ["привіт усім!", "гг", "яка гарна музика", "LUL", "давай ще раз", "хто з Львова?", "💜💜💜", "оце так стрибок"];
-const colors = ["#ff7eb6", "#7ee0ff", "#b6ff7e", "#ffcf7e", "#c9a6ff", "#7effc4"];
-const pick = a => a[Math.floor(Math.random() * a.length)];
-function say(name, text, sys) {
-  const d = document.createElement("div");
-  if (sys) { d.className = "sys"; d.textContent = text; }
-  else {
-    const n = document.createElement("b"); n.textContent = name + ": "; n.style.color = pick(colors);
-    d.append(n, text);
-  }
-  chat.append(d);
-  while (chat.children.length > 9) chat.firstChild.remove();
-}
-setInterval(() => { if (!document.hidden) say(pick(names), pick(lines)); }, 2300);
-say("max_k", "привіт усім!"); say("ira.mp3", "яка гарна музика");
+// ---------- the live demo: the overlays' own markup and timings (overlays/*/), driven by the buttons
+const ov = $("#ov"), screenEl = $("#screen");
+new ResizeObserver(() => ov.style.setProperty("--k", screenEl.clientWidth / 1920)).observe(screenEl);
+// the alerts' default text: white with a 2px black outline (TC.applyText)
+ov.style.setProperty("--shadow", Array.from({ length: 16 }, (_, i) => {
+  const a = i / 16 * 2 * Math.PI;
+  return `${(Math.cos(a) * 2).toFixed(2)}px ${(Math.sin(a) * 2).toFixed(2)}px 0 #000`;
+}).join(", "));
 
-let alertTimer, speechTimer;
-function showAlert(em, color, title, sub) {
-  clearTimeout(alertTimer);
-  alertBox.classList.remove("show");
-  requestAnimationFrame(() => {
-    alertBox.style.setProperty("--c", color);
-    alertBox.querySelector(".em").textContent = em;
-    alertBox.querySelector("b").textContent = title;
-    alertBox.querySelector("small").textContent = sub;
-    alertBox.classList.add("show");
-  });
-  alertTimer = setTimeout(() => alertBox.classList.remove("show"), 3200);
-  const f = $("#flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
-}
-function speak(text) {
-  clearTimeout(speechTimer);
-  const s = speech.querySelector("span"); s.textContent = "";
-  speech.classList.add("show");
-  let k = 0;
-  const type = setInterval(() => { s.textContent = text.slice(0, ++k); if (k >= text.length) clearInterval(type); }, 35);
-  speechTimer = setTimeout(() => { clearInterval(type); speech.classList.remove("show"); }, 3600);
-}
-// emoji that burst out of the alert, or fly in from the left for a raid
-function burst(chars, n, fromLeft) {
-  if (calm) return;
-  const r = screen.getBoundingClientRect();
-  for (let i = 0; i < n; i++) {
-    const p = document.createElement("span");
-    p.className = "particle"; p.textContent = pick(chars);
-    const x0 = fromLeft ? -30 : r.width / 2, y0 = fromLeft ? Math.random() * r.height : r.height * .25;
-    const x1 = fromLeft ? r.width + 40 : x0 + (Math.random() - .5) * r.width, y1 = fromLeft ? y0 + (Math.random() - .5) * 80 : r.height + 40;
-    p.style.left = x0 + "px"; p.style.top = y0 + "px";
-    screen.append(p);
-    const up = fromLeft ? 0 : -(60 + Math.random() * 120);
-    p.animate([
-      { transform: "translate(0,0) rotate(0)", opacity: 1 },
-      { transform: `translate(${(x1 - x0) * .5}px, ${up}px) rotate(${Math.random() * 180}deg)`, opacity: 1, offset: .35 },
-      { transform: `translate(${x1 - x0}px, ${y1 - y0}px) rotate(${Math.random() * 540}deg)`, opacity: 0 },
-    ], { duration: 1400 + Math.random() * 900, delay: Math.random() * (fromLeft ? 700 : 200), easing: "cubic-bezier(.3,.6,.5,1)", fill: "both" })
-      .onfinish = () => p.remove();
-  }
-}
-const songs = [["Хвилі", "Ніч над містом"], ["Сонячні зайчики", "Літо в кедах"], ["Пані Квітка", "Неонове серце"], ["Дим над Дніпром", "8 біт"]];
-let song = 0, deaths = 3, viewers = 128;
-const events = {
-  follow() { const n = pick(names); showAlert("💜", "#c04dff", n, "новий фоловер!"); burst(["💜", "✨"], 14); say("", `💜 ${n} тепер стежить за каналом`, true); },
-  sub() { const n = pick(names); showAlert("⭐", "#febc2e", `${n} підписався(-лась)!`, "уже 3 місяці поспіль"); burst(["⭐", "🌟", "✨"], 26);
-          speak(`${n}: дякую за чудові стріми!`); say("", `⭐ ${n} підписка, 3 місяці`, true); },
-  bits() { const n = pick(names); showAlert("💎", "#4d8bff", `${n} — 500 бітів`, "«Тримай, на каву!»"); burst(["💎", "💠"], 30); speak("Тримай, на каву!"); },
-  raid() { const n = pick(names); viewers += 42; $("#viewers").textContent = "👁 " + viewers;
-           showAlert("🚀", "#ff4040", `Рейд від ${n}!`, "42 глядачі прилітають"); burst(["🚀", "👾", "🛸", "💜"], 40, true);
-           say("", `🚀 ${n} рейдить з 42 глядачами — вітаємо!`, true); },
-  song() { song = (song + 1) % songs.length; const [a, s] = songs[song], n = pick(names);
-           $("#npTitle").textContent = `${a} — ${s}`; $("#npBy").textContent = n;
-           $("#npCover").style.filter = `hue-rotate(${song * 80}deg)`;
-           const np = $("#np"); np.classList.add("bump"); setTimeout(() => np.classList.remove("bump"), 400);
-           say(n, `!sr ${a} ${s}`); setTimeout(() => say("", `🎵 «${s}» додано в чергу, @${n}`, true), 600); },
-  death() { const d = $("#deaths"); d.textContent = ++deaths; d.classList.remove("bump"); void d.offsetWidth; d.classList.add("bump");
-            say(pick(names), pick(["F", "знову?!", "RIP", "😭"])); },
+let sound = true;
+const mute = $("#mute");
+mute.onclick = () => {
+  sound = !sound; mute.setAttribute("aria-pressed", String(!sound));
+  mute.querySelector("span").textContent = sound ? "🔊" : "🔇";
 };
-document.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => events[b.dataset.ev]());
+function play(file) {
+  if (!sound) return;
+  const a = new Audio("overlay/" + file); a.volume = .5; a.play().catch(() => {});
+}
+
+const names = ["sonya_plays", "max_k", "olia_draws", "taras_ua", "nightowl_ua", "kotyk228", "ira_mp3", "bogdan_live"];
+const lines = ["привіт усім!", "гг", "яка гарна музика", "давай ще раз", "хто з Львова?", "оце так стрибок", "ахахах", "о, ця пісня!"];
+const nameColors = ["#ff7eb6", "#7ee0ff", "#b6ff7e", "#ffcf7e", "#c9a6ff", "#7effc4", "#ff9a7e", "#9ab8ff"];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const color = n => nameColors[[...n].reduce((h, c) => h + c.charCodeAt(0), 0) % nameColors.length];
+
+// chat overlay: up to eight lines in the bottom-left corner
+const chat = $("#chat");
+function say(name, text, badge) {
+  const line = document.createElement("div");
+  line.className = "line";
+  if (badge) { const b = document.createElement("span"); b.className = "badge " + badge[0]; b.textContent = badge[1]; line.append(b); }
+  const n = document.createElement("span"); n.className = "name"; n.style.color = color(name); n.textContent = name;
+  line.append(n, ": " + text);
+  chat.append(line);
+  requestAnimationFrame(() => requestAnimationFrame(() => line.classList.add("visible")));
+  while (chat.children.length > 8) chat.firstChild.remove();
+}
+const badges = [null, null, null, ["moderator", "MOD"], ["vip", "VIP"], ["sub", "SUB"]];
+setInterval(() => { if (!document.hidden) say(pick(names), pick(lines), pick(badges)); }, 2600);
+say("max_k", "привіт усім!"); say("ira_mp3", "яка гарна музика", ["sub", "SUB"]);
+
+// alerts overlay: one at a time, the next after the last one fades out
+const alertStage = $("#stage"), queue = [];
+let showing = false;
+function alertNow(a) { queue.push(a); if (!showing) nextAlert(); }
+function nextAlert() {
+  const a = queue.shift();
+  if (!a) { showing = false; return; }
+  showing = true;
+  const el = document.createElement("div");
+  el.className = "alert " + a.kind;
+  const img = new Image(); img.src = `overlay/alert-${a.kind}.png`; img.alt = "";
+  const title = document.createElement("div"); title.className = "title"; title.textContent = a.title;
+  el.append(img, title);
+  if (a.message) { const m = document.createElement("div"); m.className = "message"; m.textContent = a.message; el.append(m); }
+  alertStage.append(el);
+  play(a.sound);
+  setTimeout(() => el.classList.add("visible"), 30);
+  setTimeout(() => {
+    el.classList.remove("visible");
+    setTimeout(() => { el.remove(); nextAlert(); }, 450);
+  }, 4500);
+}
+
+// redeems overlay: a picture with a caption, and the same picture falling from the top (image_rain)
+const fx = $("#fx").getContext("2d"), drops = [];
+const water = new Image(); water.src = "overlay/water.svg";
+let raf = 0, last = 0;
+function rain() {
+  for (let i = 0; i < 40; i++) drops.push({ x: Math.random() * 1920, y: -Math.random() * 540 - 40, vx: (Math.random() - .5) * 90,
+    vy: 90 + Math.random() * 270, r: Math.random() * 6.28, vr: (Math.random() - .5) * 8, s: .5 + Math.random() * .8, life: 4 });
+  if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
+}
+function step(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  fx.clearRect(0, 0, 1920, 1080);
+  for (let i = drops.length - 1; i >= 0; i--) {
+    const d = drops[i];
+    d.vy += 1400 * dt; d.x += d.vx * dt; d.y += d.vy * dt; d.r += d.vr * dt; d.life -= dt;
+    if (d.y > 1080 - 40 * d.s && d.vy > 0) { d.y = 1080 - 40 * d.s; d.vy *= -.35; }
+    if (d.life <= 0) { drops.splice(i, 1); continue; }
+    fx.save(); fx.globalAlpha = Math.min(1, d.life); fx.translate(d.x, d.y); fx.rotate(d.r);
+    fx.drawImage(water, -40 * d.s, -40 * d.s, 80 * d.s, 80 * d.s); fx.restore();
+  }
+  raf = drops.length ? requestAnimationFrame(step) : 0;
+  if (!raf) fx.clearRect(0, 0, 1920, 1080);
+}
+function redeem(user) {
+  const m = document.createElement("div"); m.className = "media";
+  const img = new Image(); img.src = "overlay/water.svg"; img.alt = "";
+  const c = document.createElement("div"); c.className = "caption"; c.textContent = `💧 ${user} нагадує всім попити води!`;
+  m.append(img, c); ov.append(m);
+  setTimeout(() => m.classList.add("visible"), 30);
+  setTimeout(() => { m.classList.remove("visible"); setTimeout(() => m.remove(), 500); }, 4000);
+  play("pop.wav");
+  if (!calm) rain();
+}
+
+// player overlay: the Now playing card with its progress
+const songs = [["Ніч над містом", "Хвилі", "7c3aed", 214], ["Літо в кедах", "Сонячні зайчики", "e5484d", 187],
+               ["Неонове серце", "Пані Квітка", "0d8597", 241], ["8 біт", "Дим над Дніпром", "f5a623", 199]];
+let song = 0, songStart = performance.now() - 52000;
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+function showSong(by) {
+  const [title, artist, hue, len] = songs[song];
+  $("#npTitle").textContent = title; $("#npArtist").textContent = artist;
+  $("#npBy").textContent = "замовлення від @" + by; $("#npLen").textContent = fmt(len);
+  const art = $("#art"); art.textContent = artist[0]; art.style.background = `linear-gradient(135deg, #${hue}, #1b1b24)`;
+}
+showSong("sonya_plays");
+setInterval(() => {
+  const at = Math.min((performance.now() - songStart) / 1000, songs[song][3]);
+  $("#npAt").textContent = fmt(at); $("#npBar").style.width = (100 * at / songs[song][3]) + "%";
+}, 250);
+
+let deaths = 3;
+const events = {
+  follow: u => alertNow({ kind: "follow", title: `${u} підписується на канал!`, sound: "chime.wav" }),
+  subscription: u => alertNow({ kind: "subscription", title: `${u} оформлює підписку!`, message: "Дякую за стріми!", sound: "sparkle.wav" }),
+  gift: u => alertNow({ kind: "gift", title: `${u} дарує 5 підписок!`, sound: "sparkle.wav" }),
+  cheer: u => alertNow({ kind: "cheer", title: `${u} надсилає 500 бітсів!`, message: "Тримай, на каву!", sound: "marimba.wav" }),
+  raid: u => { alertNow({ kind: "raid", title: `${u} влаштовує рейд із 42 глядачами!`, sound: "harp.wav" });
+               setTimeout(() => say(u, "РЕЙД! 💜💜💜", ["vip", "VIP"]), 900); },
+  redeem: u => redeem(u),
+  song: u => {
+    say(u, "!sr " + songs[(song + 1) % songs.length].slice(0, 2).reverse().join(" — "));
+    const np = $("#np");
+    setTimeout(() => np.classList.add("hidden"), 600);
+    setTimeout(() => { song = (song + 1) % songs.length; songStart = performance.now(); showSong(u); np.classList.remove("hidden"); }, 1100);
+  },
+  death: () => {
+    const v = $("#deaths"); v.textContent = ++deaths;
+    v.classList.remove("pulse"); void v.offsetWidth; v.classList.add("pulse");
+    say(pick(names), pick(["F", "знову?!", "RIP", "😭"]));
+  },
+};
+document.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => events[b.dataset.ev](pick(names)));
 
 // ---------- the feature grid, lit where the pointer is
 const feats = [
