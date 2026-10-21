@@ -3,424 +3,712 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Гомін — можливості</title>
+<title>Гомін — увесь стрім з одного вікна</title>
 <meta name="description" content="Увесь стрім — з одного вікна: чат, сповіщення, озвучення, музика, нагороди, OBS і Discord.">
-<!-- link previews in Discord and Telegram when the site (veekk/homin-site, scripts/make_guide.py --site) is posted -->
+<!-- the public site (veekk/homin-site), written by scripts/make_guide.py --doc promo --site DIR;
+     the screenshots, deck pictures, icon and the brochure's PDF are next to it there -->
 <meta property="og:title" content="Гомін — увесь стрім з одного вікна">
 <meta property="og:description" content="Чат, сповіщення, озвучення, музика із замовленнями глядачів, нагороди, OBS і Discord.">
 <meta property="og:image" content="https://veekk.github.io/homin-site/control.png">
 <meta property="og:url" content="https://veekk.github.io/homin-site/">
+<meta name="theme-color" content="#0b0f24">
 <link rel="icon" href="app-icon.svg">
-<!-- Printed to PDF by scripts/make_guide.py --doc promo; screenshots are next to this page when it is printed.
-     Colours as in uk.html: the new app icon (night blue, teal gem, five-colour ring). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-  @page { size: A4; margin: 0; }
-  :root { --accent: #0d8597; --accent-2: #6d3fe0; --ink: #161a2e; --muted: #59607a; --line: #e1e5ef;
-          --night: #0b0f24; --c1: #c04dff; --c2: #ff4040; --c3: #4d8bff; --c4: #19c7d6; --c5: #2fd07a;
-          --ring: linear-gradient(90deg, #c04dff, #ff4040, #4d8bff, #3de6ff, #3dff8b); }
+  :root { --night: #0b0f24; --deep: #151a3a; --violet: #2d1a5e; --ink: #eef1ff; --muted: #a3acd0; --line: rgba(255,255,255,.1);
+          --c1: #c04dff; --c2: #ff4040; --c3: #4d8bff; --c4: #3de6ff; --c5: #3dff8b; --teal: #19c7d6;
+          --ring: linear-gradient(90deg, #c04dff, #ff4040, #4d8bff, #3de6ff, #3dff8b);
+          --display: "Unbounded", "Noto Sans", sans-serif; --body: "Manrope", "Noto Sans", sans-serif; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: #fff; color: var(--ink); font-family: "Noto Sans", sans-serif;
-               font-size: 10.5pt; line-height: 1.5; }
-  .page { height: 297mm; padding: 15mm 17mm 12mm; position: relative; overflow: hidden;
-          page-break-after: always; break-after: page; }
-  .page:last-child { page-break-after: auto; }
-  .page:not(.dark) { border-top: 2mm solid transparent; border-image: var(--ring) 1; }
-  h1, h2, h3 { margin: 0; line-height: 1.2; }
-  p { margin: 0 0 2.5mm; }
-  b { font-weight: 600; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--night); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55;
+         overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.12; letter-spacing: -.01em; }
+  .wrap { width: min(1180px, 100% - 32px); margin: 0 auto; }
+  .grad { background: var(--ring); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+          animation: slide 8s linear infinite; }
+  @keyframes slide { to { background-position: 200% 0; } }
 
-  .kicker { font-size: 10pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent);
-            display: flex; align-items: center; gap: 2.5mm; margin-bottom: 2mm; }
-  .kicker::before { content: ""; width: 8mm; height: 1.2mm; border-radius: 1mm; background: var(--ring); }
-  h2 { font-size: 27pt; color: var(--night); margin-bottom: 3mm; letter-spacing: -.01em; }
-  h2 em { font-style: normal; color: var(--accent-2); }   /* gradient text doesn't survive printing */
-  .lead { font-size: 13pt; line-height: 1.55; color: var(--muted); max-width: 172mm; margin-bottom: 7mm; }
+  /* ---------- top bar */
+  nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .3s, backdrop-filter .3s; }
+  nav.solid { background: rgba(11,15,36,.72); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; gap: 24px; height: 64px; }
+  nav .brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; text-decoration: none; font-size: 18px; }
+  nav .brand img { width: 32px; height: 32px; }
+  nav .links { display: flex; gap: 22px; margin-left: auto; font-size: 15px; }
+  nav .links a { text-decoration: none; color: var(--muted); transition: color .2s; }
+  nav .links a:hover { color: #fff; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 999px; font-weight: 700;
+         text-decoration: none; border: 0; cursor: pointer; font: 700 15px var(--body); color: #fff; position: relative;
+         background: linear-gradient(120deg, #6d3fe0, #0d8597); box-shadow: 0 6px 24px rgba(109,63,224,.35); transition: transform .2s, box-shadow .2s; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(25,199,214,.35); }
+  .btn.ghost { background: rgba(255,255,255,.06); box-shadow: none; border: 1px solid var(--line); }
 
-  figure { margin: 0 0 9mm; }
-  figure img { width: 100%; display: block; border-radius: 7px; border: 1px solid #232846;
-               box-shadow: 0 3mm 8mm rgba(11, 15, 36, .25); }
+  /* ---------- hero */
+  .hero { position: relative; padding: 130px 0 80px; overflow: hidden; }
+  .aurora { position: absolute; inset: -20% -10% auto; height: 120%; pointer-events: none; filter: blur(70px); opacity: .7; }
+  .aurora i { position: absolute; border-radius: 50%; animation: drift 18s ease-in-out infinite alternate; }
+  .aurora i:nth-child(1) { width: 46vw; height: 46vw; left: 55%; top: 0; background: rgba(25,199,214,.35); }
+  .aurora i:nth-child(2) { width: 50vw; height: 50vw; left: -10%; top: 30%; background: rgba(192,77,255,.32); animation-duration: 22s; }
+  .aurora i:nth-child(3) { width: 34vw; height: 34vw; left: 35%; top: 45%; background: rgba(255,64,64,.18); animation-duration: 26s; }
+  @keyframes drift { to { transform: translate(-8vw, 6vh) scale(1.15); } }
+  .hero .wrap { position: relative; display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: center; }
+  .logo-spin { width: 92px; height: 92px; position: relative; margin-bottom: 26px; }
+  .logo-spin img { width: 100%; height: 100%; position: relative; animation: float 6s ease-in-out infinite; }
+  .logo-spin::before { content: ""; position: absolute; inset: -14px; border-radius: 40%; background: conic-gradient(#c04dff, #ff4040, #4d8bff, #3de6ff, #3dff8b, #c04dff);
+                       filter: blur(22px); opacity: .55; animation: spin 9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes float { 50% { transform: translateY(-8px); } }
+  .hero h1 { font-size: clamp(54px, 8vw, 104px); font-weight: 800; }
+  .hero .sub { font-family: var(--display); font-weight: 500; font-size: clamp(20px, 2.4vw, 28px); margin: 10px 0 22px; }
+  .rotator { display: inline-grid; vertical-align: bottom; height: 1.25em; overflow: hidden; }
+  .rotator span { grid-area: 1/1; color: #9ff4ff; transform: translateY(110%); opacity: 0; transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity .55s; }
+  .rotator span.on { transform: none; opacity: 1; }
+  .rotator span.off { transform: translateY(-110%); opacity: 0; }
+  .hero p.lead { color: var(--muted); font-size: 18px; max-width: 30em; margin: 0 0 28px; }
+  .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .tag { border: 1px solid rgba(159,244,255,.3); color: #d7f9ff; border-radius: 999px; padding: 5px 13px; font-size: 13.5px; background: rgba(159,244,255,.05); }
 
-  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; }
-  .cards.two { grid-template-columns: repeat(2, 1fr); }
-  .card { border: 1px solid var(--line); border-radius: 7px; padding: 5mm 5mm 4.5mm; position: relative;
-          background: #fbfcfe; break-inside: avoid; }
-  .card::before { content: ""; position: absolute; left: 4mm; top: 0; width: 10mm; height: 1.2mm;
-                  border-radius: 0 0 1mm 1mm; background: var(--c, var(--accent)); }
-  .card h3 { font-size: 13pt; margin: 1mm 0 2mm; color: var(--night); }
-  .card p { font-size: 10.5pt; line-height: 1.55; color: #3d4258; margin: 0; }
-  .cards > :nth-child(5n+1) { --c: var(--c1); }
-  .cards > :nth-child(5n+2) { --c: var(--c4); }
-  .cards > :nth-child(5n+3) { --c: var(--c3); }
-  .cards > :nth-child(5n+4) { --c: var(--c5); }
-  .cards > :nth-child(5n+5) { --c: var(--c2); }
+  .stage3d { perspective: 1400px; position: relative; }
+  .window { border-radius: 14px; overflow: hidden; background: #10142c; border: 1px solid #2c3560; transform-style: preserve-3d;
+            box-shadow: 0 40px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04) inset; transition: transform .25s ease-out;
+            transform: rotateY(-12deg) rotateX(6deg); }
+  .window .bar { height: 30px; display: flex; align-items: center; gap: 7px; padding: 0 12px; background: #181d3d; }
+  .window .bar i { width: 11px; height: 11px; border-radius: 50%; background: #3a4170; }
+  .window .bar i:nth-child(1) { background: #ff5f57; } .window .bar i:nth-child(2) { background: #febc2e; } .window .bar i:nth-child(3) { background: #28c840; }
+  .window .bar span { margin-left: 10px; font-size: 12px; color: var(--muted); }
+  .window img { width: 100%; aspect-ratio: 5 / 3; object-fit: cover; }
+  .toast { position: absolute; z-index: 3; display: flex; align-items: center; gap: 10px; padding: 10px 16px 10px 10px; border-radius: 14px;
+           background: rgba(21,26,58,.86); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.12); font-size: 14px; white-space: nowrap;
+           box-shadow: 0 14px 34px rgba(0,0,0,.45); opacity: 0; transform: translateY(14px) scale(.92); transition: opacity .45s, transform .45s cubic-bezier(.2,1.4,.4,1); }
+  .toast.show { opacity: 1; transform: none; }
+  .toast .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 18px; background: var(--c, var(--c1)); }
+  .toast b { display: block; font-size: 14px; } .toast small { color: var(--muted); font-size: 12.5px; }
 
-  .quote { margin-top: 9mm; padding: 6mm 8mm; border-radius: 8px; color: #fff; font-size: 12.5pt; line-height: 1.55;
-           background: linear-gradient(120deg, #2d1a5e, #151a3a 55%, #0b4f63); }
-  .quote b { color: #9ff4ff; }
-  .pagefoot { position: absolute; left: 17mm; right: 17mm; bottom: 8mm; font-size: 8pt; color: #9aa1b8;
-              display: flex; justify-content: space-between; }
+  /* ---------- sections */
+  section { position: relative; padding: 110px 0; }
+  .kicker { font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--teal);
+            display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .kicker::before { content: ""; width: 30px; height: 4px; border-radius: 4px; background: var(--ring); }
+  h2 { font-size: clamp(30px, 4.4vw, 52px); font-weight: 700; margin-bottom: 18px; }
+  .lead2 { color: var(--muted); font-size: 18px; max-width: 36em; margin: 0 0 44px; }
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity .8s, transform .8s cubic-bezier(.2,.8,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal.d1 { transition-delay: .1s; } .reveal.d2 { transition-delay: .2s; } .reveal.d3 { transition-delay: .3s; }
 
-  /* dark pages: cover and the last page */
-  .dark { color: #fff;
-          background: radial-gradient(circle at 78% 14%, rgba(25, 199, 214, .32) 0, transparent 42%),
-                      radial-gradient(circle at 12% 88%, rgba(192, 77, 255, .30) 0, transparent 48%),
-                      radial-gradient(circle at 50% 40%, #2d1a5e 0, #151a3a 60%, #0b0f24 100%); }
-  .cover { padding: 0; }
-  .cover .inner { position: absolute; left: 20mm; right: 20mm; top: 40mm; }
-  .cover img.logo { width: 26mm; height: 26mm; }
-  .cover h1 { font-size: 38pt; margin: 8mm 0 2mm; }
-  .cover .sub { font-size: 19pt; color: #9ff4ff; margin-bottom: 6mm; font-weight: 600; }
-  .ring { height: 1.6mm; width: 60mm; border-radius: 1mm; background: var(--ring); margin: 0 0 8mm; }
-  .cover .lead { color: #dfe6f7; font-size: 12pt; max-width: 150mm; }
-  .cover .tags { display: flex; flex-wrap: wrap; gap: 2.5mm; margin-top: 6mm; }
-  .tag { border: 1px solid rgba(159, 244, 255, .45); color: #d7f9ff; border-radius: 20mm; padding: 1mm 4mm; font-size: 9.5pt; }
-  .cover .shot { position: absolute; left: 20mm; right: 20mm; bottom: 26mm; }
-  .cover .shot img { width: 100%; border-radius: 8px; box-shadow: 0 4mm 12mm rgba(0, 0, 0, .6); border: 1px solid #2c3560; }
-  .cover .foot { position: absolute; left: 20mm; bottom: 12mm; font-size: 9pt; color: #8f9cc4; }
+  /* ---------- one window instead of five: the apps fly in and then circle the one window */
+  .merge { position: relative; height: 520px; --r0: 330px; --r1: 200px; --size: 112px; }
+  .orbit { position: absolute; left: 50%; top: 46%; width: 0; height: 0; animation: spin 50s linear infinite paused; }
+  .merge.in .orbit, .merge.in .app > div { animation-play-state: running; }
+  .app { position: absolute; width: var(--size); height: var(--size); left: calc(var(--size) / -2); top: calc(var(--size) / -2);
+         border-radius: 22px; border: 1px solid var(--line); background: rgba(21,26,58,.9); display: grid; place-items: center;
+         text-align: center; font-size: 13px; color: var(--muted); padding: 8px;
+         transform: rotate(var(--a)) translate(var(--r0)) rotate(calc(-1 * var(--a)));
+         transition: transform 1.3s cubic-bezier(.6,0,.2,1), border-color 1s, box-shadow 1s; }
+  .app > div { animation: spin 50s linear infinite reverse paused; }
+  .app svg { width: 30px; height: 30px; margin: 0 auto 6px; stroke: var(--c, #fff); display: block; }
+  .orbit > :nth-child(1) { --c: var(--c1); } .orbit > :nth-child(2) { --c: var(--c4); } .orbit > :nth-child(3) { --c: var(--c3); }
+  .orbit > :nth-child(4) { --c: var(--c5); } .orbit > :nth-child(5) { --c: var(--c2); } .orbit > :nth-child(6) { --c: #febc2e; }
+  .merge.in .app { transform: rotate(var(--a)) translate(var(--r1)) rotate(calc(-1 * var(--a))) scale(.78);
+                   border-color: color-mix(in srgb, var(--c) 55%, transparent); box-shadow: 0 0 28px color-mix(in srgb, var(--c) 30%, transparent); }
+  .merge .one { position: absolute; left: 50%; top: 46%; width: 230px; margin: -115px 0 0 -115px; border-radius: 30px; padding: 26px 20px; text-align: center;
+                background: linear-gradient(140deg, var(--violet), var(--deep)); border: 1px solid rgba(159,244,255,.25);
+                transform: scale(.4); opacity: 0; transition: transform .9s .9s cubic-bezier(.2,1.4,.4,1), opacity .6s .9s; }
+  .merge.in .one { transform: none; opacity: 1; box-shadow: 0 0 80px rgba(109,63,224,.45); }
+  .merge .one img { width: 96px; margin: 0 auto 12px; }
+  .merge .one b { font-family: var(--display); font-size: 22px; display: block; }
+  .merge .one span { color: var(--muted); font-size: 14px; }
+  .merge .redo { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); }
 
-  /* overview tiles */
-  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin: 2mm 0 5mm; }
-  .tile { border-radius: 8px; padding: 3mm 3.5mm 3.5mm; background: #f5f7fb; border: 1px solid var(--line); break-inside: avoid; }
-  .tile .dot { width: 6mm; height: 6mm; border-radius: 50%; margin-bottom: 2mm;
-               background: radial-gradient(circle at 35% 35%, #fff 0, var(--c, var(--accent)) 45%); }
-  .tile h3 { font-size: 11.5pt; margin-bottom: 1.2mm; }
-  .tile p { font-size: 8.5pt; line-height: 1.38; color: #4a5068; margin: 0; }
-  .tiles > :nth-child(5n+1) { --c: var(--c1); }
-  .tiles > :nth-child(5n+2) { --c: var(--c4); }
-  .tiles > :nth-child(5n+3) { --c: var(--c3); }
-  .tiles > :nth-child(5n+4) { --c: var(--c5); }
-  .tiles > :nth-child(5n+5) { --c: var(--c2); }
-  .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
-  .strip div { border-radius: 8px; padding: 3mm 4mm 3.5mm; color: #fff; break-inside: avoid;
-               background: linear-gradient(135deg, #151a3a, #2d1a5e); }
-  .strip b { display: block; font-size: 12pt; color: #9ff4ff; margin-bottom: 1mm; }
-  .strip span { font-size: 9pt; line-height: 1.4; color: #dfe6f7; }
+  /* ---------- tour */
+  .tour { display: grid; grid-template-columns: 300px 1fr; gap: 36px; align-items: start; }
+  .tabs { display: flex; flex-direction: column; gap: 4px; }
+  .tabs button { all: unset; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 12px;
+                 color: var(--muted); font-weight: 600; position: relative; overflow: hidden; transition: background .25s, color .25s; }
+  .tabs button svg { width: 22px; height: 22px; stroke: currentColor; flex: none; }
+  .tabs button:hover { color: #fff; background: rgba(255,255,255,.04); }
+  .tabs button.on { color: #fff; background: rgba(255,255,255,.07); }
+  .tabs button.on svg { stroke: var(--teal); }
+  .tabs button .prog { position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: var(--ring); }
+  .tabs button.on .prog.run { animation: prog 7s linear forwards; }
+  @keyframes prog { to { width: 100%; } }
+  .tabs button:focus-visible { outline: 2px solid var(--teal); }
+  .shot { position: relative; }
+  .shot .window { transform: none; }
+  .shot .frame { position: relative; aspect-ratio: 5 / 3; }
+  .shot .frame img { position: absolute; inset: 0; height: 100%; opacity: 0; transform: scale(1.03); transition: opacity .5s, transform .7s; }
+  .shot .frame img.on { opacity: 1; transform: none; }
+  .shot h3 { font-size: 24px; margin: 26px 0 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { padding: 8px 14px; border-radius: 12px; background: rgba(255,255,255,.05); border: 1px solid var(--line); font-size: 15px;
+          animation: pop .5s cubic-bezier(.2,1.4,.4,1) both; }
+  .chip:nth-child(2) { animation-delay: .08s; } .chip:nth-child(3) { animation-delay: .16s; }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.9); } }
 
-  .last .inner { position: absolute; left: 20mm; right: 20mm; top: 30mm; }
-  .last h2 { color: #fff; font-size: 30pt; }
-  .last .cards { gap: 6mm; margin-top: 4mm; }
-  .last .lead { color: #dfe6f7; }
-  .last .cards .card { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .14); }
-  .last .card h3 { color: #fff; }
-  .last .card p { color: #cfd7ee; }
-  .req { margin-top: 12mm; border-top: 1px solid rgba(255, 255, 255, .18); padding-top: 5mm; font-size: 11pt; color: #cfd7ee; }
-  .req b { color: #fff; }
-  .last .logo-row { position: absolute; left: 20mm; right: 20mm; bottom: 18mm; display: flex; align-items: center; gap: 5mm; }
-  .last .logo-row img { width: 16mm; height: 16mm; }
-  .last .logo-row div { font-size: 15pt; font-weight: 700; }
-  .last .logo-row span { display: block; font-size: 9.5pt; font-weight: 400; color: #9ff4ff; }
-  /* the deck page: two decks drawn by scripts/make_deck_renders.mjs, on a dark stage */
-  .deckstage { position: relative; height: 92mm; margin: 0 0 7mm; border-radius: 8px; overflow: hidden;
-               background: radial-gradient(circle at 25% 20%, rgba(25, 199, 214, .28) 0, transparent 45%),
-                           radial-gradient(circle at 85% 90%, rgba(192, 77, 255, .30) 0, transparent 50%),
-                           radial-gradient(circle at 50% 45%, #2d1a5e 0, #151a3a 60%, #0b0f24 100%); }
-  .deckstage img { position: absolute; display: block; }
-  .deckstage .deck-dials { width: 84mm; left: 4mm; top: 8mm; transform: rotate(-3deg); }
-  .deckstage .deck-keys { width: 80mm; right: 4mm; top: 17mm; transform: rotate(2.5deg); }
-  .deckstage .note { position: absolute; left: 6mm; right: 6mm; bottom: 3.5mm; font-size: 8pt; color: #aab3d0; text-align: center; }
-  /* on a screen (the site): A4 pages one under another; on a phone the pages flow instead of being fixed sheets */
-  .download { display: none; }
-  @media screen {
-    html, body { background: #0b0f24; }
-    .page { max-width: 210mm; margin: 0 auto 6mm; background-color: #fff; }
-    .page.dark { background-color: #0b0f24; }
-    .download { display: block; position: fixed; right: 16px; bottom: 16px; z-index: 10; padding: 10px 18px;
-                border-radius: 24px; background: var(--accent); color: #fff; font-weight: 600; text-decoration: none;
-                box-shadow: 0 4px 14px rgba(0, 0, 0, .4); }
+  /* ---------- live demo */
+  .demo { display: grid; grid-template-columns: 1.6fr 1fr; gap: 28px; align-items: stretch; }
+  .screen { position: relative; width: 100%; align-self: center; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; border: 1px solid #2c3560;
+            background: radial-gradient(circle at 30% 30%, #233063, #10142c 70%); box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  .screen .game { position: absolute; inset: 0; background:
+      linear-gradient(transparent 60%, rgba(0,0,0,.35)),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 2px, transparent 2px 60px),
+      radial-gradient(ellipse at 70% 120%, #1b6b5b 0, transparent 60%),
+      radial-gradient(circle at 80% 22%, #ffd57a 0, #ff9a5a 4%, transparent 9%),
+      linear-gradient(#2a2f6b, #6b3b7a 55%, #c96a5a); }
+  .screen .hills { position: absolute; inset: auto 0 0; height: 40%; background: radial-gradient(ellipse at 20% 100%, #16213f 0 55%, transparent 56%),
+      radial-gradient(ellipse at 75% 110%, #0f1730 0 60%, transparent 61%); }
+  .live { position: absolute; left: 14px; top: 12px; display: flex; gap: 8px; align-items: center; font-size: 12px; font-weight: 700; }
+  .live b { background: #e91916; padding: 2px 8px; border-radius: 4px; }
+  .live span { background: rgba(0,0,0,.45); padding: 2px 8px; border-radius: 4px; }
+  .alert { position: absolute; left: 50%; top: 14%; transform: translateX(-50%) scale(.6); opacity: 0; text-align: center; padding: 14px 26px;
+           border-radius: 16px; background: rgba(11,15,36,.85); border: 2px solid var(--c, var(--c1)); min-width: 46%;
+           box-shadow: 0 0 40px var(--c, var(--c1)); transition: transform .5s cubic-bezier(.2,1.5,.4,1), opacity .35s; }
+  .alert.show { transform: translateX(-50%); opacity: 1; }
+  .alert .em { font-size: 34px; line-height: 1; display: block; animation: wob 1s ease-in-out infinite; }
+  @keyframes wob { 50% { transform: rotate(-10deg) scale(1.1); } }
+  .alert b { font-family: var(--display); font-size: clamp(14px, 1.8vw, 20px); display: block; margin-top: 6px; }
+  .alert small { color: #cfd7ee; font-size: 13px; }
+  .np { position: absolute; left: 14px; bottom: 14px; display: flex; gap: 10px; align-items: center; padding: 8px 14px 8px 8px; border-radius: 12px;
+        background: rgba(11,15,36,.78); font-size: 12.5px; max-width: 55%; transition: transform .4s; }
+  .np.bump { transform: scale(1.08); }
+  .np .cover { width: 36px; height: 36px; border-radius: 8px; flex: none; background: linear-gradient(135deg, var(--c1), var(--c3)); transition: filter .4s; }
+  .np b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .eq { display: flex; gap: 2px; align-items: flex-end; height: 14px; margin-left: 4px; }
+  .eq i { width: 3px; background: var(--c5); animation: eq .9s ease-in-out infinite; }
+  .eq i:nth-child(2) { animation-delay: .2s; } .eq i:nth-child(3) { animation-delay: .4s; } .eq i:nth-child(4) { animation-delay: .1s; }
+  @keyframes eq { 0%, 100% { height: 20%; } 50% { height: 100%; } }
+  .counter { position: absolute; right: 14px; top: 12px; padding: 6px 12px; border-radius: 10px; background: rgba(11,15,36,.78); font-size: 13px; }
+  .counter b { font-family: var(--display); color: var(--c2); display: inline-block; }
+  .counter b.bump { animation: bump .4s; }
+  @keyframes bump { 50% { transform: scale(1.6); } }
+  .speech { position: absolute; right: 14px; bottom: 14px; max-width: 42%; padding: 9px 13px; border-radius: 14px 14px 4px 14px; font-size: 13px;
+            background: #fff; color: #161a2e; opacity: 0; transform: translateY(8px); transition: opacity .3s, transform .3s; }
+  .speech.show { opacity: 1; transform: none; }
+  .speech .wave { display: flex; gap: 2px; height: 10px; margin-top: 5px; align-items: center; }
+  .speech .wave i { flex: 1; background: #6d3fe0; border-radius: 2px; animation: eq .6s ease-in-out infinite; }
+  .speech .wave i:nth-child(odd) { animation-delay: .15s; } .speech .wave i:nth-child(3n) { animation-delay: .3s; }
+  .particle { position: absolute; pointer-events: none; font-size: 22px; will-change: transform; }
+  .flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle, rgba(255,255,255,.4), transparent 70%); }
+  .flash.go { animation: flash .7s; }
+  @keyframes flash { 30% { opacity: 1; } }
+  .side { display: flex; flex-direction: column; gap: 14px; }
+  .chat { flex: 1; min-height: 220px; border-radius: 16px; border: 1px solid var(--line); background: rgba(255,255,255,.03); padding: 14px;
+          display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; font-size: 14px; position: relative; }
+  .chat::before { content: "Чат"; position: absolute; top: 10px; left: 14px; font-size: 12px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .chat div { padding: 3px 0; animation: pop .35s both; }
+  .chat .sys { color: #9ff4ff; }
+  .buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .buttons button { all: unset; cursor: pointer; text-align: center; padding: 12px 6px; border-radius: 12px; font-size: 13.5px; font-weight: 700;
+                    background: rgba(255,255,255,.05); border: 1px solid var(--line); transition: transform .15s, background .2s, border-color .2s; }
+  .buttons button span { display: block; font-size: 22px; margin-bottom: 3px; }
+  .buttons button:hover { background: rgba(255,255,255,.1); border-color: rgba(159,244,255,.35); }
+  .buttons button:active { transform: scale(.94); }
+  .buttons button:focus-visible { outline: 2px solid var(--teal); }
+  .hint { color: var(--muted); font-size: 13.5px; text-align: center; }
+
+  /* ---------- feature grid */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .feat { position: relative; border-radius: 18px; padding: 22px 20px; min-height: 150px; background: rgba(255,255,255,.035); border: 1px solid var(--line);
+          overflow: hidden; transition: transform .3s, border-color .3s; cursor: default; }
+  .feat::before { content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity .35s;
+                  background: radial-gradient(circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--c) 30%, transparent), transparent 65%); }
+  .feat:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--c) 50%, transparent); }
+  .feat:hover::before { opacity: 1; }
+  .feat svg { width: 30px; height: 30px; stroke: var(--c); position: relative; }
+  .feat h3 { font-size: 16px; margin: 14px 0 6px; position: relative; }
+  .feat p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; position: relative; }
+  .grid > :nth-child(5n+1) { --c: var(--c1); } .grid > :nth-child(5n+2) { --c: var(--c4); } .grid > :nth-child(5n+3) { --c: var(--c3); }
+  .grid > :nth-child(5n+4) { --c: var(--c5); } .grid > :nth-child(5n+5) { --c: var(--c2); }
+
+  /* ---------- deck */
+  .deck { display: grid; grid-template-columns: 1.3fr 1fr; gap: 50px; align-items: center; }
+  .decks { position: relative; aspect-ratio: 4 / 3; }
+  .decks img { position: absolute; filter: drop-shadow(0 24px 40px rgba(0,0,0,.6)); transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+  .decks .d1 { width: 72%; left: 0; top: 4%; transform: rotate(-4deg); animation: float 7s ease-in-out infinite; }
+  .decks .d2 { width: 64%; right: 0; bottom: 4%; transform: rotate(3deg); animation: float 8s ease-in-out 1s infinite; }
+  .decks:hover .d1 { transform: rotate(-1deg) translateX(-12px); }
+  .decks:hover .d2 { transform: rotate(0) translateX(12px); }
+  .bullets { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .bullets li { display: flex; gap: 14px; align-items: flex-start; font-size: 16px; }
+  .bullets li i { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-style: normal; font-size: 18px;
+                  background: rgba(255,255,255,.06); }
+  .bullets b { display: block; }
+  .bullets span { color: var(--muted); font-size: 15px; }
+
+  /* ---------- values + closing */
+  .values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .value { border-radius: 20px; padding: 30px 26px; background: linear-gradient(140deg, rgba(45,26,94,.8), rgba(21,26,58,.8)); border: 1px solid var(--line); }
+  .value .big { font-size: 40px; display: block; margin-bottom: 12px; }
+  .value b { font-family: var(--display); font-size: 20px; display: block; margin-bottom: 6px; }
+  .value span { color: var(--muted); font-size: 15px; }
+  .closing { text-align: center; overflow: hidden; }
+  .closing .ringline { width: 140px; height: 5px; border-radius: 5px; background: var(--ring); margin: 0 auto 30px; }
+  .closing h2 { font-size: clamp(32px, 5vw, 60px); }
+  .closing p { color: var(--muted); max-width: 34em; margin: 0 auto 30px; }
+  .closing .req { margin-top: 44px; font-size: 14px; color: var(--muted); max-width: 46em; margin-left: auto; margin-right: auto; }
+  footer { padding: 30px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  /* ---------- narrow screens */
+  @media (max-width: 960px) {
+    .hero .wrap, .tour, .demo, .deck { grid-template-columns: 1fr; }
+    .hero { padding-top: 100px; }
+    .window { transform: none; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .tabs { flex-direction: row; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+    .tabs button { white-space: nowrap; flex: none; }   /* overflow: hidden would let them shrink to the icon */
+    .values { grid-template-columns: 1fr; }
+    .merge { height: 440px; --r0: 240px; --r1: 160px; --size: 92px; }
+    .app { font-size: 11.5px; }
+    section { padding: 80px 0; }
   }
-  @media screen and (max-width: 800px) {
-    body { font-size: 15px; }
-    .page { height: auto; padding: 28px 16px 24px; margin-bottom: 12px; }
-    .cover, .last { padding: 32px 16px; }
-    .cover .inner, .cover .shot, .cover .foot, .last .inner, .last .logo-row, .pagefoot { position: static; }
-    .cover .shot { margin-top: 24px; }
-    .cover .foot { margin-top: 12px; }
-    .last .logo-row { margin-top: 24px; }
-    .pagefoot { display: none; }
-    h2 { font-size: 26px; }
-    .cover h1 { font-size: 40px; }
-    .cover .sub { font-size: 20px; }
-    .lead, .cover .lead { font-size: 16px; }
-    .cards, .cards.two, .strip { grid-template-columns: 1fr; }
-    .tiles { grid-template-columns: repeat(2, 1fr); }
-    .card p, .tile p, .strip span { font-size: 14px; }
-    .deckstage { height: auto; padding: 16px 8px 36px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
-    .deckstage img, .deckstage .deck-dials, .deckstage .deck-keys { position: static; width: 92%; transform: none; }
-    .deckstage .note { position: static; }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    nav .links a:not(.btn) { display: none; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .feat { padding: 16px 14px; min-height: 0; }
+    .feat p { display: none; }
+    .toast { transform: scale(.85); font-size: 12px; }
+    .toast.show { transform: scale(.85); }
+    .buttons { grid-template-columns: repeat(3, 1fr); }
+    .np { max-width: 62%; }
+    .speech { display: none; }
+    .alert { top: 5%; padding: 8px 14px; min-width: 62%; border-radius: 12px; }
+    .alert .em { font-size: 22px; } .alert small { font-size: 11px; }
+    .np { padding: 5px 10px 5px 5px; font-size: 11px; left: 8px; bottom: 8px; } .np .cover { width: 26px; height: 26px; }
+    .counter, .live { font-size: 11px; }
+    .merge { height: 380px; --r0: 190px; --r1: 128px; --size: 74px; }
+    .app { font-size: 10px; border-radius: 16px; } .app svg { width: 24px; height: 24px; margin-bottom: 3px; }
+    .merge .one { width: 150px; margin: -75px 0 0 -75px; padding: 16px 10px; border-radius: 22px; }
+    .merge .one img { width: 56px; margin-bottom: 8px; } .merge .one b { font-size: 17px; } .merge .one span { font-size: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
   }
 </style>
 </head>
 <body>
-<a class="download" href="homin-promo-uk.pdf" download>PDF ↓</a>
 
-<!-- ============================================================ cover -->
-<section class="page dark cover">
-  <div class="inner">
-    <img class="logo" src="app-icon.svg" alt="">
-    <h1>Гомін</h1>
-    <div class="sub">Увесь стрім — з одного вікна</div>
-    <div class="ring"></div>
-    <div class="lead">Чат, сповіщення, озвучення, музика із замовленнями глядачів, нагороди за бали каналу, OBS і Discord.
-      Менше вкладок, менше ботів, менше метушні — більше уваги глядачам.</div>
-    <div class="tags">
-      <span class="tag">Українською та англійською</span><span class="tag">Windows і Linux</span>
-      <span class="tag">Працює на вашому комп’ютері</span><span class="tag">Українські голоси TTS</span>
-      <span class="tag">Налаштування крок за кроком</span>
+<!-- the icons, drawn once and used by <use href="#i-…"> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-control" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 9l3 2-3 2M13 13h4"/></symbol>
+    <symbol id="i-voice" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13M12 8S10 3 7.5 4 9 8 12 8zM12 8s2-5 4.5-4S15 8 12 8z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></symbol>
+    <symbol id="i-obs" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="7.5" r="2.3"/><circle cx="8" cy="14.5" r="2.3"/><circle cx="16" cy="14.5" r="2.3"/></symbol>
+    <symbol id="i-discord" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7c-2 .4-3 1-3 1s-2 3-2 9c2 2 5 2 5 2l1-2M16 7c2 .4 3 1 3 1s2 3 2 9c-2 2-5 2-5 2l-1-2M7 16c3 1.5 7 1.5 10 0M9 7.5c2-.6 4-.6 6 0"/><circle cx="9" cy="12.5" r="1"/><circle cx="15" cy="12.5" r="1"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M9 13v1M15 13v1M9 17h6"/><circle cx="12" cy="3.5" r="1"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 11-11M14 4v3M19 9h-3M17.5 5.5l-2 2M9 3v2M3 9h2"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+    <symbol id="i-deck" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h2M11 9h2M16 9h2M6 14h2M11 14h2M16 14h2"/></symbol>
+    <symbol id="i-move" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h13M13 7l5 5-5 5M20 4v16"/></symbol>
+    <symbol id="i-train" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 4-6 5 4"/><path d="M15 4h6v6"/></symbol>
+    <symbol id="i-count" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 9v6M6 12h4M14 10l2-1v6"/></symbol>
+  </defs>
+</svg>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="app-icon.svg" alt="">Гомін</a>
+    <div class="links">
+      <a href="#tour">Огляд</a><a href="#demo">Спробувати</a><a href="#deck">Пульт</a><a href="#all">Усе</a>
+      <a class="btn ghost" href="homin-promo-uk.pdf" download>PDF ↓</a>
     </div>
   </div>
-  <div class="shot"><img src="control.png" alt=""></div>
-  <div class="foot">Гомін (Homin) 1.0 · знімки екрана зроблено з тестовими даними, виконавці й канали вигадані</div>
+</nav>
+
+<!-- ============================================================ hero -->
+<header class="hero" id="top">
+  <div class="aurora"><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <div>
+      <div class="logo-spin"><img src="app-icon.svg" alt=""></div>
+      <h1>Гомін</h1>
+      <div class="sub">Увесь стрім — з одного вікна.<br>
+        <span class="rotator" id="rotator"><span class="on">Чат</span><span>Озвучення</span><span>Музика</span><span>Нагороди</span><span>Сповіщення</span><span>OBS</span><span>Discord</span></span></div>
+      <p class="lead">Менше вкладок, менше ботів, менше метушні — більше уваги глядачам.</p>
+      <div class="cta">
+        <a class="btn" href="#demo">▶ Спробувати тут</a>
+        <a class="btn ghost" href="#tour">Як це виглядає</a>
+      </div>
+      <div class="tags">
+        <span class="tag">🇺🇦 Українською</span><span class="tag">Windows і Linux</span>
+        <span class="tag">Працює на вашому ПК</span><span class="tag">Українські голоси</span>
+      </div>
+    </div>
+    <div class="stage3d" id="heroStage">
+      <div class="window" id="heroWindow">
+        <div class="bar"><i></i><i></i><i></i><span>Гомін — Центр керування</span></div>
+        <img src="control.png" alt="Центр керування Гоміна: чат, перегляд стріму, кнопки OBS і стрічка подій">
+      </div>
+      <div class="toast" id="toast"><div class="ic"></div><div><b></b><small></small></div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================ one window -->
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">Що всередині</div>
+    <h2 class="reveal d1">Шість програм — <span class="grad">одне вікно</span></h2>
+    <p class="lead2 reveal d2">Бот, сповіщення, програвач, озвучення й панель OBS працюють разом і знають одне про одного.</p>
+    <div class="merge" id="merge">
+      <div class="orbit">
+        <div class="app"><div><svg><use href="#i-bot"/></svg>Чат-бот</div></div>
+        <div class="app"><div><svg><use href="#i-bell"/></svg>Сповіщення</div></div>
+        <div class="app"><div><svg><use href="#i-music"/></svg>Програвач</div></div>
+        <div class="app"><div><svg><use href="#i-voice"/></svg>Озвучення</div></div>
+        <div class="app"><div><svg><use href="#i-obs"/></svg>Панель OBS</div></div>
+        <div class="app"><div><svg><use href="#i-discord"/></svg>Discord</div></div>
+      </div>
+      <div class="one"><img src="app-icon.svg" alt=""><b>Гомін</b><span>усе разом, без конфліктів</span></div>
+      <button class="btn ghost redo" id="redo" type="button">↺ Ще раз</button>
+    </div>
+  </div>
 </section>
 
-<!-- ============================================================ overview -->
-<section class="page">
-  <div class="kicker">Що всередині</div>
-  <h2>Усе для стріму — <em>в одному вікні</em></h2>
-  <p class="lead" style="margin-bottom: 4mm">Замість десятка вкладок, окремого бота, програвача й панелі OBS — одне вікно,
-    де все працює разом і знає одне про одного.</p>
-  <div class="tiles">
-    <div class="tile"><div class="dot"></div><h3>Центр керування</h3><p>Чат з AutoMod, перегляд стріму, кнопки OBS, лічильники й стрічка подій на одному екрані.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Озвучення</h3><p>Чат і нагороди звучать голосом, зокрема українським, з розумними фільтрами.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Музика</h3><p>YouTube, Spotify і власні файли в одній черзі; глядачі замовляють пісні.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Нагороди та ефекти</h3><p>Бали каналу запускають звуки, GIF, відео, ефекти на весь екран і кроки в OBS.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Події каналу</h3><p>Сповіщення, озвучення, скрипт і привітання рейду для кожної події — в одному місці.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Оверлеї</h3><p>Чат, музика, черга, відлік і сповіщення для OBS — із живим переглядом.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Керування OBS</h3><p>Сцени, джерела, мікшер, запис і попередження про стан трансляції.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Discord</h3><p>Оголошення про стрім, кліпи, мікрофон і навушники прямо з застосунку.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Чат-бот</h3><p>Команди, таймери, цитати, розіграші й привітання рейдерів і новачків.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Кліпи й рейди</h3><p>Момент — одним кліком, кліп — після стріму. Пошук каналу для рейду.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Скрипти</h3><p>Ваші скрипти на нагороду, команду чи подію — з редактором і прикладами.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Майстер налаштування</h3><p>Twitch, OBS, оверлеї й озвучення крок за кроком.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Пульт і телефон</h3><p>Плагін для OpenDeck: живі кнопки й ручки. Телефон у тій самій мережі — теж пульт.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Перенести з інших</h3><p>Команди, таймери, сповіщення й нагороди з інших ботів і застосунків — кількома кліками.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Хайп-потяг і цілі</h3><p>Рівень, внески й ціль каналу — на оверлеї та в стрічці подій.</p></div>
-    <div class="tile"><div class="dot"></div><h3>Лічильники</h3><p>Смерті, чашки чаю — з клавіші, пульта чи команди в чаті, і на екрані стріму.</p></div>
+<!-- ============================================================ tour -->
+<section id="tour">
+  <div class="wrap">
+    <div class="kicker reveal">Огляд</div>
+    <h2 class="reveal d1">Клацніть — і <span class="grad">подивіться</span></h2>
+    <p class="lead2 reveal d2">Справжні екрани застосунку. Дані тестові, виконавці й канали вигадані.</p>
+    <div class="tour reveal d2">
+      <div class="tabs" id="tabs" role="tablist"></div>
+      <div class="shot">
+        <div class="window"><div class="bar"><i></i><i></i><i></i><span id="shotTitle"></span></div>
+          <div class="frame" id="frame"></div></div>
+        <h3 id="tourHead"></h3>
+        <div class="chips" id="chips"></div>
+      </div>
+    </div>
   </div>
-  <div class="strip">
-    <div><b>Приватно</b><span>Усе працює локально. Входи й ключі — у сховищі паролів системи, а не у файлі.</span></div>
-    <div><b>Українською</b><span>Повністю український інтерфейс і українські голоси для озвучення.</span></div>
-    <div><b>Безпечно для чату</b><span>Текст глядачів ніколи нікого не пінгує в Discord і не ламає оверлеї.</span></div>
-  </div>
-  <div class="pagefoot"><span>Гомін</span><span>2</span></div>
 </section>
 
-<!-- ============================================================ setup wizard -->
-<section class="page">
-  <div class="kicker">Перший запуск</div>
-  <h2>Від встановлення до ефіру — <em>крок за кроком</em></h2>
-  <p class="lead">Майстер налаштування проводить через Twitch, OBS, оверлеї й озвучення. Кожна інструкція — з кнопкою
-    чи полем поруч, а позначка з’являється, щойно застосунок бачить, що все вийшло.</p>
-  <figure><img src="setup-2.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Підказка до кожного поля</h3><p>Форма Twitch показана такою, як її треба заповнити, з кнопками копіювання. Client ID перевіряється в Twitch ще до входу.</p></div>
-    <div class="card"><h3>Сам перевіряє</h3><p>OBS підключено, оверлеї додано в сцену, звук озвучення захоплено — майстер бачить це сам, а якщо ні, пише чому.</p></div>
-    <div class="card"><h3>У вашому темпі</h3><p>Будь-який крок можна відкласти. Майстер відкривається знову з налаштувань і показує, що вже готово.</p></div>
+<!-- ============================================================ live demo -->
+<section id="demo">
+  <div class="wrap">
+    <div class="kicker reveal">Спробувати</div>
+    <h2 class="reveal d1">Зробіть <span class="grad">галас</span> на стрімі</h2>
+    <p class="lead2 reveal d2">Натискайте кнопки — так глядачі бачать оверлеї Гоміна в OBS.</p>
+    <div class="demo reveal d2">
+      <div class="screen" id="screen">
+        <div class="game"></div><div class="hills"></div>
+        <div class="live"><b>LIVE</b><span id="viewers">👁 128</span></div>
+        <div class="counter">💀 Смерті: <b id="deaths">3</b></div>
+        <div class="alert" id="alert"><span class="em"></span><b></b><small></small></div>
+        <div class="np" id="np"><div class="cover" id="npCover"></div><div><b id="npTitle">Хвилі — Ніч над містом</b><small style="color:var(--muted)">замовив(-ла) <span id="npBy">sonya_plays</span></small></div>
+          <div class="eq"><i></i><i></i><i></i><i></i></div></div>
+        <div class="speech" id="speech"><span></span><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="flash" id="flash"></div>
+      </div>
+      <div class="side">
+        <div class="chat" id="chat"></div>
+        <div class="buttons">
+          <button type="button" data-ev="follow"><span>💜</span>Фоловер</button>
+          <button type="button" data-ev="sub"><span>⭐</span>Підписка</button>
+          <button type="button" data-ev="bits"><span>💎</span>Біти</button>
+          <button type="button" data-ev="raid"><span>🚀</span>Рейд</button>
+          <button type="button" data-ev="song"><span>🎵</span>Пісня</button>
+          <button type="button" data-ev="death"><span>💀</span>Смерть</button>
+        </div>
+        <div class="hint">Пісня — замовлення за бали каналу, смерть — лічильник з клавіші чи пульта.</div>
+      </div>
+    </div>
   </div>
-  <div class="pagefoot"><span>Гомін</span><span>3</span></div>
 </section>
 
-<!-- ============================================================ control -->
-<section class="page">
-  <div class="kicker">Центр керування</div>
-  <h2>Увесь ефір <em>перед очима</em></h2>
-  <p class="lead">Чат, перегляд OBS або Twitch, кнопки трансляції й відліків, назва, категорія та події каналу — на
-    одному екрані. Не треба перемикатися між вікнами, поки ви в ефірі.</p>
-  <figure><img src="control.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Живий чат</h3><p>Емоції, GIF, відповіді й згадки. Перезапустили застосунок посеред ефіру — чат і підсумок продовжуються з того ж місця.</p></div>
-    <div class="card"><h3>Стан трансляції</h3><p>Пропущені кадри, перевантажений кодувальник чи низький бітрейт — застосунок помітить і скаже, що саме не так.</p></div>
-    <div class="card"><h3>Гарячі клавіші й у грі</h3><p>Пауза озвучення, пропуск пісні, лічильник смертей — клавішами навіть посеред гри.</p></div>
+<!-- ============================================================ deck -->
+<section id="deck">
+  <div class="wrap deck">
+    <div class="decks reveal">
+      <img class="d1" src="deck-dials.svg" alt="Пульт із ручками: гучність, музика, відлік">
+      <img class="d2" src="deck-keys.svg" alt="Пульт із кнопками: ефір, мікрофон, сцени">
+    </div>
+    <div>
+      <div class="kicker reveal">Пульт і телефон</div>
+      <h2 class="reveal d1">Кнопки, що <span class="grad">живуть</span></h2>
+      <p class="lead2 reveal d2" style="margin-bottom:28px">Плагін для OpenDeck: кнопки показують, що відбувається на стрімі.</p>
+      <ul class="bullets">
+        <li class="reveal d1"><i>⏱</i><div><b>Час в ефірі, глядачі, пісня</b><span>Прямо на кнопках, живцем.</span></div></li>
+        <li class="reveal d2"><i>🎛</i><div><b>Ручки</b><span>Гучність, перемотка, відлік — поворотом.</span></div></li>
+        <li class="reveal d3"><i>📱</i><div><b>Телефон — теж пульт</b><span>Ті самі кнопки в браузері, без застосунків.</span></div></li>
+      </ul>
+    </div>
   </div>
-  <div class="quote">Після ефіру — <b>підсумок трансляції</b>: тривалість, глядачі, нові фоловери, підписки, біти й рейди.
-    Його можна скопіювати, надіслати в Discord або взяти з нього <b>розділи для YouTube</b>.</div>
-  <div class="pagefoot"><span>Гомін</span><span>4</span></div>
 </section>
 
-<!-- ============================================================ clips, raids, scripts -->
-<section class="page">
-  <div class="kicker">Кліпи, рейди й скрипти</div>
-  <h2>Найкращі моменти — <em>без поспіху</em></h2>
-  <p class="lead">Під час ефіру — один клік, щоб не загубити момент. Після ефіру — спокійно обрізати, назвати й
-    опублікувати. А наприкінці стріму — знайти, кому передати глядачів.</p>
-  <div class="cards two">
-    <div class="card"><h3>Кліп — після стріму</h3><p>«Створити кліп» зберігає момент. Потім у вікні «Кліпи» задаєте початок, тривалість і назву, переглядаєте фрагмент — і кліп з’являється на Twitch та в Discord уже з правильною назвою.</p></div>
-    <div class="card"><h3>Або одразу, як звикли</h3><p>Кліп одразу на Twitch; обрізаєте там, натискаєте «Готово» — і лише тоді він іде в Discord, з остаточною назвою.</p></div>
-    <div class="card"><h3>Знайти канал для рейду</h3><p>Канали у вашій категорії, вашою мовою й потрібного розміру. Клік — і видно стрім із чатом, де можна привітатися ще до рейду.</p></div>
-    <div class="card"><h3>Красиве завершення</h3><p>Відлік рейду над чатом, «Скоро завершуємо», що закінчується разом із рейдом, і стрім, який зупиниться сам.</p></div>
-    <div class="card"><h3>Скрипти на все</h3><p>Ваш Python, shell чи PowerShell на нагороду, команду чату або подію каналу. Скрипт може відповісти в чат або відмовити й повернути бали.</p></div>
-    <div class="card"><h3>Редактор і приклади</h3><p>Вбудований редактор з підсвіткою й пробним запуском. Готові приклади: лічильник, кубик, журнал нагород, текст для OBS.</p></div>
+<!-- ============================================================ everything -->
+<section id="all">
+  <div class="wrap">
+    <div class="kicker reveal">Усе</div>
+    <h2 class="reveal d1">І ще <span class="grad">купа всього</span></h2>
+    <p class="lead2 reveal d2">Кожна функція з’явилася, бо її бракувало під час справжнього ефіру.</p>
+    <div class="grid" id="grid"></div>
   </div>
-  <div class="quote">Рейд приймає <b>посилання з браузера</b>, а якщо інший канал не приймає рейдів, застосунок скаже, що саме
-    заважає.</div>
-  <div class="pagefoot"><span>Гомін</span><span>5</span></div>
 </section>
 
-<!-- ============================================================ tts -->
-<section class="page">
-  <div class="kicker">Озвучення тексту</div>
-  <h2>Чат, що <em>говорить вашою мовою</em></h2>
-  <p class="lead">Повідомлення й нагороди звучать голосом прямо на стрімі — українською чи будь-якою з десятків мов.
-    Ви вирішуєте, що читати, а що ні.</p>
-  <figure><img src="tts.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Голоси на вибір</h3><p>Piper з десятками мов, природний український StyleTTS2 або голоси системи. Усе працює на вашому комп’ютері.</p></div>
-    <div class="card"><h3>Розумні фільтри</h3><p>Без команд, посилань, емоцій і GIF. Видалене модератором чи від забаненого глядача не дочитується. Імена — лише коли змінюється співрозмовник.</p></div>
-    <div class="card"><h3>Правильна вимова</h3><p>Псевдоніми для ніків і слів: «gamer123» звучить як «Сашко», і в згадках, і у відповідях.</p></div>
+<!-- ============================================================ values -->
+<section style="padding-top:20px">
+  <div class="wrap values">
+    <div class="value reveal"><span class="big">🔒</span><b>Приватно</b><span>Усе працює локально. Входи й ключі — у сховищі паролів системи.</span></div>
+    <div class="value reveal d1"><span class="big">🇺🇦</span><b>Українською</b><span>Повністю український інтерфейс і українські голоси.</span></div>
+    <div class="value reveal d2"><span class="big">🛡️</span><b>Безпечно для чату</b><span>Текст глядачів нікого не пінгує в Discord і не ламає оверлеї.</span></div>
   </div>
-  <div class="quote">Черга звучить <b>без пауз</b>: наступна фраза готується, поки звучить попередня. А підписки, біти й рейди
-    оголошуються голосом — кожна подія зі своїм текстом.</div>
-  <div class="pagefoot"><span>Гомін</span><span>6</span></div>
-</section>
-
-<!-- ============================================================ player -->
-<section class="page">
-  <div class="kicker">Музика й замовлення пісень</div>
-  <h2>Глядачі обирають <em>саундтрек стріму</em></h2>
-  <p class="lead">Одна черга для YouTube, Spotify і ваших файлів. Глядачі замовляють пісні за бали каналу, а застосунок
-    сам перевіряє правила й відповідає в чаті.</p>
-  <figure><img src="player.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Чесні правила</h3><p>Максимальна довжина, ліміт на глядача, паузи, заборонені пісні. Не підійшло — бали повертаються самі.</p></div>
-    <div class="card"><h3>Резервний плейлист</h3><p>Немає замовлень — грає ваша музика. З’явилося замовлення — воно м’яко займає своє місце.</p></div>
-    <div class="card"><h3>Платні пісні</h3><p>Замовлення з donatik.ua грають першими, з позначкою ціни в черзі й на оверлеї.</p></div>
-  </div>
-  <div class="quote">Пріоритетні замовлення, пропуск пісні за бали, команди <b>!sr</b> і <b>!skip</b> для модераторів і
-    красиві оверлеї «Зараз грає» та «Черга».</div>
-  <div class="pagefoot"><span>Гомін</span><span>7</span></div>
-</section>
-
-<!-- ============================================================ redeems -->
-<section class="page">
-  <div class="kicker">Нагороди та ефекти</div>
-  <h2>Бали каналу, які <em>справді щось роблять</em></h2>
-  <p class="lead">Кожна нагорода — це сценарій: звук, картинка, відео, ефект на весь екран, повідомлення в чат чи Discord,
-    перемикання сцени в OBS. Дії виконуються одна за одною.</p>
-  <figure><img src="redeems.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Розташування мишкою</h3><p>Картинку чи відео тягнете на маленькому екрані туди, де вони мають з’явитися, і розтягуєте за кут.</p></div>
-    <div class="card"><h3>Спробувати одну дію</h3><p>▶ біля дії показує її одразу, ще до збереження. Дії перетягуються й дублюються.</p></div>
-    <div class="card"><h3>Нічого не губиться</h3><p>Нагороди, обрані, поки застосунок був закритий, виконуються або повертаються.</p></div>
-  </div>
-  <div class="quote">Готові приклади, <b>медіатека</b> для звуків, GIF і відео та вікно «Нагороди на Twitch» для всіх нагород каналу.</div>
-  <div class="pagefoot"><span>Гомін</span><span>8</span></div>
-</section>
-
-<!-- ============================================================ alerts -->
-<section class="page">
-  <div class="kicker">Події каналу</div>
-  <h2>Кожна підтримка — <em>помітна</em></h2>
-  <p class="lead">Фоловери, підписки, подаровані підписки, біти, Power-ups і рейди. Для кожної події — все в одному місці:
-    яскрава картка на стрімі, голосове оголошення, ваш скрипт, а для рейду — привітання в чаті.</p>
-  <figure><img src="events.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Ваш стиль</h3><p>Позиція, анімація, фон, рамка, розмір, будь-який шрифт, колір і обведення тексту.</p></div>
-    <div class="card"><h3>Пресети для ігор</h3><p>Окремий набір сповіщень для кожної гри чи образу. Перемикається сам, коли змінюється категорія.</p></div>
-    <div class="card"><h3>Гучність для кожного</h3><p>Гучний звук рейду тихіше, решта як була. Тестове сповіщення й повтор останніх — одним кліком.</p></div>
-  </div>
-  <div class="quote">Поріг для бітів і рейдів: <b>дрібниці не перебивають</b> важливе, а великі події отримують усю сцену.</div>
-  <div class="pagefoot"><span>Гомін</span><span>9</span></div>
-</section>
-
-<!-- ============================================================ overlays -->
-<section class="page">
-  <div class="kicker">Оверлеї для OBS</div>
-  <h2>Гарний стрім <em>без дизайнера</em></h2>
-  <p class="lead">Сповіщення, чат, нагороди, «Зараз грає», черга пісень, відлік, хайп-потяг і лічильники — готові оверлеї, які додаються в
-    OBS однією кнопкою й одразу потрібного розміру.</p>
-  <figure><img src="overlays.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Живий перегляд</h3><p>Оверлей таким, яким його малює OBS, прямо поруч із налаштуваннями. Змінили — одразу видно.</p></div>
-    <div class="card"><h3>Демо-режим</h3><p>Заповнює всі оверлеї зразками одночасно, щоб налаштувати вигляд до початку стріму.</p></div>
-    <div class="card"><h3>Чистий чат на екрані</h3><p>Без команд, ботів і службових повідомлень. Видалені повідомлення зникають і зі стріму.</p></div>
-  </div>
-  <div class="quote">Відлік <b>«Скоро почнемо»</b>, <b>«Скоро повернусь»</b> і <b>«Скоро завершуємо»</b> сам перемикає сцену,
-    коли час вийшов.</div>
-  <div class="pagefoot"><span>Гомін</span><span>10</span></div>
-</section>
-
-<!-- ============================================================ obs -->
-<section class="page">
-  <div class="kicker">Керування OBS</div>
-  <h2>OBS під рукою, <em>не на передньому плані</em></h2>
-  <p class="lead">Сцени, джерела, мікшер з рівнями звуку, режим студії, стрім і запис — без перемикання в OBS.</p>
-  <figure><img src="obs.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Швидкі перемикачі</h3><p>Сховати камеру, вимкнути мікрофон чи Discord у живій сцені — одним кліком із головного екрана.</p></div>
-    <div class="card"><h3>Знімок екрана</h3><p>Кадр із живої сцени одразу у вашій теці зображень — для прев’ю, соцмереж чи анонсів.</p></div>
-    <div class="card"><h3>Варта стріму</h3><p>Застосунок стежить за цифрами OBS і попереджає про проблеми з мережею, кодувальником чи диском.</p></div>
-  </div>
-  <div class="pagefoot"><span>Гомін</span><span>11</span></div>
-</section>
-
-<!-- ============================================================ deck and phone remote -->
-<section class="page">
-  <div class="kicker">Пульт і телефон</div>
-  <h2>Кнопки під рукою — <em>посеред гри</em></h2>
-  <p class="lead">Плагін для OpenDeck перетворює пульт із кнопками-екранами на панель стріму. Кнопки не просто
-    натискаються — вони показують, що відбувається: час в ефірі, глядачів, пісню, відлік.</p>
-  <div class="deckstage">
-    <img class="deck-dials" src="deck-dials.svg" alt="">
-    <img class="deck-keys" src="deck-keys.svg" alt="">
-    <div class="note">Зображення пультів умовні, кнопки на них намалював сам плагін. Підходять пульти, які підтримує OpenDeck.</div>
-  </div>
-  <div class="cards">
-    <div class="card"><h3>Живі кнопки</h3><p>Ефір, відлік «Скоро повернусь», мікрофон, Discord, лічильник, режими чату. Вимкнене горить червоним — вимкнений мікрофон видно одразу.</p></div>
-    <div class="card"><h3>Ручки</h3><p>Гучність музики й озвучення, перемотка, наступна пісня з обкладинкою, і відлік, який можна подовжити поворотом.</p></div>
-    <div class="card"><h3>Телефон як пульт</h3><p>Ті самі кнопки в браузері телефону — у тій самій мережі Wi-Fi, зі своїм ключем, без застосунків.</p></div>
-  </div>
-  <div class="quote">Плагін іде разом із застосунком: <b>«Встановити в OpenDeck»</b> — і кнопки вже в списку. Мова й колір —
-    як у застосунку.</div>
-  <div class="pagefoot"><span>Гомін</span><span>12</span></div>
-</section>
-
-<!-- ============================================================ discord -->
-<section class="page">
-  <div class="kicker">Discord</div>
-  <h2>Ваша спільнота <em>дізнається першою</em></h2>
-  <p class="lead">Оголошення про початок стріму, нові кліпи й повідомлення з нагород — у ваші канали Discord. Без бота й
-    без окремого сервісу.</p>
-  <figure><img src="discord.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Розумне оголошення</h3><p>Картка з назвою, категорією й картинкою. Оновлюється, коли змінюється назва, і показує тривалість після ефіру.</p></div>
-    <div class="card"><h3>Без зайвих пінгів</h3><p>Стрім обірвався й повернувся — повідомлення те саме. Текст глядачів ніколи нікого не згадує.</p></div>
-    <div class="card"><h3>Голос під рукою</h3><p>Мікрофон, навушники й «натисни й говори» Discord — у верхній панелі застосунку.</p></div>
-  </div>
-  <div class="pagefoot"><span>Гомін</span><span>13</span></div>
-</section>
-
-<!-- ============================================================ chatbot -->
-<section class="page">
-  <div class="kicker">Чат-бот</div>
-  <h2>Бот, що знає <em>ваш стрім</em></h2>
-  <p class="lead">Відповідає від вашого облікового запису й бачить усе, що відбувається: яка пісня грає, скільки триває
-    ефір, коли буде реклама.</p>
-  <figure><img src="chatbot.png" alt=""></figure>
-  <div class="cards">
-    <div class="card"><h3>Команди</h3><p>Свої команди з доступом за ролями й паузами. Шаутаути, запуск нагород і керування музикою з чату.</p></div>
-    <div class="card"><h3>Цитати й розіграші</h3><p>Смішне зі стріму — <code>!quote</code>. Розіграш за словом у чаті з перевіркою, що переможець ще тут.</p></div>
-    <div class="card"><h3>Таймери, рейди й реклама</h3><p>Нагадування лише коли чат живий, привітання рейдерів і новачків, попередження перед рекламою.</p></div>
-  </div>
-  <div class="quote">Нічого не публікується без вашого рішення: <b>усе нове спершу вимкнене</b>.</div>
-  <div class="pagefoot"><span>Гомін</span><span>14</span></div>
 </section>
 
 <!-- ============================================================ closing -->
-<section class="page dark last">
-  <div class="inner">
-    <div class="kicker" style="color:#9ff4ff">Чому Гомін</div>
-    <h2>Зроблено стрімером — <em style="color:#9ff4ff">для стрімерів</em></h2>
-    <p class="lead">Застосунок виріс із реальних ефірів: кожна функція з’явилася, бо її бракувало під час стріму.</p>
-    <div class="cards two">
-      <div class="card"><h3>Ваші дані — ваші</h3><p>Усе працює на вашому комп’ютері. Входи в Twitch, OBS, Spotify і посилання Discord зберігаються у сховищі паролів системи.</p></div>
-      <div class="card"><h3>Українською з першого дня</h3><p>Повністю український інтерфейс, українські голоси й тексти за замовчуванням, які говорять вашою мовою.</p></div>
-      <div class="card"><h3>Одне вікно замість п’яти</h3><p>Бот, сповіщення, програвач, озвучення й панель OBS працюють разом і не сперечаються між собою.</p></div>
-      <div class="card"><h3>Ваш вигляд</h3><p>Темна, чорна для OLED, світла тема або як у системі. Закрили вікно — застосунок працює далі в треї. Налаштування легко перенести на інший комп’ютер.</p></div>
+<section class="closing">
+  <div class="aurora" style="top:10%;opacity:.45"><i></i><i></i></div>
+  <div class="wrap" style="position:relative">
+    <div class="ringline reveal"></div>
+    <h2 class="reveal d1">Зроблено стрімером —<br><span class="grad">для стрімерів</span></h2>
+    <p class="reveal d2">Темна, OLED чи світла тема, трей, перенесення налаштувань і майстер, що проведе через Twitch, OBS, оверлеї й озвучення.</p>
+    <div class="reveal d3" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a class="btn" href="homin-promo-uk.pdf" download>Брошура PDF ↓</a>
+      <a class="btn ghost" href="#top">↑ Нагору</a>
     </div>
-    <div class="req"><b>Що потрібно:</b> Windows або Linux, OBS Studio, обліковий запис Twitch. Spotify Premium — для пісень зі
-      Spotify. Опитування, прогнози, реклама й бали каналу Twitch надає компаньйонам і партнерам.</div>
+    <div class="req reveal">Потрібно: Windows або Linux, OBS Studio, обліковий запис Twitch. Spotify Premium — для пісень зі Spotify.
+      Опитування, прогнози, реклама й бали каналу Twitch надає компаньйонам і партнерам.</div>
   </div>
-  <div class="logo-row"><img src="app-icon.svg" alt=""><div>Гомін<span>Увесь стрім — з одного вікна</span></div></div>
 </section>
 
+<footer><div class="wrap"><span>Гомін (Homin) · увесь стрім — з одного вікна</span><span>Знімки екрана зроблено з тестовими даними</span></div></footer>
+
+<script>
+"use strict";
+const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = (s, el = document) => el.querySelector(s);
+
+// the bar gets a background once the page scrolls
+const nav = $("#nav");
+addEventListener("scroll", () => nav.classList.toggle("solid", scrollY > 30), { passive: true });
+
+// sections slide in as they come into view
+const seen = new IntersectionObserver(entries => entries.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); seen.unobserve(e.target); }
+}), { threshold: .15 });
+document.querySelectorAll(".reveal").forEach(el => seen.observe(el));
+
+// ---------- hero: the rotating word, the tilting window, the toasts
+const words = [...$("#rotator").children];
+let w = 0;
+setInterval(() => {
+  words[w].className = "off";
+  const old = w; setTimeout(() => { words[old].className = ""; }, 600);
+  w = (w + 1) % words.length; words[w].className = "on";
+}, 2000);
+
+const stage = $("#heroStage"), win = $("#heroWindow");
+if (!calm && matchMedia("(hover: hover)").matches) {
+  stage.addEventListener("mousemove", e => {
+    const r = stage.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+    win.style.transform = `rotateY(${x * 14}deg) rotateX(${-y * 10}deg)`;
+  });
+  stage.addEventListener("mouseleave", () => { win.style.transform = ""; });
+}
+
+const toasts = [
+  ["⭐", "#c04dff", "olia_draws підписалася", "3 місяці поспіль"],
+  ["🚀", "#ff4040", "Рейд від nightowl_ua", "42 глядачі"],
+  ["🎵", "#3dff8b", "Зараз грає", "Хвилі — Ніч над містом"],
+  ["💎", "#4d8bff", "500 бітів від max_k", "«Тримай, на каву!»"],
+  ["🔊", "#3de6ff", "Озвучено", "«Привіт усім з Києва!»"],
+  ["🎁", "#febc2e", "Нагорода: Гідратація", "Випий води 💧"],
+];
+const spots = [[-4, 8], [62, -6], [70, 78], [-6, 70], [40, 88]];
+const toast = $("#toast");
+let t = 0;
+function nextToast() {
+  toast.classList.remove("show");
+  setTimeout(() => {
+    const [ic, c, title, sub] = toasts[t % toasts.length], [x, y] = spots[t % spots.length];
+    toast.querySelector(".ic").textContent = ic; toast.style.setProperty("--c", c);
+    toast.querySelector("b").textContent = title; toast.querySelector("small").textContent = sub;
+    toast.style.left = x + "%"; toast.style.top = y + "%";
+    toast.classList.add("show"); t++;
+  }, 450);
+}
+nextToast(); setInterval(nextToast, 2800);
+
+// ---------- six apps fly into one
+const merge = $("#merge");
+merge.querySelectorAll(".app").forEach((a, i) => {
+  a.style.setProperty("--a", `${i * 60 - 90}deg`);
+  a.style.transitionDelay = `${i * .08}s`;
+});
+new IntersectionObserver((es, o) => es.forEach(e => {
+  if (e.isIntersecting) { setTimeout(() => merge.classList.add("in"), 400); o.disconnect(); }
+}), { threshold: .5 }).observe(merge);
+$("#redo").onclick = () => { merge.classList.remove("in"); setTimeout(() => merge.classList.add("in"), 1400); };
+
+// ---------- the tour
+const tour = [
+  ["control", "i-control", "Центр керування", "Увесь ефір перед очима", ["Чат з AutoMod", "Стан трансляції", "Гарячі клавіші й у грі"]],
+  ["tts", "i-voice", "Озвучення", "Чат, що говорить українською", ["Природні голоси", "Розумні фільтри", "Псевдоніми для ніків"]],
+  ["player", "i-music", "Музика", "Глядачі обирають саундтрек", ["YouTube, Spotify, файли", "Чесні правила", "Резервний плейлист"]],
+  ["redeems", "i-gift", "Нагороди", "Бали, що справді щось роблять", ["Звук, GIF, відео", "Розміщення мишкою", "Кроки в OBS"]],
+  ["events", "i-bell", "Події каналу", "Кожна підтримка — помітна", ["Ваш стиль", "Пресети для ігор", "Голос і скрипт"]],
+  ["overlays", "i-layers", "Оверлеї", "Гарний стрім без дизайнера", ["В OBS однією кнопкою", "Живий перегляд", "Демо-режим"]],
+  ["obs", "i-obs", "OBS", "OBS під рукою", ["Сцени й мікшер", "Знімок екрана", "Варта стріму"]],
+  ["discord", "i-discord", "Discord", "Спільнота дізнається першою", ["Оголошення про стрім", "Кліпи", "Без зайвих пінгів"]],
+  ["chatbot", "i-bot", "Чат-бот", "Бот, що знає ваш стрім", ["Команди й таймери", "Цитати й розіграші", "Привітання рейдерів"]],
+  ["setup-2", "i-wand", "Майстер", "Від встановлення до ефіру", ["Крок за кроком", "Сам перевіряє", "У вашому темпі"]],
+];
+const tabs = $("#tabs"), frame = $("#frame");
+let cur = -1, auto = true, timer;
+tour.forEach(([img, icon, name], i) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.setAttribute("role", "tab");
+  b.innerHTML = `<svg><use href="#${icon}"/></svg><span></span><i class="prog"></i>`;
+  b.querySelector("span").textContent = name;
+  b.onclick = () => { auto = false; show(i); };
+  tabs.append(b);
+  const im = new Image(); im.src = img + ".png"; im.alt = name; im.loading = i ? "lazy" : "eager";
+  frame.append(im);
+});
+function show(i) {
+  if (i === cur) return;
+  cur = i;
+  const [, , name, head, chips] = tour[i];
+  [...tabs.children].forEach((b, k) => { b.classList.toggle("on", k === i); b.setAttribute("aria-selected", k === i); });
+  [...frame.children].forEach((im, k) => im.classList.toggle("on", k === i));
+  $("#shotTitle").textContent = "Гомін — " + name;
+  $("#tourHead").textContent = head;
+  $("#chips").replaceChildren(...chips.map(c => Object.assign(document.createElement("span"), { className: "chip", textContent: c })));
+  const prog = tabs.children[i].querySelector(".prog");
+  tabs.querySelectorAll(".prog").forEach(p => p.classList.remove("run"));
+  if (auto && !calm) { void prog.offsetWidth; prog.classList.add("run"); }
+  if (matchMedia("(max-width: 960px)").matches)
+    tabs.scrollTo({ left: tabs.children[i].offsetLeft - 16, behavior: "smooth" });
+  clearTimeout(timer);
+  if (auto && !calm) timer = setTimeout(() => show((cur + 1) % tour.length), 7000);
+}
+show(0);
+
+// ---------- the live demo
+const chat = $("#chat"), alertBox = $("#alert"), screen = $("#screen"), speech = $("#speech");
+const names = ["sonya_plays", "max_k", "olia_draws", "taras_ua", "nightowl_ua", "kotyk228", "ira.mp3", "bogdan_live"];
+const lines = ["привіт усім!", "гг", "яка гарна музика", "LUL", "давай ще раз", "хто з Львова?", "💜💜💜", "оце так стрибок"];
+const colors = ["#ff7eb6", "#7ee0ff", "#b6ff7e", "#ffcf7e", "#c9a6ff", "#7effc4"];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function say(name, text, sys) {
+  const d = document.createElement("div");
+  if (sys) { d.className = "sys"; d.textContent = text; }
+  else {
+    const n = document.createElement("b"); n.textContent = name + ": "; n.style.color = pick(colors);
+    d.append(n, text);
+  }
+  chat.append(d);
+  while (chat.children.length > 9) chat.firstChild.remove();
+}
+setInterval(() => { if (!document.hidden) say(pick(names), pick(lines)); }, 2300);
+say("max_k", "привіт усім!"); say("ira.mp3", "яка гарна музика");
+
+let alertTimer, speechTimer;
+function showAlert(em, color, title, sub) {
+  clearTimeout(alertTimer);
+  alertBox.classList.remove("show");
+  requestAnimationFrame(() => {
+    alertBox.style.setProperty("--c", color);
+    alertBox.querySelector(".em").textContent = em;
+    alertBox.querySelector("b").textContent = title;
+    alertBox.querySelector("small").textContent = sub;
+    alertBox.classList.add("show");
+  });
+  alertTimer = setTimeout(() => alertBox.classList.remove("show"), 3200);
+  const f = $("#flash"); f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
+}
+function speak(text) {
+  clearTimeout(speechTimer);
+  const s = speech.querySelector("span"); s.textContent = "";
+  speech.classList.add("show");
+  let k = 0;
+  const type = setInterval(() => { s.textContent = text.slice(0, ++k); if (k >= text.length) clearInterval(type); }, 35);
+  speechTimer = setTimeout(() => { clearInterval(type); speech.classList.remove("show"); }, 3600);
+}
+// emoji that burst out of the alert, or fly in from the left for a raid
+function burst(chars, n, fromLeft) {
+  if (calm) return;
+  const r = screen.getBoundingClientRect();
+  for (let i = 0; i < n; i++) {
+    const p = document.createElement("span");
+    p.className = "particle"; p.textContent = pick(chars);
+    const x0 = fromLeft ? -30 : r.width / 2, y0 = fromLeft ? Math.random() * r.height : r.height * .25;
+    const x1 = fromLeft ? r.width + 40 : x0 + (Math.random() - .5) * r.width, y1 = fromLeft ? y0 + (Math.random() - .5) * 80 : r.height + 40;
+    p.style.left = x0 + "px"; p.style.top = y0 + "px";
+    screen.append(p);
+    const up = fromLeft ? 0 : -(60 + Math.random() * 120);
+    p.animate([
+      { transform: "translate(0,0) rotate(0)", opacity: 1 },
+      { transform: `translate(${(x1 - x0) * .5}px, ${up}px) rotate(${Math.random() * 180}deg)`, opacity: 1, offset: .35 },
+      { transform: `translate(${x1 - x0}px, ${y1 - y0}px) rotate(${Math.random() * 540}deg)`, opacity: 0 },
+    ], { duration: 1400 + Math.random() * 900, delay: Math.random() * (fromLeft ? 700 : 200), easing: "cubic-bezier(.3,.6,.5,1)", fill: "both" })
+      .onfinish = () => p.remove();
+  }
+}
+const songs = [["Хвилі", "Ніч над містом"], ["Сонячні зайчики", "Літо в кедах"], ["Пані Квітка", "Неонове серце"], ["Дим над Дніпром", "8 біт"]];
+let song = 0, deaths = 3, viewers = 128;
+const events = {
+  follow() { const n = pick(names); showAlert("💜", "#c04dff", n, "новий фоловер!"); burst(["💜", "✨"], 14); say("", `💜 ${n} тепер стежить за каналом`, true); },
+  sub() { const n = pick(names); showAlert("⭐", "#febc2e", `${n} підписався(-лась)!`, "уже 3 місяці поспіль"); burst(["⭐", "🌟", "✨"], 26);
+          speak(`${n}: дякую за чудові стріми!`); say("", `⭐ ${n} підписка, 3 місяці`, true); },
+  bits() { const n = pick(names); showAlert("💎", "#4d8bff", `${n} — 500 бітів`, "«Тримай, на каву!»"); burst(["💎", "💠"], 30); speak("Тримай, на каву!"); },
+  raid() { const n = pick(names); viewers += 42; $("#viewers").textContent = "👁 " + viewers;
+           showAlert("🚀", "#ff4040", `Рейд від ${n}!`, "42 глядачі прилітають"); burst(["🚀", "👾", "🛸", "💜"], 40, true);
+           say("", `🚀 ${n} рейдить з 42 глядачами — вітаємо!`, true); },
+  song() { song = (song + 1) % songs.length; const [a, s] = songs[song], n = pick(names);
+           $("#npTitle").textContent = `${a} — ${s}`; $("#npBy").textContent = n;
+           $("#npCover").style.filter = `hue-rotate(${song * 80}deg)`;
+           const np = $("#np"); np.classList.add("bump"); setTimeout(() => np.classList.remove("bump"), 400);
+           say(n, `!sr ${a} ${s}`); setTimeout(() => say("", `🎵 «${s}» додано в чергу, @${n}`, true), 600); },
+  death() { const d = $("#deaths"); d.textContent = ++deaths; d.classList.remove("bump"); void d.offsetWidth; d.classList.add("bump");
+            say(pick(names), pick(["F", "знову?!", "RIP", "😭"])); },
+};
+document.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => events[b.dataset.ev]());
+
+// ---------- the feature grid, lit where the pointer is
+const feats = [
+  ["i-control", "Центр керування", "Чат, перегляд стріму, кнопки OBS і події — на одному екрані."],
+  ["i-voice", "Озвучення", "Чат і нагороди голосом, зокрема українським."],
+  ["i-music", "Музика", "YouTube, Spotify і файли в одній черзі."],
+  ["i-gift", "Нагороди", "Звуки, GIF, відео й ефекти на весь екран."],
+  ["i-bell", "Події каналу", "Сповіщення, голос і скрипт для кожної події."],
+  ["i-layers", "Оверлеї", "Чат, музика, черга, відлік — у OBS одним кліком."],
+  ["i-obs", "Керування OBS", "Сцени, джерела, мікшер, запис."],
+  ["i-discord", "Discord", "Оголошення, кліпи, мікрофон і навушники."],
+  ["i-bot", "Чат-бот", "Команди, таймери, цитати, розіграші."],
+  ["i-clip", "Кліпи й рейди", "Момент — одним кліком. Пошук каналу для рейду."],
+  ["i-code", "Скрипти", "Ваш код на нагороду, команду чи подію."],
+  ["i-wand", "Майстер", "Twitch, OBS, оверлеї й голос — крок за кроком."],
+  ["i-deck", "Пульт і телефон", "OpenDeck і телефон у тій самій мережі."],
+  ["i-move", "Перенести з інших", "Команди й нагороди з інших ботів — кількома кліками."],
+  ["i-train", "Хайп-потяг і цілі", "Рівень і внески — на оверлеї."],
+  ["i-count", "Лічильники", "Смерті, чашки чаю — з клавіші чи чату."],
+];
+const grid = $("#grid");
+feats.forEach(([icon, h, p], i) => {
+  const d = document.createElement("div");
+  d.className = "feat reveal" + (i % 4 ? " d" + (i % 4) : "");
+  d.innerHTML = `<svg><use href="#${icon}"/></svg><h3></h3><p></p>`;
+  d.querySelector("h3").textContent = h; d.querySelector("p").textContent = p;
+  d.addEventListener("pointermove", e => {
+    const r = d.getBoundingClientRect();
+    d.style.setProperty("--mx", e.clientX - r.left + "px"); d.style.setProperty("--my", e.clientY - r.top + "px");
+  });
+  grid.append(d); seen.observe(d);
+});
+</script>
 </body>
 </html>
