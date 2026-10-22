@@ -269,8 +269,21 @@
   footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
   /* ---------- narrow screens */
+  /* ---------- download */
+  .dl { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .os { border-radius: 20px; padding: 28px 26px; background: rgba(255,255,255,.035); border: 1px solid var(--line);
+        display: flex; flex-direction: column; gap: 14px; }
+  .os h3 { font-size: 22px; display: flex; align-items: center; gap: 12px; }
+  .os h3 .big { font-size: 30px; }
+  .os .files { display: flex; flex-direction: column; gap: 10px; }
+  .os .files a { justify-content: space-between; }
+  .os .files small { font-weight: 400; opacity: .75; }
+  .os p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .os code { font-size: 13px; background: rgba(255,255,255,.07); padding: 2px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+  .dl-note { margin-top: 22px; color: var(--muted); font-size: 15px; }
+  .dl-note a { color: var(--ink); }
   @media (max-width: 960px) {
-    .hero .wrap, .tour, .demo, .deck { grid-template-columns: 1fr; }
+    .hero .wrap, .tour, .demo, .deck, .dl { grid-template-columns: 1fr; }
     .hero { padding-top: 100px; }
     .window { transform: none; }
     .grid { grid-template-columns: repeat(2, 1fr); }
@@ -327,7 +340,7 @@
     <a class="brand" href="#top"><img src="app-icon.svg" alt="">Гомін</a>
     <div class="links">
       <a href="#tour">Огляд</a><a href="#demo">Спробувати</a><a href="#deck">Пульт</a><a href="#all">Усе</a>
-      <a class="btn ghost" href="homin-promo-uk.pdf" download>PDF ↓</a>
+      <a class="btn ghost" href="#download">Завантажити ↓</a>
     </div>
   </div>
 </nav>
@@ -344,7 +357,7 @@
       <p class="lead">Менше вкладок, менше ботів, менше метушні — більше уваги глядачам.</p>
       <div class="cta">
         <a class="btn" href="#demo">▶ Спробувати тут</a>
-        <a class="btn ghost" href="#tour">Як це виглядає</a>
+        <a class="btn ghost" href="#download">Завантажити ↓</a>
       </div>
       <div class="tags">
         <span class="tag">🇺🇦 Українською</span><span class="tag">Windows і Linux</span>
@@ -476,6 +489,39 @@
   </div>
 </section>
 
+<!-- ============================================================ download -->
+<!-- the files and the version come from latest.json (scripts/publish_release.py), so a new release
+     shows here without rebuilding the page; without it the links go to the releases page -->
+<section id="download">
+  <div class="wrap">
+    <div class="kicker reveal">Завантажити</div>
+    <h2 class="reveal d1">Гомін <span class="grad" id="dlVersion">для вашого ПК</span></h2>
+    <p class="lead2 reveal d2" id="dlLead">Безкоштовне завантаження для Windows і Linux. Щоб Гомін працював, потрібен ліцензійний ключ на ваш канал Twitch.</p>
+    <div class="dl">
+      <div class="os reveal">
+        <h3><span class="big">🪟</span>Windows 10 і 11</h3>
+        <div class="files">
+          <a class="btn" data-kind="windows-setup" href="https://github.com/veekk/homin-site/releases">Інсталятор <small>.exe</small></a>
+          <a class="btn ghost" data-kind="windows-portable" href="https://github.com/veekk/homin-site/releases">Без встановлення <small>.zip</small></a>
+        </div>
+        <p>Інсталятор не підписано, тож Windows попередить про невідомого видавця: натисніть
+          «Додаткові відомості» › «Усе одно запустити». Нову версію встановлюйте поверх старої — налаштування лишаться.</p>
+      </div>
+      <div class="os reveal d1">
+        <h3><span class="big">🐧</span>Linux</h3>
+        <div class="files">
+          <a class="btn" data-kind="linux-appimage" href="https://github.com/veekk/homin-site/releases">AppImage <small>x86_64</small></a>
+          <a class="btn ghost" data-kind="linux-tar" href="https://github.com/veekk/homin-site/releases">Архів теки <small>.tar.gz</small></a>
+        </div>
+        <p>AppImage запускається одразу: <code>chmod +x Homin-*.AppImage</code>, потім відкрийте його.
+          Архів розпакуйте будь-куди й запустіть <code>homin</code>.</p>
+      </div>
+    </div>
+    <p class="dl-note reveal">Гомін сам скаже, коли вийде нова версія (Налаштування › Загальні › Оновлення).
+      Усі версії, що нового й контрольні суми SHA-256 — на <a href="https://github.com/veekk/homin-site/releases">сторінці випусків</a>.</p>
+  </div>
+</section>
+
 <!-- ============================================================ closing -->
 <section class="closing">
   <div class="aurora" style="top:10%;opacity:.45"><i></i><i></i></div>
@@ -496,6 +542,28 @@
 
 <script>
 "use strict";
+// the download section: the newest release from latest.json (its payload is base64url JSON; the
+// app checks the signature, the page only shows the links)
+fetch("latest.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).then(file => {
+  if (!file) return;
+  const b64 = file.payload.replace(/-/g, "+").replace(/_/g, "/");
+  const bytes = Uint8Array.from(atob(b64 + "=".repeat((4 - b64.length % 4) % 4)), c => c.charCodeAt(0));
+  const releases = JSON.parse(new TextDecoder().decode(bytes)).releases || [];
+  const newest = releases[releases.length - 1];
+  if (!newest) return;
+  const rc = /rc\d+$/.test(newest.version);
+  document.getElementById("dlVersion").textContent = newest.version;
+  const lead = document.getElementById("dlLead");
+  lead.textContent = (rc ? "Кандидат у реліз — тестова версія перед випуском. " : "")
+    + (newest.date ? "Вийшла " + newest.date.split("-").reverse().join(".") + ". " : "") + lead.textContent;
+  for (const a of document.querySelectorAll("[data-kind]")) {
+    const f = (newest.files || {})[a.dataset.kind];
+    if (!f || !/^https:\/\//.test(f.url)) continue;
+    a.href = f.url;
+    a.setAttribute("download", "");
+    if (f.size) a.querySelector("small").textContent += " · " + Math.round(f.size / 1e6) + " МБ";
+  }
+}).catch(() => {});
 const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = (s, el = document) => el.querySelector(s);
 
