@@ -47,8 +47,8 @@
   .layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 48px; width: min(1320px, 100% - 32px); margin: 0 auto;
             padding-top: calc(var(--top) + 28px); }
   aside { position: sticky; top: calc(var(--top) + 20px); align-self: start; max-height: calc(100vh - var(--top) - 36px); display: flex; flex-direction: column; gap: 14px; }
-  .search { position: relative; }
-  .search input { width: 100%; padding: 11px 14px 11px 38px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel);
+  .search .field { position: relative; }   /* the icon centres on the input, not on the count under it */
+  .search input { display: block; width: 100%; padding: 11px 14px 11px 38px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel);
                   color: var(--ink); font: 15px var(--body); }
   .search input:focus { outline: 2px solid var(--teal); outline-offset: 0; border-color: transparent; }
   .search svg { position: absolute; left: 12px; top: 50%; width: 17px; height: 17px; transform: translateY(-50%); stroke: var(--muted); }
@@ -181,8 +181,10 @@
 <div class="layout">
   <aside id="aside">
     <div class="search">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="Пошук: рейд, OBS, скрипт…" aria-label="Пошук у вікі" autocomplete="off">
+      <div class="field">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Пошук: рейд, OBS, скрипт…" aria-label="Пошук у вікі" autocomplete="off">
+      </div>
       <div class="count" id="qCount"></div>
     </div>
     <div class="toc" id="toc"></div>
