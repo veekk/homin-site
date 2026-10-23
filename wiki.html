@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Гомін — вікі</title>
+<meta name="description" content="Докладний довідник Гоміна: встановлення, підключення, кожна сторінка застосунку, оверлеї, скрипти, чат-бот, пульт і що робити, коли щось не працює.">
+<!-- the site's wiki (veekk/homin-site wiki.html), copied by scripts/make_guide.py --doc promo --site DIR;
+     the screenshots are the site's own, next to it. Sources: README.md and docs/guide/uk.html -->
+<meta property="og:title" content="Гомін — вікі">
+<meta property="og:description" content="Усе про Гомін: від встановлення до скриптів і пульта.">
+<meta property="og:image" content="https://veekk.github.io/homin-site/control.png">
+<meta property="og:url" content="https://veekk.github.io/homin-site/wiki.html">
+<meta name="theme-color" content="#0b0f24">
+<link rel="icon" href="app-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Unbounded:wght@500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root { --night: #0b0f24; --deep: #151a3a; --panel: #121733; --violet: #2d1a5e; --ink: #eef1ff; --muted: #a3acd0;
+          --line: rgba(255,255,255,.1); --teal: #19c7d6; --ui: #c9b4ff; --warn: #febc2e;
+          --ring: linear-gradient(90deg, #c04dff, #ff4040, #4d8bff, #3de6ff, #3dff8b);
+          --display: "Unbounded", "Noto Sans", sans-serif; --body: "Manrope", "Noto Sans", sans-serif;
+          --mono: "JetBrains Mono", "Noto Sans Mono", monospace; --top: 64px; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--top) + 16px); }
+  body { margin: 0; background: var(--night); color: var(--ink); font-family: var(--body); font-size: 16.5px; line-height: 1.65;
+         -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: #9ff4ff; text-underline-offset: 3px; }
+  img { display: block; max-width: 100%; }
+  h1, h2, h3 { font-family: var(--display); line-height: 1.2; letter-spacing: -.01em; margin: 0; }
+
+  /* ---------- top bar */
+  nav { position: fixed; inset: 0 0 auto; z-index: 50; height: var(--top); background: rgba(11,15,36,.82); backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; gap: 18px; height: 100%; width: min(1320px, 100% - 32px); margin: 0 auto; }
+  nav .brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; text-decoration: none; color: var(--ink); font-size: 18px; }
+  nav .brand img { width: 30px; height: 30px; }
+  nav .brand small { font-family: var(--body); font-weight: 500; color: var(--muted); font-size: 14px; }
+  nav .links { display: flex; gap: 20px; margin-left: auto; font-size: 15px; align-items: center; }
+  nav .links a { text-decoration: none; color: var(--muted); }
+  nav .links a:hover { color: #fff; }
+  .menu-btn { display: none; all: unset; cursor: pointer; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); font-size: 14px; color: var(--ink); }
+  .menu-btn:focus-visible { outline: 2px solid var(--teal); }
+
+  /* ---------- layout: contents on the left, the article on the right */
+  .layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 48px; width: min(1320px, 100% - 32px); margin: 0 auto;
+            padding-top: calc(var(--top) + 28px); }
+  aside { position: sticky; top: calc(var(--top) + 20px); align-self: start; max-height: calc(100vh - var(--top) - 36px); display: flex; flex-direction: column; gap: 14px; }
+  .search { position: relative; }
+  .search input { width: 100%; padding: 11px 14px 11px 38px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel);
+                  color: var(--ink); font: 15px var(--body); }
+  .search input:focus { outline: 2px solid var(--teal); outline-offset: 0; border-color: transparent; }
+  .search svg { position: absolute; left: 12px; top: 50%; width: 17px; height: 17px; transform: translateY(-50%); stroke: var(--muted); }
+  .search .count { font-size: 13px; color: var(--muted); margin-top: 6px; min-height: 1.2em; }
+  .toc { overflow-y: auto; padding-right: 6px; scrollbar-width: thin; scrollbar-color: #2c3560 transparent; }
+  .toc ol { list-style: none; margin: 0; padding: 0; }
+  .toc > ol > li > a { display: flex; gap: 10px; padding: 6px 10px; border-radius: 9px; text-decoration: none; color: var(--muted); font-size: 14.5px; font-weight: 500; }
+  .toc > ol > li > a .n { color: var(--teal); font-weight: 700; min-width: 1.6em; font-variant-numeric: tabular-nums; }
+  .toc a:hover { color: #fff; background: rgba(255,255,255,.04); }
+  .toc a.on { color: #fff; background: rgba(255,255,255,.07); }
+  .toc ol ol { display: none; margin: 2px 0 6px 2.2em; border-left: 1px solid var(--line); }
+  .toc li.open > ol { display: block; }
+  .toc ol ol a { display: block; padding: 3px 10px; text-decoration: none; color: var(--muted); font-size: 13.5px; border-radius: 0 8px 8px 0; }
+  .toc ol ol a.on { color: #9ff4ff; background: none; box-shadow: inset 2px 0 0 var(--teal); }
+  .toc li.hidden { display: none; }
+
+  /* ---------- the article */
+  main { min-width: 0; max-width: 860px; padding-bottom: 80px; }
+  .intro { padding: 10px 0 34px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+  .intro .kicker { font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--teal);
+                   display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .intro .kicker::before { content: ""; width: 30px; height: 4px; border-radius: 4px; background: var(--ring); }
+  .intro h1 { font-size: clamp(36px, 5vw, 54px); font-weight: 700; margin-bottom: 14px; }
+  .intro p { color: var(--muted); font-size: 18px; max-width: 40em; margin: 0 0 22px; }
+  .quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .quick a { display: block; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.035); border: 1px solid var(--line);
+             text-decoration: none; color: var(--ink); transition: border-color .2s, transform .2s; }
+  .quick a:hover { border-color: rgba(159,244,255,.35); transform: translateY(-2px); }
+  .quick b { display: block; font-size: 15px; }
+  .quick span { color: var(--muted); font-size: 13.5px; line-height: 1.4; display: block; margin-top: 2px; }
+
+  article { padding: 34px 0 10px; border-bottom: 1px solid var(--line); }
+  article.hidden, .topic.hidden { display: none; }
+  article h2 { font-size: clamp(24px, 3vw, 32px); font-weight: 700; margin-bottom: 16px; display: flex; align-items: baseline; gap: 14px; }
+  article h2 .n { font-size: .62em; color: var(--teal); font-variant-numeric: tabular-nums; }
+  article h3 { font-size: 18.5px; font-weight: 500; margin: 30px 0 10px; color: #fff; }
+  article h2 a.anchor, article h3 a.anchor { opacity: 0; text-decoration: none; color: var(--muted); font-size: .8em; margin-left: 4px; transition: opacity .2s; }
+  article h2:hover a.anchor, article h3:hover a.anchor, a.anchor:focus { opacity: 1; }
+  p { margin: 0 0 12px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  li::marker { color: var(--teal); }
+  b { font-weight: 700; color: #fff; }
+  code { font-family: var(--mono); font-size: .86em; background: rgba(255,255,255,.07); border-radius: 6px; padding: 1px 6px; overflow-wrap: anywhere; }
+  pre { margin: 0 0 14px; padding: 14px 16px; border-radius: 12px; background: #080b1c; border: 1px solid var(--line); overflow-x: auto; }
+  pre code { background: none; padding: 0; font-size: 13.5px; line-height: 1.6; overflow-wrap: normal; white-space: pre; }
+  .ui { font-weight: 700; color: var(--ui); }   /* the app's own labels */
+  kbd { font-family: var(--mono); font-size: .82em; padding: 1px 7px; border-radius: 6px; border: 1px solid #3a4170; border-bottom-width: 2px;
+        background: #181d3d; white-space: nowrap; }
+  mark { background: rgba(254,188,46,.35); color: #fff; border-radius: 3px; padding: 0 1px; }
+
+  figure { margin: 18px 0 22px; }
+  /* the screenshots are 1600x960: their room is kept before they load, so a #link lands where it should */
+  figure img { width: 100%; aspect-ratio: 5 / 3; border-radius: 12px; border: 1px solid #2c3560; box-shadow: 0 20px 50px rgba(0,0,0,.45); cursor: zoom-in; }
+  figcaption { font-size: 13.5px; color: var(--muted); margin-top: 8px; text-align: center; }
+
+  .note { border-left: 3px solid var(--teal); background: rgba(25,199,214,.07); border-radius: 0 12px 12px 0; padding: 12px 16px; margin: 16px 0; }
+  .note.warn { border-color: var(--warn); background: rgba(254,188,46,.07); }
+  .note > b:first-child { display: block; margin-bottom: 2px; }
+  .note p:last-child, .note ul:last-child { margin-bottom: 0; }
+
+  .steps { counter-reset: s; list-style: none; padding-left: 0; }
+  .steps > li { counter-increment: s; position: relative; padding-left: 40px; margin-bottom: 10px; }
+  .steps > li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 26px; height: 26px; border-radius: 50%;
+                        background: linear-gradient(135deg, #19c7d6, #6d3fe0); color: #fff; font-size: 13px; font-weight: 700;
+                        display: grid; place-items: center; }
+
+  .table { overflow-x: auto; margin: 6px 0 18px; border: 1px solid var(--line); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  th { background: rgba(255,255,255,.04); font-weight: 700; color: #fff; font-size: 14px; }
+  td:first-child { white-space: nowrap; }
+  td.wrap { white-space: normal; }
+
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 6px 0 16px; }
+  .cards > div { padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.035); border: 1px solid var(--line); font-size: 15px; }
+  .cards > div b { display: block; margin-bottom: 2px; }
+
+  .empty { display: none; padding: 40px 0; color: var(--muted); }
+  .empty.show { display: block; }
+  footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; padding: 26px 0 40px; }
+  footer .wrap { width: min(1320px, 100% - 32px); margin: 0 auto; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .totop { position: fixed; right: 18px; bottom: 18px; z-index: 40; all: unset; position: fixed; right: 18px; bottom: 18px; cursor: pointer;
+           width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: rgba(21,26,58,.9);
+           border: 1px solid var(--line); opacity: 0; pointer-events: none; transition: opacity .3s; font-size: 18px; }
+  .totop.show { opacity: 1; pointer-events: auto; }
+  .totop:focus-visible { outline: 2px solid var(--teal); }
+
+  /* a screenshot opened large */
+  .zoom { position: fixed; inset: 0; z-index: 100; background: rgba(5,7,18,.92); display: none; place-items: center; padding: 24px; cursor: zoom-out; }
+  .zoom.show { display: grid; }
+  .zoom img { max-width: 100%; max-height: 100%; border-radius: 10px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+
+  @media (max-width: 1000px) {
+    .layout { grid-template-columns: 1fr; gap: 0; }
+    .menu-btn { display: inline-block; }
+    aside { position: fixed; z-index: 60; top: var(--top); left: 0; bottom: 0; width: min(340px, 88vw); max-height: none; padding: 18px 16px;
+            background: var(--deep); border-right: 1px solid var(--line); transform: translateX(-102%); transition: transform .3s; }
+    aside.open { transform: none; box-shadow: 30px 0 60px rgba(0,0,0,.5); }
+    .quick { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    nav .links a:not(.keep) { display: none; }
+    nav .brand small { display: none; }
+    .quick, .cards { grid-template-columns: 1fr; }
+    td:first-child { white-space: normal; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <button class="menu-btn" id="menuBtn" type="button" aria-controls="aside" aria-expanded="false">☰ Зміст</button>
+    <a class="brand" href="index.html"><img src="app-icon.svg" alt="">Гомін <small>вікі</small></a>
+    <div class="links">
+      <a href="index.html">Про Гомін</a>
+      <a href="index.html#download">Завантажити</a>
+      <a class="keep" href="https://github.com/veekk/homin-site/releases">Випуски</a>
+    </div>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside id="aside">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Пошук: рейд, OBS, скрипт…" aria-label="Пошук у вікі" autocomplete="off">
+      <div class="count" id="qCount"></div>
+    </div>
+    <div class="toc" id="toc"></div>
+  </aside>
+
+  <main id="main">
+    <header class="intro">
+      <div class="kicker">Вікі</div>
+      <h1>Усе про <span style="background:var(--ring);-webkit-background-clip:text;background-clip:text;color:transparent">Гомін</span></h1>
+      <p>Докладний довідник: як встановити й підключити, що робить кожна сторінка застосунку, як налаштувати оверлеї,
+        нагороди, скрипти, чат-бот і пульт — і що робити, коли щось не працює. Назви кнопок — як в українському інтерфейсі.</p>
+      <div class="quick">
+        <a href="#install"><b>Почати</b><span>Встановлення, активація й майстер налаштування</span></a>
+        <a href="#connect"><b>Підключити</b><span>Twitch, OBS, Spotify, Discord, donatik.ua</span></a>
+        <a href="#trouble"><b>Щось не так</b><span>Глядачі не чують, бали не повертаються…</span></a>
+      </div>
+    </header>
+
+<!-- ============================================================ install -->
+<article id="install">
+  <h2>Встановлення</h2>
+  <div class="topic">
+  <h3 id="install-windows">Windows 10 і 11</h3>
+  <ol class="steps">
+    <li>Завантажте <code>Homin-…-setup.exe</code> або переносний <code>.zip</code> з <a href="index.html#download">розділу «Завантажити»</a>
+      чи <a href="https://github.com/veekk/homin-site/releases">сторінки випусків</a>.</li>
+    <li>Інсталятор не підписано, тож Windows SmartScreen покаже «невідомий видавець». Натисніть
+      <b>Додаткові відомості › Усе одно запустити</b>.</li>
+    <li>Під час першого запуску Гомін сам завантажить музичний програвач mpv (близько 30 МБ) і звірить його відбиток.
+      На Windows 10 ще й маленький розпакувальник 7-Zip (0,6 МБ).</li>
+  </ol>
+  <p>Нову версію встановлюйте поверх старої — налаштування й дані лишаються.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="install-linux">Linux</h3>
+  <p>Найпростіше — AppImage:</p>
+  <pre><code>chmod +x Homin-*-x86_64.AppImage
+./Homin-*-x86_64.AppImage</code></pre>
+  <p>Та сама збірка є архівом теки <code>.tar.gz</code>: розпакуйте будь-куди й запустіть <code>Homin/homin</code>.
+    Хоч так, хоч так, менеджером пакетів встановіть:</p>
+  <div class="table"><table>
+    <tr><th>Програма</th><th>Для чого</th></tr>
+    <tr><td><code>mpv</code></td><td class="wrap">відтворення музики (і віконце перегляду Twitch)</td></tr>
+    <tr><td><code>pipewire</code> або <code>pulseaudio-utils</code></td><td class="wrap">озвучення TTS окремим джерелом звуку, яке захоплює OBS; зведення музики</td></tr>
+    <tr><td><code>ffmpeg</code></td><td class="wrap">запасне відтворення, тривалість медіафайлів, прослуховування звуків</td></tr>
+  </table></div>
+  <p>Пункт у меню застосунків вмикає Налаштування › Загальні › <span class="ui">Показувати в меню застосунків</span>.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="install-preview">Плавний перегляд OBS</h3>
+  <p>Без цього перегляд OBS у Гоміні — це послідовність знімків, і кожен — додаткова робота для OBS. Коли перегляд
+    показує справжнє відео, у його куті написано <span class="ui">● Живе відео</span>.</p>
+  <ul>
+    <li><b>Windows:</b> нічого встановлювати не треба. Гомін читає віртуальну камеру OBS через mpv (вже завантажений для
+      музики) або ffmpeg. Кожен кадр іде через JPEG, тож процесора це бере більше, ніж на Linux.</li>
+    <li><b>Linux:</b> потрібен модуль ядра <code>v4l2loopback</code>. Гомін сам вмикає віртуальну камеру OBS, поки її
+      показує перегляд, і вимикає, якщо вмикав сам. Встановіть і завантажте модуль один раз (Arch; потрібні заголовки вашого ядра):</li>
+  </ul>
+  <pre><code>sudo pacman -S v4l2loopback-dkms linux-headers
+echo 'options v4l2loopback exclusive_caps=1 card_label="OBS Virtual Camera"' | sudo tee /etc/modprobe.d/v4l2loopback.conf
+echo v4l2loopback | sudo tee /etc/modules-load.d/v4l2loopback.conf
+sudo modprobe v4l2loopback</code></pre>
+  <p>Гомін користується модулем, лише якщо його вже завантажено: інакше OBS попросив би ваш пароль. Шестірня на
+    перегляді вмикає й вимикає відео, задає кадри за секунду (10–60, спершу 30), розмір (<b>Повний</b>, до 1920 px, або
+    <b>Половина</b>, легше для процесора) і розмір та частоту знімків, які стоять там, де відео немає (Попередній
+    перегляд у режимі студії). Вона ж підказує, скільки що коштує.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="install-mock">Спробувати без облікових записів</h3>
+  <p>Параметр <code>--mock</code> запускає режим розробки: усі сторінки наповнюються вигаданим чатом, подіями й піснями,
+    OBS теж несправжній, а дані лежать в окремій теці. Нічого не надсилається на Twitch. Озвучення стартує на паузі —
+    <span class="ui">Відновити TTS</span> угорі вмикає його. Усі знімки екрана на цьому сайті зроблено саме так.</p>
+  <pre><code>./Homin-*-x86_64.AppImage --mock</code></pre>
+  </div>
+</article>
+
+<!-- ============================================================ licence + wizard -->
+<article id="start">
+  <h2>Перший запуск</h2>
+  <div class="topic">
+  <h3 id="start-activate">Активація</h3>
+  <p>Спершу Гомін просить <span class="ui">Активувати Гомін</span>: вставте ліцензійний ключ (починається з
+    <code>HOMIN-</code>) і увійдіть у Twitch обліковим записом, для якого ключ створено. Те саме вікно проводить через вхід
+    у Twitch, як майстер. Потім Гомін перезапускається вже з усім увімкненим.</p>
+  <ul>
+    <li>Поки ключа немає, нічого не працює (ні OBS, ні музика, ні TTS, ні оверлеї), але
+      <span class="ui">Спершу роздивитися</span> дає погортати сторінки — вони притьмарені й не приймають кліків.</li>
+    <li>Ключ прив’язано до каналу, а не до імені: він працює й після перейменування каналу.</li>
+    <li>Якщо ввійшли іншим обліковим записом, вікно про це скаже й запропонує вийти.</li>
+    <li>«Про програму» показує, для кого ключ; <span class="ui">Видалити ключ</span> (двічі) забуває його й перезапускає
+      Гомін неактивним. Вхід у Twitch лишається.</li>
+  </ul>
+  <p>Користуючись ключем, ви приймаєте ліцензійну угоду; політика приватності пояснює, що застосунок зберігає й надсилає:
+    нічого — нам, а іншим сервісам — лише те, чого потребують увімкнені вами функції. Обидві є під полем ключа й у «Про програму».</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="start-wizard">Майстер налаштування</h3>
+  <p>Ліворуч — кроки, праворуч — інструкції по черзі. Біля кожної інструкції — кнопка чи поле, що її виконує, а номер
+    стає зеленою позначкою, щойно Гомін бачить, що зроблено. Те, чого застосунок побачити не може (наприклад, налаштування
+    в браузері), позначаєте кнопкою <span class="ui">Готово</span>.</p>
+  <figure><img src="setup-2.png" alt="Крок Twitch у майстрі налаштування" loading="lazy"><figcaption>Крок Twitch: що ввести в кожне поле форми Twitch, з кнопками копіювання</figcaption></figure>
+  <ol class="steps">
+    <li><b>Мова й вигляд</b> — мова застосунку й типових текстів у чаті, тема, масштаб.</li>
+    <li><b>Twitch</b> — двофакторний вхід, власний застосунок на dev.twitch.tv, <span class="ui">Перевірити в Twitch</span>
+      для Client ID, вхід кодом і що доступно вашому каналу.</li>
+    <li><b>OBS</b> — сервер WebSocket, пароль і підключення; якщо не вийшло, майстер пише чому.</li>
+    <li><b>Оверлеї</b> — виберіть сцену й оверлеї, і <span class="ui">Додати до сцени</span> додасть їх в OBS потрібного розміру.</li>
+    <li><b>Озвучення</b> — рушій (Piper, StyleTTS2, голоси системи або «Не зараз»), встановлення, голос, проба й звук для
+      OBS. Майстер сам перевіряє, чи OBS чує озвучення.</li>
+    <li><b>Ще</b> — Discord, Spotify, donatik.ua і перенесення з інших застосунків (усе необов’язкове).</li>
+    <li><b>Готово</b> — як Гомін запускається й закривається, і що вже готово.</li>
+  </ol>
+  <p>Кожен крок можна відкласти (<span class="ui">Пізніше</span>) або пропустити все. Знову майстер відкриває
+    Налаштування › Дані › <span class="ui">Налаштувати знову</span> — і показує, що вже зроблено.</p>
+  </div>
+</article>
+
+<!-- ============================================================ connections -->
+<article id="connect">
+  <h2>Підключення</h2>
+  <p>Усе з майстра можна зробити вручну: <span class="ui">Налаштування</span> (останній пункт меню) › вкладка
+    <span class="ui">Підключення</span>. Ліворуч — сервіси з їхнім станом, праворуч — налаштування вибраного. Клік по
+    сервісу в нижньому рядку відкриває його тут.</p>
+  <figure><img src="connections.png" alt="Налаштування › Підключення" loading="lazy"><figcaption>Twitch підключено; нижче — що дозволяє ваш обліковий запис</figcaption></figure>
+
+  <div class="topic">
+  <h3 id="connect-twitch">Twitch</h3>
+  <p>Twitch вимагає, щоб кожен застосунок мав свій Client ID. Це безкоштовно й займає дві хвилини.</p>
+  <ol class="steps">
+    <li>Відкрийте <a href="https://dev.twitch.tv/console/apps">dev.twitch.tv/console/apps</a> і натисніть <b>Register Your Application</b>.</li>
+    <li>Name — будь-яка унікальна назва. OAuth Redirect URL — <code>http://localhost</code>. Category — <i>Broadcaster Suite</i>.
+      Client Type — <b>Public</b>.</li>
+    <li>Скопіюйте <b>Client ID</b> у картку Twitch і натисніть <span class="ui">Увійти</span>.</li>
+    <li>Картка покаже короткий код. Відкрийте адресу поруч (twitch.tv/activate), введіть код і підтвердіть.</li>
+  </ol>
+  <p>Картка стане зеленою й покаже, що вміє ваш обліковий запис. Поле <span class="ui">Канал</span> лишіть порожнім,
+    щоб працювати з власним каналом. Якщо ввійти не тим обліковим записом, що канал, чат працюватиме, але частину подій
+    (фоловери, підписки, біти, нагороди) Twitch дає лише власнику каналу — картка скаже, яких бракує.</p>
+  <div class="note warn"><b>Створюйте нагороди з Гоміна</b>
+    Twitch дозволяє повертати бали лише за нагороди, які створив той самий застосунок. Тому створюйте їх на сторінці
+    <span class="ui">Нагороди</span> кнопкою <span class="ui">Створити на Twitch</span>, а не в панелі Twitch.
+    Нагороду іншого застосунку можна <a href="#redeems-twitch">перенести в Гомін</a>.</div>
+  <div class="note"><b>Нова функція просить увійти ще раз?</b>
+    Деяким функціям (шаутаути, опитування, розклад реклами, кліпи з запису, режими чату, AutoMod, хайп-потяг) потрібні нові
+    дозволи Twitch, яких немає в старих входах. Натисніть у картці Twitch <span class="ui">Увійти повторно</span> — один раз.</div>
+  </div>
+
+  <div class="topic">
+  <h3 id="connect-obs">OBS Studio</h3>
+  <ol class="steps">
+    <li>В OBS відкрийте <b>Інструменти › Налаштування сервера WebSocket</b>, увімкніть сервер і подивіться порт (4455) і
+      пароль (<b>Показати дані для підключення</b>).</li>
+    <li>Введіть їх у картці OBS Studio й натисніть <span class="ui">Підключити</span>.</li>
+  </ol>
+  <ul>
+    <li><span class="ui">Запускати OBS разом із Homin</span> — запускає OBS, коли стартує Гомін (якщо OBS на цьому ПК і ще
+      не запущений). Картка показує, яку програму запускає; <span class="ui">Вибрати…</span> — іншу.</li>
+    <li><span class="ui">Запускати OBS згорнутим</span> — у трей (без значка OBS у треї вікно все одно з’явиться).</li>
+    <li><span class="ui">Закривати OBS разом із Homin</span> — коли Гомін виходить (не коли ховається в трей чи
+      перезапускається) і ніколи, поки OBS стрімить чи записує.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="connect-spotify">Spotify (необов’язково)</h3>
+  <p>Потрібен, лише якщо хочете пісні зі Spotify у черзі. Потрібна підписка Premium, а пісні грають у вашому застосунку
+    Spotify, тож він має бути відкритий.</p>
+  <ol class="steps">
+    <li>На <a href="https://developer.spotify.com/dashboard">developer.spotify.com/dashboard</a> створіть застосунок.</li>
+    <li>Додайте в нього <b>Redirect URI</b> з картки Spotify (поруч є кнопка копіювання).</li>
+    <li>Вставте <b>Client ID</b> у картку й натисніть <span class="ui">Увійти</span>.</li>
+    <li>Плеєр › <span class="ui">Відтворення</span>: увімкніть <span class="ui">Відтворювати пісні Spotify з черги</span>.</li>
+  </ol>
+  <p>Щоб Spotify чули глядачі: на Linux додайте його в <a href="#player-mix">зведення музики</a>, деінде — як джерело звуку
+    в OBS. Спершу перевірте музичні правила Spotify і Twitch.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="connect-discord">Discord (необов’язково)</h3>
+  <p>Оголошення, кліпи й повідомлення нагород ідуть через вебхуки — без бота й без застосунку Discord.</p>
+  <ol class="steps">
+    <li>У Discord: <b>Налаштування сервера › Інтеграції › Вебхуки › Новий вебхук</b>, виберіть канал і
+      <b>Копіювати URL вебхука</b>.</li>
+    <li>У картці Discord вставте його в перший рядок під <span class="ui">Канали</span> й натисніть кнопку перевірки поруч.</li>
+    <li>Для інших каналів (кліпи, журнал нагород…) введіть назву, натисніть <span class="ui">Додати канал</span> і вставте
+      його вебхук. Назви бачите лише ви.</li>
+  </ol>
+  <p>Канал без вебхука чи видалений публікує в перший канал. Хто має URL вебхука, може писати в той канал, тому він
+    зберігається в сховищі ключів системи й не потрапляє в експорт.</p>
+  <h3 id="connect-discord-voice">Мікрофон і навушники Discord</h3>
+  <p>Шматок верхньої панелі показує сервер і голосовий канал, де ви є, з перемикачами мікрофона, навушників і режиму
+    рації. Discord дозволяє це лише власнику застосунку, тож потрібен свій:</p>
+  <ol class="steps">
+    <li>На <a href="https://discord.com/developers/applications">discord.com/developers/applications</a> створіть застосунок
+      тим обліковим записом, яким користуєтеся в Discord.</li>
+    <li>В <b>OAuth2</b> додайте redirect <code>http://localhost</code> і скопіюйте <b>Client ID</b> і <b>Client Secret</b>.</li>
+    <li>Вставте обидва в розділ <span class="ui">Керування голосом</span> картки Discord і натисніть
+      <span class="ui">Підключити</span>. Discord один раз попросить дозвіл.</li>
+  </ol>
+  <p>Далі Гомін сам підключається, коли Discord запущено, і стежить за змінами в самому Discord. Потрібен офіційний
+    застосунок Discord на цьому ж комп’ютері (звичайний, Flatpak чи Snap); клієнти на кшталт Vesktop цих команд не мають.
+    Режим стрімера ззовні не перемкнути — Discord уміє вмикати його сам (Налаштування користувача › Режим стрімера).</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="connect-donatik">donatik.ua (необов’язково)</h3>
+  <p>Платні пісні з музичного віджета donatik.ua грають у плеєрі Гоміна раніше за всі інші замовлення.</p>
+  <ol class="steps">
+    <li>На donatik.ua відкрийте віджет «Замовлення музики» й скопіюйте <span class="ui">Посилання модератора</span>
+      (<code>https://widget.donatik.ua/…/admin</code>).</li>
+    <li>Вставте його в Налаштування › Підключення › donatik.ua й натисніть <span class="ui">Підключити</span>.</li>
+    <li>Приберіть музичний віджет donatik з OBS.</li>
+  </ol>
+  <p>Подробиці — у розділі <a href="#songs-donatik">Платні пісні</a>.</p>
+  </div>
+</article>
+
+<!-- ============================================================ window -->
+<article id="window">
+  <h2>Вікно застосунку</h2>
+  <div class="topic">
+  <h3 id="window-menu">Меню й клавіші сторінок</h3>
+  <p>Ліворуч — сторінки в групах: для самого стріму, для того, що роблять глядачі, і для того, що виходить назовні.</p>
+  <div class="table"><table>
+    <tr><th>Клавіші</th><th>Сторінка</th></tr>
+    <tr><td><kbd>Ctrl+1</kbd> <kbd>Ctrl+2</kbd> <kbd>Ctrl+3</kbd></td><td class="wrap"><a href="#control">Центр керування</a>, <a href="#obs">OBS</a>, <a href="#player">Плеєр</a></td></tr>
+    <tr><td><kbd>Ctrl+4</kbd> <kbd>Ctrl+5</kbd> <kbd>Ctrl+6</kbd></td><td class="wrap"><a href="#events">Події</a>, <a href="#redeems">Нагороди</a>, <a href="#chatbot">Чат-бот</a></td></tr>
+    <tr><td><kbd>Ctrl+7</kbd> <kbd>Ctrl+8</kbd> <kbd>Ctrl+9</kbd></td><td class="wrap"><a href="#tts">TTS</a>, <a href="#overlays">Оверлеї</a>, <a href="#discord">Discord</a></td></tr>
+    <tr><td><kbd>Ctrl+0</kbd></td><td class="wrap"><a href="#settings">Налаштування</a></td></tr>
+  </table></div>
+  </div>
+
+  <div class="topic">
+  <h3 id="window-bars">Верхня й нижня панелі</h3>
+  <ul>
+    <li><b>Угорі</b> на кожній сторінці: <span class="ui">Призупинити TTS</span>, <span class="ui">Очистити оверлей нагород</span>,
+      <span class="ui">Очистити сповіщення</span> (у вузькому вікні — лише значки) і голос Discord.</li>
+    <li><b>Унизу</b> — міні-плеєр і стан кожного сервісу; клік по сервісу відкриває його налаштування. Пульт на телефоні й
+      API для Stream Deck з’являються там значками, поки ввімкнені; підказка каже, скільки пристроїв підключено.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="window-summary">Підсумок трансляції</h3>
+  <p><span class="ui">НАЖИВО</span> (або <span class="ui">ОФЛАЙН</span>) праворуч у нижньому рядку відкриває
+    <span class="ui">Підсумок трансляції</span>: тривалість, пік і середнє глядачів, нові фоловери, підписки, біти, чат,
+    нагороди, замовлення пісень, кліпи, маркери, рейди й рекламні паузи.</p>
+  <ul>
+    <li>Рахує, поки ви в ефірі, переживає перезапуск Гоміна, а стрім, що обірвався й повернувся за п’ять хвилин, вважає одним.</li>
+    <li>Зберігаються останні 20 трансляцій. Підсумок можна скопіювати текстом, надіслати в канал Discord або публікувати
+      самому за кілька хвилин після кожного стріму.</li>
+    <li><span class="ui">Розділи</span> копіює розділи для опису на YouTube (<code>0:00 Just Chatting</code>,
+      <code>12:34 Бос</code>…): категорія на початку, кожна зміна категорії й кожен маркер трансляції. Якщо Twitch ще має
+      запис, беруться його маркери — і ті, що ставили модератори через <code>/marker</code>. YouTube показує розділи від трьох,
+      кожен щонайменше 10 секунд.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="window-restart">Перезапуск посеред стріму</h3>
+  <p>Якщо перезапустити Гомін під час ефіру, чат почнеться з повідомлень від початку стріму (до 100, з
+    recent-messages.robotty.de — сервісу, яким користуються Chatterino та інші), а підсумок дорахує пропущені. Активність
+    повертається як була: що Гомін бачив, і що сталося, поки він був закритий (підписки, подарунки, рейди, біти, серії переглядів
+    з історії чату, фоловери з Twitch). TTS, бот, сповіщення й оверлеї на них удруге не реагують. Нагород, Power-up і шаутаутів
+    з того часу потім не знайти.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="window-usage">Використання ресурсів</h3>
+  <p>Налаштування › Загальні › <span class="ui">Показувати використання ресурсів</span> (спершу вимкнено) додає в нижній
+    рядок процесор і пам’ять Гоміна (з програмами, які він запустив: голос StyleTTS2, mpv), а з відеокартою NVIDIA — її
+    навантаження. Клік показує розбивку: Гомін, озвучення (з <span class="ui">Звільнити пам'ять</span> для StyleTTS2 і
+    RAD-TTS++), OBS і його браузерні джерела окремо, увесь ПК і кожна відеокарта.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="window-tray">Трей і закриття вікна</h3>
+  <p>Закриття вікна питає: <span class="ui">Залишити працювати в треї</span> (TTS, сповіщення, оверлеї й чат-бот працюють
+    далі) чи <span class="ui">Вийти</span>. З позначкою <span class="ui">Запам'ятати вибір</span> більше не питає; змінити —
+    Налаштування › Загальні › <span class="ui">Під час закриття вікна</span>. <span class="ui">Перезапустити Homin</span>
+    (там же й у меню трею) запускає свіжу копію й закриває цю, а OBS і стрім ідуть далі.</p>
+  </div>
+</article>
+
+<!-- ============================================================ control -->
+<article id="control">
+  <h2>Центр керування</h2>
+  <p>Екран для ефіру.</p>
+  <figure><img src="control.png" alt="Центр керування" loading="lazy"><figcaption>Чат, перегляд OBS, картки «Керування трансляцією» й «Twitch», «У трансляції» й Активність</figcaption></figure>
+
+  <div class="topic">
+  <h3 id="control-chat">Чат</h3>
+  <ul>
+    <li>Емоції, GIF, посилання, відповіді, згадки, виділені оголошення й значки Twitch картинками (або словами HOST, MOD, VIP,
+      SUB: правий клік › <span class="ui">Значки картинками</span>).</li>
+    <li>Правий клік по повідомленню: відповісти, закріпити, скопіювати, надіслати в TTS, <span class="ui">Ім'я для TTS…</span>,
+      модерувати, <span class="ui">Картка глядача</span>.</li>
+    <li>Кнопка трансляції в заголовку чату показує події між повідомленнями, як у чаті Twitch (спершу вимкнено).</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="control-viewer">Картка глядача</h3>
+  <p>Коли створено обліковий запис (з попередженням, якщо йому менше тижня), чи стежить і відколи, рівень підписки, останні
+    рядки в чаті, його нагороди й замовлення пісень, коли Гомін уперше його побачив і скільки повідомлень. Звідти ж —
+    шаутаут, тайм-аут, бан, «TTS пропускає його повідомлення» й посилання на сторінку Twitch.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="control-modes">Режими чату, режим захисту й AutoMod</h3>
+  <ul>
+    <li>Щит у заголовку чату — <span class="ui">Режим захисту</span> і режими чату: лише емоції, лише фоловери (будь-хто
+      або ті, хто стежить від 10 хвилин до 30 днів), повільний (3 секунди — 2 хвилини), лише підписники, унікальний чат.
+      Це для хейт-рейду, без відкривання Twitch. Поки щось увімкнено, смуга під заголовком називає це (червона для режиму
+      захисту) — і тоді, коли його ввімкнув інший модератор чи сайт Twitch.</li>
+    <li>Повідомлення, затримані AutoMod, чекають над чатом з автором і причиною (категорія й рівень AutoMod або
+      заблоковане слово). ✓ пропускає в чат, ✕ відхиляє. Вони зникають, коли відповість інший модератор або мине час.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="control-preview">Перегляд і стан стріму</h3>
+  <ul>
+    <li><b>Перегляд OBS</b> займає все місце, що лишають картки; вкладка <span class="ui">Перегляд Twitch</span> показує стрім
+      таким, яким його отримують глядачі (кілька секунд позаду, звук спершу вимкнено, щоб не було луни).
+      Поки OBS не підключено — кнопка <span class="ui">Запустити OBS</span>.</li>
+    <li><b>Стан трансляції</b> — позначка над переглядом: зазвичай кадри й бітрейт OBS. Коли щось не так, вона стає
+      помаранчевою (червоною — коли серйозно) і називає що: кадри губляться дорогою до Twitch, кодувальник чи відеокарта
+      не встигає, OBS перепідключається, бітрейт набагато нижчий за звичний, диск заповнюється під час запису.
+      Про проблему каже й повідомлення в застосунку та на робочому столі, коли вікно у фоні: серйозна — одразу, легка —
+      якщо триває хвилину, повтор за п’ять хвилин — лише якщо гірше. У чат нічого не пишеться; вимикає
+      <span class="ui">Попередження про стан трансляції</span>.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="control-stream">Керування трансляцією</h3>
+  <p>Старт і зупинка стріму, запис, буфер повтору, віртуальна камера (увімкнене підсвічено).
+    <span class="ui">Почати трансляцію</span> спершу шукає, що може бути не так: вимкнений мікрофон чи схована камера,
+    оверлей, що не завантажився, TTS на паузі, Twitch не підключено, немає назви чи категорії, назва минулого стріму.
+    Якщо все добре — стартує одразу, інакше каже що, з <span class="ui">Все одно почати</span> і «Скасувати». Перевірку
+    вимикає це ж вікно або Налаштування › Загальні; гаряча клавіша стартує без неї.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="control-twitch">Картка Twitch</h3>
+  <ul>
+    <li><b>Назва й категорія</b> одним рядком: клік відкриває <span class="ui">Інформація про трансляцію</span> — назва,
+      категорія й теги, зберігає <span class="ui">Оновити</span>. Кнопка-тека біля назви — <b>профілі</b>: збережіть назву,
+      категорію й теги під іменем, і пізніше одним кліком поставите їх на Twitch.</li>
+    <li><span class="ui">Маркер трансляції</span>, <span class="ui">Створити кліп</span> (<a href="#clips">Кліпи</a>),
+      <span class="ui">Спільна трансляція</span> (відкриває сторінку Twitch: відкритого API немає) і <a href="#raids">рейд</a>.</li>
+    <li><b>Реклама</b> — відлік до наступної запланованої, скільки ще триває поточна; у меню — відкласти на 5 хвилин або
+      запустити зараз (30 секунд — 3 хвилини).</li>
+    <li>У вузькому вікні «Керування трансляцією» і «Twitch» стають вкладками, у високому — стоять одна під одною.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="control-onstream">У трансляції й лічильники</h3>
+  <ul>
+    <li>Одним кліком сховати чи показати камеру, вимкнути мікрофон, Discord чи будь-яке джерело в живій сцені OBS. Червоне —
+      вимкнено. Поки не вибрали своїх олівцем, пропонує камеру, мікрофон і Discord, знайдені за тим, що про них каже OBS.</li>
+    <li>Під ними — відліки з <span class="ui">Кнопка в Центрі керування</span>: клік запускає, а запущений показує час і меню
+      (хвилина більше чи менше, <span class="ui">Перемкнути зараз</span>, зупинити).</li>
+    <li><b>Лічильники</b> (смерті, перемоги, чашки чаю…): − і + рахують, клік по назві перейменовує, задає число, видаляє
+      чи прибирає зі стріму; <span class="ui">Новий лічильник…</span> в олівці додає (до 20). Гарячі клавіші
+      <span class="ui">Лічильник +1</span> і «Лічильник −1» рахують вибраний — і з гри.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="control-activity">Активність</h3>
+  <p>Фоловери, підписки, подарунки, біти, Power-up, рейди, нагороди, замовлення пісень, серії переглядів, шаутаути (вам і
+    ваші) і ті, хто пише вперше. Фільтр ховає зайве. ⚡ надсилає <b>тестову подію</b> через усе по-справжньому (стрічка, TTS,
+    сповіщення), щоб перевірити налаштування без справжньої.</p>
+  <ul>
+    <li><b>Хайп-потяг і цілі</b> — потяг угорі панелі з рівнем, скільки до наступного, часом і хто дав найбільше; лишається
+      півтори хвилини після кінця. Цілі автора з панелі Twitch (фоловери, підписники, біти…) — кожна зі смугою.</li>
+    <li><b>Опитування й прогнози</b> — кнопка з графіком: опитування (2–5 варіантів, за бажання — додаткові голоси за бали) або
+      прогноз (2–10 результатів). Поки триває, видно живі числа: завершити чи прибрати опитування; закрити прогноз, натиснути
+      <span class="ui">Переміг</span> на тому, що сталося, або скасувати з поверненням балів.</li>
+  </ul>
+  <div class="note">Хайп-потяг, цілі, опитування, прогнози, реклама й бали каналу Twitch дає лише компаньйонам і партнерам.</div>
+  </div>
+</article>
+
+<!-- ============================================================ clips -->
+<article id="clips">
+  <h2>Кліпи</h2>
+  <div class="topic">
+  <h3 id="clips-moments">Момент зараз, кліп — потім</h3>
+  <p><span class="ui">Створити кліп</span> під час ефіру лише зберігає момент (і ставить маркер; це вимикається). На Twitch
+    нічого не з’являється, тож ніхто не побачить кліп із назвою стріму. Кнопка поруч (з числом незроблених) відкриває вікно
+    <span class="ui">Кліпи</span> — воно є й у підсумку трансляції.</p>
+  <ol class="steps">
+    <li>Для кожного моменту задайте, де кліп починається (г:хх:сс, або на 5 с раніше чи пізніше), тривалість (5–60 с) і назву.</li>
+    <li><span class="ui">Переглянути</span> програє фрагмент по колу у вікні mpv (або відкриває запис у браузері на тому місці).</li>
+    <li><span class="ui">Створити кліп</span> робить його на Twitch із запису трансляції. Тоді його можна опублікувати в Discord:
+      самого, якщо на сторінці Discord увімкнено кліпи, або кнопкою <span class="ui">Опублікувати в Discord</span>.</li>
+  </ol>
+  <p>Потрібно, щоб у Twitch було ввімкнено «Зберігати минулі трансляції». Записи живуть 7 днів (у партнерів — 60), тож
+    доробіть кліп за тиждень. Підсумок трансляції нагадує про незроблені.</p>
+  </div>
+  <div class="topic">
+  <h3 id="clips-now">Як раніше — одразу</h3>
+  <p>З <span class="ui">Робити кліпи одразу</span> (у вікні Кліпи) кліп робиться на Twitch негайно. Обріжте й перейменуйте його
+    там (<span class="ui">Редагувати на Twitch</span>: редактор перші 24 години, потім менеджер кліпів) і натисніть
+    <span class="ui">Готово</span> — Гомін візьме назву з Twitch і лише тоді опублікує в Discord.</p>
+  <p>Картка кліпу в Discord — власна Гоміна (назва як на Twitch у момент публікації, картинка, посилання): сторінка кліпу на
+    Twitch тримає першу назву навіть після перейменування.</p>
+  </div>
+</article>
+
+<!-- ============================================================ raids -->
+<article id="raids">
+  <h2>Рейди</h2>
+  <div class="topic">
+  <h3 id="raids-start">Почати рейд</h3>
+  <ul>
+    <li>Поле рейду в картці Twitch приймає ім’я каналу, <code>@ім’я</code> чи посилання з браузера (<code>twitch.tv/name</code>, навіть <code>…/videos</code>).</li>
+    <li>Після старту над чатом видно канал і 90-секундний відлік Twitch з ✕ для скасування й кнопкою, що запускає
+      <span class="ui">Скоро завершуємо</span> разом із рейдом. Якщо налаштування іншого каналу не дозволяють рейд, Гомін пише які.</li>
+    <li>Рейд, почату на сайті Twitch, тут без відліку (Twitch не каже про нього застосункам), але скасування там прибирає відлік.
+      «Рейд зараз» є лише на сайті.</li>
+    <li>Коли рейд відбувся, Активність це помічає, а поки OBS стрімить, вікно пропонує зупинити стрім, запустити
+      «Скоро завершуємо» чи стрімити далі. Перемикач «Зупиняти трансляцію саму після рейду» (і в налаштуваннях відліку)
+      робить це сам — спершу вимкнено.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="raids-find">Знайти канал для рейду</h3>
+  <p>Лупа біля поля рейду відкриває <span class="ui">Знайти канал для рейду</span>: хто в ефірі у вашій категорії (або іншій чи
+    в усіх), вибраними мовами (спершу — мова вашого каналу; вибір запам’ятовується) і, за бажання, в діапазоні глядачів —
+    найбільші першими. На кожній картці — кнопка <span class="ui">Рейд</span>.</p>
+  <p>Клік по картці показує ближче: стрім (у перегляді Twitch, 480p) і його чат з останніми повідомленнями. Поле під чатом
+    пише туди від вашого облікового запису — щоб привітатися до рейду (якщо канал відмовить, наприклад у режимі «лише
+    фоловери», видно причину). Twitch показує неввійденим глядачам рекламу на початку, тож стрім зазвичай починається
+    приблизно за пів хвилини; доти видно знімок каналу.</p>
+  </div>
+</article>
+
+<!-- ============================================================ obs -->
+<article id="obs">
+  <h2>Керування OBS</h2>
+  <p>Сцени, джерела, мікшер з рівнями, режим студії з переходами, кнопки стріму й запису — без перемикання в OBS. Ліворуч
+    сцени, посередині перегляд (де джерела рухаються й змінюють розмір), праворуч джерела сцени й мікшер — в одному стовпці з
+    перемикачем, поруч лише в широкому вікні.</p>
+  <figure><img src="obs.png" alt="Сторінка OBS" loading="lazy"><figcaption>Сцени, перегляд, джерела, мікшер і відлік</figcaption></figure>
+
+  <div class="topic">
+  <h3 id="obs-scenes">Сцени</h3>
+  <ul>
+    <li>Клік перемикає (у режимі студії — вибирає Попередній перегляд), подвійний клік перемикає й у режимі студії.</li>
+    <li><b>⋯</b> на сцені (при наведенні чи правим кліком): перейменувати, дублювати, видалити (з підтвердженням).
+      <span class="ui">Додати сцену</span> під списком — порожня. Копія зберігає місце, розмір і обрізку кожного джерела; групу
+      OBS не може мати у двох сценах, тож копія лишає групи й каже які.</li>
+    <li>У режимі студії спершу Попередній перегляд, потім Перехід, потім Програма; список джерел тоді показує джерела
+      Попереднього перегляду, як в OBS.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="obs-sources">Джерела</h3>
+  <ul>
+    <li><b>Подвійний клік по джерелу</b> (на перегляді чи в списку) — його панель поверх списку сцен, не діалог: зміна видна на
+      перегляді одразу, джерела можна тягати, а вибір іншого перемикає панель (Esc чи × закриває). У заголовку — мініатюра,
+      назва (перейменовує), тип, показати/сховати й замок.
+      <ul>
+        <li><b>Налаштування</b> для поширених типів: слова, шрифт, розмір і колір тексту; файл картинки чи відео (повтор, з
+          початку при показі); адреса веб-сторінки, розмір і чи йде її звук в OBS; колір; яка камера чи мікрофон.</li>
+        <li><b>Позиція</b>: дев’ять місць (кути, краї, середина), заповнити чи вмістити, розмір як частка ширини кадру, точна
+          рамка в пікселях (X, Y, ширина, висота), обрізка, скидання.</li>
+        <li><b>Фільтри</b>: увімкнути чи вимкнути, прибрати, додати хромакей, корекцію кольору чи обрізку (для мікрофона —
+          придушення шуму чи підсилення). Решта — у вікнах Властивості й Фільтри самого OBS, які редактор відкриває.</li>
+      </ul></li>
+    <li><b>На перегляді</b> — як в OBS: клік по джерелу і тягніть; кут змінює розмір зі збереженням форми (з <kbd>Shift</kbd> — будь-якої),
+      край розтягує. Прилипає до країв і середини (<kbd>Shift</kbd> — без прилипання), стрілки зсувають на піксель
+      (<kbd>Shift</kbd> — на десять). Клік знаходить менше джерело раніше за повноекранний оверлей над ним. Джерела всередині
+      групи теж рухаються (не в повернутій групі). Сховані, замкнені й повернуті стоять. Замок над переглядом — «Замкнути
+      перегляд» OBS.</li>
+    <li><b>Порядок</b> — тягніть значок джерела на інший рядок.</li>
+    <li><b>⋯</b> на джерелі: замкнути, вище чи нижче, копіювати в іншу сцену, перезавантажити сторінку, грати, пауза чи
+      з початку для відео, Властивості чи Фільтри OBS, прибрати зі сцени (з підтвердженням: OBS видаляє джерело, якого немає
+      в жодній іншій сцені).</li>
+    <li><span class="ui">Додати джерело</span>: текст, картинка, відео чи звуковий файл, веб-сторінка, колір, камера, мікрофон,
+      звук робочого столу, звук програми, захоплення екрана чи вікна (які є у вашому OBS), уже наявне джерело або ціла сцена.
+      Захоплення екрана вибирається в OBS (на Wayland — у діалозі робочого столу).</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="obs-mixer">Мікшер, вивід і знімок екрана</h3>
+  <ul>
+    <li>⚙ на вході мікшера: <b>доріжки</b> (в які з шести доріжок OBS іде звук — стрім, запис і доріжка VOD Twitch беруть ті, що
+      вибрано в налаштуваннях виводу OBS) і <b>моніторинг</b>: вимкнено (лише стрім), лише ви, або ви й стрім.</li>
+    <li>Внизу: старт і зупинка стріму та запису (під час запису — <span class="ui">Призупинити запис</span>); буфер повтору,
+      віртуальна камера й <span class="ui">Знімок екрана</span> — у меню <b>⋯</b>.</li>
+    <li>Поруч — цифри OBS із втраченими кадрами за 30 секунд трьома способами: <b>Мережа</b> (не дійшли до Twitch),
+      <b>Кодувальник</b> (не встиг закодувати), <b>Рендер</b> (OBS не встиг намалювати — зазвичай відеокарта зайнята грою).
+      Жовті чи червоні — там, де починаються попередження про стан трансляції.</li>
+    <li><span class="ui">Знімок екрана</span> зберігає живу сцену в «Зображення › Homin» (і коли OBS на іншому ПК).</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="obs-setup">Налаштувати мої сцени</h3>
+  <p>✨ біля «Сцени» створює сцени для стріму з Гоміном — ті, які позначите:</p>
+  <div class="cards">
+    <div><b>Скоро почнемо</b>тло, відлік, картка пісні</div>
+    <div><b>Наживо</b>чат, картка пісні, лічильники</div>
+    <div><b>Скоро повернусь</b> </div>
+    <div><b>Скоро завершуємо</b> </div>
+  </div>
+  <p>Кожна отримує вкладену сцену <b>Homin · Alerts &amp; sound</b> зі сповіщеннями, нагородами, хайп-потягом, озвученням і
+    музикою — тож кожен оверлей лише одне браузерне джерело, і сповіщення ніколи не грає двічі. Нічого вашого не видаляється
+    й не рухається: наявна сцена отримує лише те, чого бракує (ніколи тло), наявний в OBS оверлей чи захоплення
+    використовується знову, а повторний запуск нічого не додає. <span class="ui">Також у моїх інших сценах</span> додає
+    сповіщення й звук і у ваші власні сцени. Гру чи екран і камеру в «Наживо» додаєте в OBS самі.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="obs-countdown">Відлік: «Скоро почнемо», «Скоро повернусь», «Скоро завершуємо»</h3>
+  <ul>
+    <li>Під сценами. Кожен перемикає на свою сцену й рахує час на оверлеї «Відлік»; на нулі — на наступну сцену (після
+      перерви — назад, де були). «Скоро завершуємо» може натомість зупинити стрім, а під час рейду закінчується разом із ним.</li>
+    <li>Поки триває: хвилина більше чи менше, <span class="ui">Перемкнути зараз</span> або зупинити й лишитися. Якщо ви самі
+      перемкнули сцену до нуля, таймер нічого не перемикає й не зупиняє.</li>
+    <li>Шестірня задає сцену, тривалість, заголовок оверлею, що робити на нулі й <span class="ui">Кнопка в Центрі керування</span>.</li>
+    <li>Годинник поруч рахує до часу доби: «Скоро почнемо до 20:00» (сьогодні, або завтра, якщо час минув).</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="obs-offline">Коли OBS не підключено</h3>
+  <p>Сторінка каже чому, з <span class="ui">Запустити OBS</span> (коли OBS є на цьому ПК: <code>obs</code> чи Flatpak на Linux,
+    звичайна тека встановлення на Windows), «Підключити зараз» і налаштуваннями підключення. Приблизно за десять секунд після
+    підключення Гомін оновлює ті оверлеї, що лишилися порожніми, бо OBS запустився раніше.</p>
+  </div>
+</article>
+
+<!-- ============================================================ player -->
+<article id="player">
+  <h2>Плеєр</h2>
+  <p>Одна черга для YouTube, Spotify і локальних файлів. Список ліворуч у групах: Слухати, Бібліотека, Замовлення, Налаштування.</p>
+  <figure><img src="player.png" alt="Плеєр" loading="lazy"><figcaption>Зараз грає з чергою поруч</figcaption></figure>
+
+  <div class="topic">
+  <h3 id="player-pages">Розділи плеєра</h3>
+  <ul>
+    <li><span class="ui">Зараз грає</span> — що звучить, з гучністю, і черга: додати посилання, файл чи пошук, пересунути,
+      зберегти в плейлист, прибрати. Біля замовлених — хто замовив. На інших сторінках міні-плеєр має перемішування, а кнопка
+      черги відкриває «Зараз грає».</li>
+    <li><span class="ui">Плейлисти</span> — ваші списки; позначте один чи кілька як <b>резервний</b>: він грає, коли замовлень немає.</li>
+    <li><b>YouTube / Spotify / Локальні файли</b> — пошук і додавання вручну.</li>
+    <li><span class="ui">Історія</span> — що грало: скопіювати посилання, зберегти в плейлист, поставити знову.</li>
+    <li><span class="ui">Замовлення пісень</span> — правила для глядачів (<a href="#songs">нижче</a>).</li>
+    <li><span class="ui">Відтворення</span> — що робить резервний плейлист, коли приходить замовлення, Spotify,
+      <span class="ui">Мій вхід у YouTube із браузера</span>, звуковий рушій, музика на стрімі й медіаклавіші.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="player-keys">Медіаклавіші</h3>
+  <p>Клавіші пауза/відтворення, наступна й попередня на клавіатурі й навушниках, а також медіакерування системи керують
+    плеєром: Гомін видно там як музичний програвач з піснею, обкладинкою й позицією. На Linux — MPRIS (віджет KDE й GNOME,
+    екран блокування, <code>playerctl</code>), на Windows — керування біля гучності й на екрані блокування. Увімкнено одразу;
+    вимикає <span class="ui">Медіаклавіші керують плеєром</span>. Якщо водночас грає Spotify, система сама вибирає, кому клавіша.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="player-mix">Зведення музики (Linux)</h3>
+  <p>Плеєр › Відтворення › <span class="ui">Зводити музику в один звуковий пристрій</span> додає звуковий пристрій
+    <i>Homin Music</i>. Плеєр Гоміна й програми, які ви ввімкнете під ним (Spotify, Pear Desktop для YouTube Music, що завгодно),
+    переходять у нього щоразу, як починають грати, а ви чуєте все у своїх колонках чи навушниках.</p>
+  <ol class="steps">
+    <li>Увімкніть зведення й програми, які мають бути на стрімі. Програму видно в списку, поки вона грає: увімкніть пісню й
+      натисніть <span class="ui">Перевірити ще раз</span>, якщо її немає.</li>
+    <li><span class="ui">Додати в OBS</span> під ним додає в поточну сцену <i>Homin · Music mix</i>. Приберіть старе захоплення
+      <i>Homin Music</i>, інакше пісні звучатимуть двічі (сторінка про це скаже).</li>
+    <li><span class="ui">Скільки чуєте ви</span> — лише ваша гучність; стрім отримує музику повністю, рівень — у мікшері OBS.
+      Кнопка з навушниками біля гучності має обидві: <span class="ui">У трансляції</span> і <span class="ui">Чуєте ви</span>, з
+      вимкненням звуку лише у ваших навушниках.</li>
+  </ol>
+  <p>Пристрій лишається, поки Гомін закритий, тож перезапуск не вириває музику зі стріму; вимкнення зведення прибирає його.
+    Потрібен <code>pactl</code> (pipewire-pulse або PulseAudio). YouTube Music у вкладці браузера переносить увесь браузер — з
+    Pear Desktop такого немає.</p>
+  </div>
+
+  <div class="topic">
+  <h3 id="player-browser">Музика через браузерне джерело</h3>
+  <p>Для тих, хто хоче музику тихіше (чи без неї) для себе, але не для глядачів — і без Linux.</p>
+  <ol class="steps">
+    <li>Оверлеї › Музика: увімкніть <span class="ui">Грати музику й тут</span> і натисніть <b>+</b>. Джерело додається з
+      «Керувати звуком через OBS», тож звук іде в стрім, а не у ваші колонки.</li>
+    <li>Вимкніть чи приберіть те, що захоплювало плеєр досі (<i>Homin Music</i> чи Звук робочого столу), інакше глядачі
+      чутимуть кожну пісню двічі.</li>
+    <li>OBS грає звук джерела лише в сцені, що його показує: додайте музику в кожну сцену з музикою (або в одну вкладену).</li>
+  </ol>
+  <p>Плеєр лишається головним: сторінка грає ту саму пісню, стає на паузу й перемотує разом із ним. Повзунок плеєра тепер лише
+    для вас; <span class="ui">Гучність на стрімі</span> задає, що чують глядачі. Пісні Spotify грають у Spotify й сюди не входять.</p>
+  </div>
+</article>
+
+<!-- ============================================================ songs -->
+<article id="songs">
+  <h2>Замовлення пісень</h2>
+  <div class="topic">
+  <h3 id="songs-on">Як увімкнути</h3>
+  <ol class="steps">
+    <li>На сторінці <span class="ui">Нагороди</span> виберіть <span class="ui">Замовлення пісні</span> (створюється при першому
+      запуску) і натисніть <span class="ui">Створити на Twitch</span>. Поставте свою ціну.</li>
+    <li>Глядач обирає нагороду й пише посилання YouTube, Spotify (якщо налаштовано) чи просто назву пісні.</li>
+    <li>Гомін перевіряє замовлення, ставить у чергу й відповідає в чаті. Якщо не підходить (задовге, вже в черзі, зарано) — бали повертаються.</li>
+  </ol>
+  </div>
+  <div class="topic">
+  <h3 id="songs-rules">Правила</h3>
+  <p>Плеєр › <span class="ui">Замовлення пісень</span>: звідки можна (перемикач для YouTube, вашої музичної теки й Spotify), де
+    шукати просто назви, максимальна довжина, пісень на глядача, розмір черги, пауза між замовленнями, повтори, пісні з
+    відвертим текстом і відповіді в чаті — коли пісню поставлено, коли грає одразу, коли відмовлено, коли замовлена починає
+    грати пізніше. Кожна відповідь має свій перемикач; вимкнена нічого не пише, але замовлення працює й бали повертаються.</p>
+  <ul>
+    <li><span class="ui">Пріоритетне замовлення пісні</span> ставить пісню на початок замовлень, не перериваючи ту, що грає.</li>
+    <li><span class="ui">Пропустити пісню</span> пропускає поточну й пише, хто що пропустив і чия вона була. Дія заповнює
+      <code>{song}</code>, <code>{artist}</code> і <code>{requester}</code> для наступних кроків. Коли нічого не грає — бали назад.</li>
+    <li>Модератори мають <code>!sr &lt;посилання чи назва&gt;</code> (правила пісні діють, ліміти глядача — ні) і
+      <code>!skip</code> (пропускає й платну). Обидві — на сторінці Чат-бот, спершу вимкнені.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="songs-donatik">Платні пісні з donatik.ua</h3>
+  <p>Грають раніше за всі інші замовлення (і пріоритетні), у порядку оплати, з золотою позначкою ціни й «оплатив» замість
+    «замовив». Не перериває замовлення, що грає, — хіба що ввімкнено <span class="ui">Платні пісні грають одразу</span>: тоді
+    починається негайно, а перервана пісня продовжиться з того ж місця після платних. Платна ніколи не перериває іншу платну.</p>
+  <ul>
+    <li>Гомін дивиться віджет кожні 5 секунд. Поставлена в чергу пісня зникає з плейлиста віджета (переходить у «видалену
+      музику» на donatik), тож віджет не зіграє її вдруге. Пісня, яку плеєр не може зіграти, лишається на donatik.</li>
+    <li>Ваші ліміти (довжина, пісень на глядача, пауза) на платні не діють — у donatik свої.</li>
+    <li><span class="ui">Платні пісні не можна пропустити за бали каналу</span> (спершу ввімкнено): пропуск відмовляється,
+      бали повертаються, чат дізнається чому.</li>
+    <li>Посилання модератора — у сховищі ключів, не в експорті: хто його має, керує плейлистом віджета.
+      <span class="ui">Перепідключити</span> пробує одразу, якщо donatik якийсь час не відповідав.</li>
+  </ul>
+  </div>
+</article>
+
+<!-- ============================================================ tts -->
+<article id="tts">
+  <h2>Озвучення тексту (TTS)</h2>
+  <figure><img src="tts.png" alt="Сторінка TTS" loading="lazy"><figcaption>Рушій і голос, відтворення з чергою, фільтри</figcaption></figure>
+  <div class="topic">
+  <h3 id="tts-engines">Рушії й голоси</h3>
+  <p>У списку лише рушії, що справді працюють.</p>
+  <div class="table"><table>
+    <tr><th>Рушій</th><th>Що варто знати</th></tr>
+    <tr><td><b>Piper</b></td><td class="wrap">Багато мов. Встановлюється кнопкою <span class="ui">Встановити</span> (близько 200 МБ, один раз);
+      файли голосів <code>.onnx</code> кладіть у теку голосів. Кожен голос має свою ліцензію — перевірте перед монетизованим стрімом.</td></tr>
+    <tr><td><b>StyleTTS2</b></td><td class="wrap">Українська, однією кнопкою; кілька ГБ (переважно PyTorch), <span class="ui">Прибрати</span>
+      звільняє місце. Приходить без голосів: у <b>Голосах</b> вставте посилання Hugging Face на пресети <code>.pt</code>,
+      <span class="ui">Знайти голоси</span> покаже їх з ліцензією автора, позначте й завантажте; <span class="ui">З файлів…</span> —
+      ваші. На NVIDIA бере близько 1,15 ГБ відеопам’яті, з <span class="ui">Половинна точність на відеокарті</span> — близько 0,85 ГБ.</td></tr>
+    <tr><td><b>RAD-TTS++</b></td><td class="wrap">Українська, однією кнопкою, на процесорі: три голоси — Тетяна, Микита й Лада (новіша модель
+      голосу Piper <code>uk_UA-ukrainian_tts</code>, 44,1 кГц). Рядок чату — за помітно менше секунди; близько 2,5 ГБ. Читає лише
+      українські літери (англійським нікам дайте псевдонім), вирівнює гучність. <code>+</code> після голосної в псевдонімі — наголос: <code>замо+к</code>.</td></tr>
+    <tr><td><b>Голоси системи</b></td><td class="wrap">Те, що вже є у вашій системі.</td></tr>
+  </table></div>
+  <p>Під голосом — згортки «Голоси», «Налаштування рушія» й «Встановлення»; згорнуті, кожна одним рядком каже, що задано
+    («Авто · половинна точність», «Встановлено · 2,1 ГБ»), а «Встановлення» розгортається сама, коли рушій не працює.
+    <span class="ui">Звільняти пам'ять без роботи</span> (StyleTTS2 і RAD-TTS++, спершу через 30 хвилин) закриває модель,
+    коли довго не було рядків — ніколи під час ефіру; наступний рядок чекає 10–20 с, а початок ефіру завантажує її заздалегідь.</p>
+  <div class="note warn">Пресети голосів часто зроблено з записів справжніх людей — перевірте, що дозволяє автор, перш ніж
+    вмикати такий голос на стрімі.</div>
+  </div>
+
+  <div class="topic">
+  <h3 id="tts-playback">Відтворення й фільтри</h3>
+  <ul>
+    <li><b>Відтворення</b> — що читається, черга, пауза, <span class="ui">Пропустити поточне</span>, <span class="ui">Очистити чергу</span>
+      і <span class="ui">Перевірити</span>. Поки грає один рядок, наступний уже готується — жвавий чат читається без пауз.</li>
+    <li><b>Фільтри</b> — що читати (увесь чат, чат без нагород або лише TTS-нагороди), чи читати відповіді й імена, і що
+      пропускати: команди <code>!</code>, посилання, емоції, GIF, задовгі повідомлення. Повідомлення, від якого нічого не лишилося, не читається.</li>
+    <li><b>Видалене не читається.</b> Повідомлення, яке видалив модератор, зникає з черги чи обривається; бан чи тайм-аут — так
+      само для всіх повідомлень глядача, очищення чату — для всіх. Нагороди й події лишаються.</li>
+    <li>Фоловерів, підписки, біти й рейди озвучує картка <a href="#events">«Читати вголос»</a> кожної події.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="tts-aliases">Псевдоніми, глядачі та слова</h3>
+  <ul>
+    <li><span class="ui">Псевдоніми</span> — окремі списки для слів і імен: пошук, додати, змінити, <span class="ui">Послухати</span>,
+      видалити; <span class="ui">Редагувати текстом</span> — рядками <code>оригінал = як читати</code>, щоб вставити багато.
+      Псевдоніми імен діють і для <code>@ім’я</code> у згадках та відповідях.</li>
+    <li>Ім’я можна задати й з чату: правий клік › <span class="ui">Ім'я для TTS…</span> (і в картці глядача) або самі глядачі
+      командою <code>!ttsname</code> (Чат-бот).</li>
+    <li><span class="ui">Глядачі та слова</span> — кого й що не читати взагалі (боти вже в списку).</li>
+  </ul>
+  <div class="note"><b>Щоб глядачі чули озвучення</b>
+    Під відтворенням (<b>В OBS</b>) видно, чи OBS чує мовлення; <span class="ui">Додати в OBS</span> сама додає в поточну сцену
+    джерело «Захоплення звуку програми» з <i>Homin TTS</i>. На Linux тримайте ввімкненим <span class="ui">Завжди показувати в OBS</span>,
+    щоб воно було в списку й між повідомленнями. Більше — у <a href="#trouble-sound">«Глядачі не чують»</a>.</div>
+  </div>
+</article>
+
+<!-- ============================================================ events -->
+<article id="events">
+  <h2>Події</h2>
+  <p>Усе, що відбувається на фоловера, підписку, повторну й подаровану підписку, біти, Power-up, рейд і хайп-потяг. Ліворуч —
+    <b>Загальні</b> й події зі значками того, що кожна робить; посередині — вибрана; праворуч — останні сповіщення.</p>
+  <figure><img src="events.png" alt="Сторінка Події" loading="lazy"><figcaption>Події зі значками того, що вони роблять</figcaption></figure>
+  <div class="topic">
+  <h3 id="events-general">Загальні й пресети</h3>
+  <ul>
+    <li><b>Загальні</b> — перемикач усіх сповіщень, пресети, час на екрані, гучність, найменші біти й рейд для сповіщення.
+      <span class="ui">Посилання й вигляд оверлею</span> відкриває оверлей сповіщень на сторінці Оверлеї.</li>
+    <li><b>Пресети</b> — збережені копії налаштувань сповіщень, вигляду оверлею й кожної події, наприклад для кожної гри.
+      Вкажіть у пресеті категорії стріму — і він увімкнеться сам, коли категорія зміниться. Зміни зберігаються в поточний пресет.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="events-alert">Сповіщення на стрімі й більші сповіщення</h3>
+  <ul>
+    <li>Для кожної події: перемикач, текст зі змінними (<code>{user}</code>…), звук і картинка або відео (грає зі своїм звуком, а
+      сповіщення лишається до кінця — до хвилини). ▶ біля звуку грає лише у вас; ▶ у заголовку картки показує тестове сповіщення
+      на стрімі. Динамік перед звуком — власна гучність сповіщення як частка загальної (50 % при загальних 80 % = 40 %).</li>
+    <li><span class="ui">Більші сповіщення</span> (біти, подаровані й повторні підписки, рейди, Power-up, хайп-потяг): від
+      певного числа (від 100 бітів, від 12 місяців, від 50 глядачів…) — свій текст, звук і картинка чи відео. Показується те, чиє
+      число досягнуто найбільше; чого воно не задає, береться зі сповіщення вище. ▶ на рядку — тест на цьому числі.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="events-more">Читати вголос, рейд, скрипт</h3>
+  <ul>
+    <li><span class="ui">Читати вголос</span> — TTS промовляє подію своїм текстом, раніше за повідомлення чату в черзі.</li>
+    <li><span class="ui">Привітати рейд</span> (у Рейді) — привітання в чаті (<code>{user}</code>, <code>{login}</code>,
+      <code>{viewers}</code>, <code>{game}</code>), шаутаут рейдеру і, за бажання, сцена (і назад) чи джерело (показати й сховати)
+      в OBS — від певної кількості глядачів і після паузи. <span class="ui">Спробувати зараз</span> перевіряє з вашим каналом як
+      рейдером. Twitch дає шаутаути лише в ефірі, один на 2 хвилини.</li>
+    <li><b>Скрипт</b> — ваш <a href="#scripts">скрипт</a> на подію, навіть коли сповіщення не показується. Спершу вимкнено, доки не виберете скрипт.</li>
+    <li><span class="ui">Останні сповіщення</span> — що показувалося; кнопка біля кожного показує знову, ✕ очищує екран.</li>
+  </ul>
+  </div>
+</article>
+
+<!-- ============================================================ redeems -->
+<article id="redeems">
+  <h2>Нагороди та ефекти</h2>
+  <p>Кожне правило пов’язує нагороду за бали каналу зі списком дій, що виконуються по черзі.</p>
+  <figure><img src="redeems.png" alt="Сторінка Нагороди" loading="lazy"><figcaption>Ліворуч правила, посередині вибране, праворуч дії, медіа й історія</figcaption></figure>
+  <div class="topic">
+  <h3 id="redeems-rules">Правила</h3>
+  <ul>
+    <li><b>Ліворуч</b> — ваші правила. При першому запуску є сім прикладів: замовлення пісні, пріоритетне замовлення, пропуск
+      пісні, TTS-повідомлення й три ефекти. <b>+</b> додає порожнє правило чи копію прикладу. Порядок — перетягуванням за крапки.</li>
+    <li><b>Посередині</b> — вибране правило. Спершу дії; розділи <span class="ui">Нагорода</span> (Twitch, ціна,
+      <span class="ui">Створити на Twitch</span>) і <span class="ui">Умови</span> (паузи, ліміти на трансляцію, обов’язковий текст,
+      повернення балів) згорнуті в рядок-підсумок — «500 балів · Замовлення пісні · є на Twitch».
+      <span class="ui">Перевірити нагороду</span> запускає її без витрати балів.</li>
+    <li><b>Праворуч</b> — дії: звуки, картинки, GIF, відео, повноекранні ефекти, TTS, повідомлення в чат і Discord, вебхуки,
+      скрипти, кроки в OBS і плеєрі. <span class="ui">Медіа</span> — бібліотека файлів, <span class="ui">Історія</span> — хто що обрав.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="redeems-editor">Редактор дії</h3>
+  <ul>
+    <li>Числа — повзунки з полем для точного значення й одиницями (%, с, °); напрямок — маленький циферблат; кольори — зразки чи
+      палітра; сцени й джерела OBS — зі списку. Видно лише те, що має значення.</li>
+    <li>Картинка чи звук — мініатюрою чи кнопкою прослуховування; <span class="ui">Бібліотека…</span> пропонує лише потрібний тип.
+      Клік по змінній вставляє її там, де курсор.</li>
+    <li><b>Розташування мишкою:</b> з позицією <span class="ui">Власне</span> маленький екран 16:9 показує, де й якого розміру буде
+      картинка чи відео. Тягніть її, а кут — щоб змінити розмір; прилипає до середніх ліній.</li>
+    <li>Дії тягнуться за крапки; ▶ пробує саме цю дію, як вона є в редакторі, навіть незбережену (без пауз та історії);
+      <span class="ui">Дублювати</span> копіює нижче. Те саме — у меню правого кліку.</li>
+    <li>У текстах — змінні: <code>{user}</code> — хто обрав, <code>{message}</code> — що написав, <code>{reward}</code>, <code>{amount}</code>.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="redeems-media">Медіатека</h3>
+  <p>Спершу ваші файли, під окремим заголовком — вбудовані. Звуки й відео — списком з ▶ і тривалістю, картинки й GIF — плитками.
+    Перетягніть файли на неї або <b>Імпорт</b>; правий клік — перейменувати, видалити, скопіювати посилання. Під час вибору файлу
+    для дії позначено той, що використовується, і для якої він дії.</p>
+  </div>
+  <div class="topic">
+  <h3 id="redeems-twitch">Нагороди на Twitch і перенесення</h3>
+  <p><span class="ui">Нагороди на Twitch</span> (під списком) показує всі нагороди каналу, як їх бачить Twitch: для кожної —
+    правило (чи нове з її назвою, ціною й кольором), увімкнути, вимкнути, видалити. Нагороди з панелі Twitch чи інших застосунків
+    теж можна пов’язати з правилом, але вмикати, видаляти й повертати бали за них Гомін не може.</p>
+  <ol class="steps">
+    <li><span class="ui">Перенести в Гомін</span> робить вимкнену копію з назвою «… (Homin)» (назви на Twitch унікальні, а чужу
+      нагороду не перейменувати).</li>
+    <li>Видаліть стару в панелі Twitch (кнопка «Видалити на Twitch» відкриває її).</li>
+    <li>Під час наступного завантаження копія бере стару назву, вмикається, якщо стара була ввімкнена, і її правило відповідає.</li>
+  </ol>
+  <p>Іконку застосунки змінювати не можуть: <span class="ui">Іконка на Twitch…</span> робить з картинки PNG потрібних розмірів
+    (112, 56 і 28 px, у теці <code>reward-icons</code>), відкриває теку й сторінку нагород у панелі Twitch — завантажте там.</p>
+  </div>
+  <div class="topic">
+  <h3 id="redeems-offline">Нагороди, поки Гомін був закритий</h3>
+  <p>Після підключення Гомін дивиться в черзі Twitch нагороди, які він створив: молодші за 10 хвилин виконуються, старші — тихо
+    повертають бали (без повідомлення в чаті). Історія показує їх; <span class="ui">Пропущені офлайн</span> на вкладці Історія це змінює:
+    повернути всі або лишити в черзі Twitch для вас.</p>
+  </div>
+</article>
+
+<!-- ============================================================ scripts -->
+<article id="scripts">
+  <h2>Скрипти</h2>
+  <p>Скрипт — ваша програма (Python, shell або PowerShell), яку Гомін запускає, коли щось стається. Скрипти лежать у теці
+    <code>scripts</code> у теці даних (<span class="ui">Відкрити теку</span> в дії Скрипт).</p>
+  <div class="topic">
+  <h3 id="scripts-where">Де їх запускати</h3>
+  <div class="cards">
+    <div><b>Нагорода</b>дія «Скрипт»: показує скрипти з теки й змінні, які скрипт отримає</div>
+    <div><b>Команда чату</b>«Запустити скрипт» у команді: <code>!roll</code> → <code>{user} викинув {roll}</code></div>
+    <div><b>Подія каналу</b>картка «Скрипт» у кожній події: фоловер, підписка, біти, рейд…</div>
+    <div><b>Перевірка</b><span class="ui">Запустити</span> в редакторі — з глядачем і текстом, які вкажете</div>
+  </div>
+  </div>
+  <div class="topic">
+  <h3 id="scripts-editor">Редактор і шаблони</h3>
+  <ul>
+    <li><span class="ui">Новий скрипт…</span> — порожній Python, shell чи PowerShell, що вже читає нагороду, або приклад: останній
+      глядач для текстового джерела OBS, журнал нагород (відкривається як таблиця), кидок кубика, лічильник для кожного глядача,
+      перевірка повідомлення із забороненими словами, сповіщення на робочому столі (Linux).</li>
+    <li><span class="ui">Редагувати</span> — вбудований редактор з кольоровим кодом, номерами рядків і змінними, що вставляються кліком.
+      <span class="ui">Запустити</span> показує, що скрипт надрукував, помилки й код виходу — точно як під час нагороди.
+      <span class="ui">Відкрити у своєму редакторі</span> — для вашого улюбленого.</li>
+    <li>На Linux файл <code>.py</code> чи <code>.sh</code> запускається й без біта виконання; на Windows — <code>.ps1</code>, <code>.bat</code>,
+      <code>.cmd</code> і <code>.py</code> (потрібен встановлений Python).</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="scripts-vars">Що отримує скрипт</h3>
+  <div class="table"><table>
+    <tr><th>Змінна середовища</th><th>Що в ній</th></tr>
+    <tr><td><code>TC_USER</code></td><td class="wrap">хто обрав нагороду, написав команду чи зробив подію</td></tr>
+    <tr><td><code>TC_MESSAGE</code></td><td class="wrap">що глядач написав (у команді — після назви команди)</td></tr>
+    <tr><td><code>TC_REWARD</code>, <code>TC_AMOUNT</code></td><td class="wrap">нагорода й кількість (біти, глядачі рейду…)</td></tr>
+    <tr><td><code>TC_ARGS</code>, <code>TC_TARGET</code></td><td class="wrap">для команд: усе після команди і її перше слово</td></tr>
+    <tr><td><code>TC_EVENT</code></td><td class="wrap">для подій: follow, resub…; ще <code>TC_MONTHS</code>, <code>TC_TIER</code>, <code>TC_VIEWERS</code>, <code>TC_POWERUP</code>, <code>TC_LEVEL</code></td></tr>
+    <tr><td><code>TC_TEST</code></td><td class="wrap">1 для тестової події</td></tr>
+    <tr><td><code>TC_VARIABLES</code></td><td class="wrap">усе разом як JSON</td></tr>
+  </table></div>
+  <div class="note warn"><b>Текст глядача — ненадійний</b>
+    Вживайте <code>TC_MESSAGE</code> лише як текст (<code>"$TC_MESSAGE"</code> у shell), ніколи як команду.</div>
+  </div>
+  <div class="topic">
+  <h3 id="scripts-output">Скрипт може відповісти</h3>
+  <ul>
+    <li>Що скрипт надрукував, наступні дії бачать як <code>{script_output}</code>: повідомлення в чат <code>{user}: {script_output}</code> публікує його.</li>
+    <li>Надрукований JSON-об’єкт (увесь вивід або останній рядок) робить ключі змінними: <code>{"roll": 4, "sides": 6}</code> →
+      <code>{user} викинув {roll} на d{sides}</code>. Наступний скрипт отримає їх як <code>TC_ROLL</code>.</li>
+    <li><code>{"refuse": "причина"}</code> — свідома відмова: наступні дії не виконуються, глядач отримує повідомлення про відмову з
+      <code>{reason}</code>, а бали повертаються, якщо нагорода так налаштована.</li>
+    <li>Скрипт, що завершився з кодом помилки, зриває нагороду; Історія показує останній рядок помилки (у чат не пишеться).
+      Скрипт команди, що зламався чи працював довше 10 секунд, лишається без відповіді.</li>
+  </ul>
+  </div>
+</article>
+
+<!-- ============================================================ chatbot -->
+<article id="chatbot">
+  <h2>Чат-бот</h2>
+  <p>Відповідає в чаті від вашого облікового запису. Нічого не публікується, доки не ввімкнете: приклади команд спершу вимкнені.
+    Повідомлення, які пише сам Гомін, TTS не читає, а бот на них не відповідає.</p>
+  <figure><img src="chatbot.png" alt="Сторінка Чат-бот" loading="lazy"><figcaption>Команди, таймери й рекламні паузи</figcaption></figure>
+  <div class="topic">
+  <h3 id="chatbot-commands">Команди</h3>
+  <p><code>!назва</code> і відповідь. Можна задати інші назви, хто може (усі, підписники, VIP, модератори, лише ви) і паузу — для
+    всіх і для кожного глядача. Команда на паузі мовчить; модератори не чекають. Команда може ще й:</p>
+  <ul>
+    <li>дати <b>шаутаут</b> Twitch (<code>!so @канал</code>; у тексті — <code>{login}</code> і <code>{game}</code> того каналу);</li>
+    <li>запустити <b>дії нагороди</b> без витрати балів (<code>!hydrate</code>); <code>{message}</code> — що написано після команди;</li>
+    <li>запустити ваш <a href="#scripts">скрипт</a> (<code>!roll</code>);</li>
+    <li>рахувати <b>лічильник</b> чи лише сказати його (<code>!death</code> → <code>{counter_name}: {counter}</code>);</li>
+    <li>керувати <b>музикою</b> (<code>!sr</code>, <code>!skip</code>);</li>
+    <li>для модераторів — <b>змінити назву</b> (<code>!title …</code>) і <b>категорію</b> (<code>!game Minecraft</code> — найближча
+      категорія Twitch); <b>тайм-аут</b> того, хто написав (<code>!vanish</code> на 1 секунду прибирає його повідомлення) або кого
+      назвав (<code>!to @глядач</code>).</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="chatbot-vars">Змінні</h3>
+  <div class="table"><table>
+    <tr><th>Змінна</th><th>Що підставляє</th></tr>
+    <tr><td><code>{user}</code></td><td class="wrap">хто написав команду</td></tr>
+    <tr><td><code>{args}</code>, <code>{target}</code></td><td class="wrap">усе після команди; його перше слово (або сам глядач)</td></tr>
+    <tr><td><code>{arg1}</code>…<code>{arg9}</code>, <code>{args2}</code>…<code>{args9}</code></td><td class="wrap">одне слово; від цього слова до кінця</td></tr>
+    <tr><td><code>{count}</code></td><td class="wrap">скільки разів команду вжито</td></tr>
+    <tr><td><code>{title}</code>, <code>{category}</code>, <code>{uptime}</code>, <code>{channel}</code></td><td class="wrap">про стрім</td></tr>
+    <tr><td><code>{song}</code>, <code>{artist}</code></td><td class="wrap">що грає</td></tr>
+    <tr><td><code>{viewers}</code>, <code>{followers}</code>, <code>{subs}</code></td><td class="wrap">числа каналу</td></tr>
+    <tr><td><code>{time}</code>, <code>{random}</code>, <code>{random_chatter}</code></td><td class="wrap">час; число 1–100; хтось, хто писав за останні десять хвилин</td></tr>
+    <tr><td><code>{commands}</code></td><td class="wrap">список команд</td></tr>
+    <tr><td><code>{user_id}</code>, <code>{channel_id}</code>, <code>{message_id}</code></td><td class="wrap">ідентифікатори Twitch</td></tr>
+  </table></div>
+  </div>
+  <div class="topic">
+  <h3 id="chatbot-timers">Таймери й реклама</h3>
+  <ul>
+    <li><b>Таймери</b> — повідомлення кожні N хвилин, лише в ефірі й лише після кількох повідомлень у чаті, щоб не засмічувати
+      порожній чат. З <b>лічильником</b> текст отримує <code>{counter}</code>: «Смертей уже: {counter}».</li>
+    <li><b>Рекламні паузи</b> — попередити чат приблизно за хвилину, на початку й після реклами, кожне своїм текстом (порожній — пропустити).</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="chatbot-quotes">Цитати й розіграш</h3>
+  <ul>
+    <li><b>Цитати</b>: <code>!quote</code> — випадкова, <code>!quote 12</code> — дванадцята, <code>!quote бос</code> — зі словом;
+      модератори додають <code>!quote add …</code> (з категорією й датою) і видаляють <code>!quote del 12</code>. Кнопка
+      <span class="ui">Цитати</span> показує список. Номери не зсуваються.</li>
+    <li><span class="ui">Розіграш</span> (кнопка під командами чи смуга над чатом): слово для участі (<code>!join</code>), кожен, хто
+      його написав, бере участь один раз; підписники можуть мати більше шансів. <span class="ui">Визначити переможця</span> закриває
+      запис і вибирає; видно його рядки після розіграшу — чи він ще тут. <span class="ui">Ще раз</span> — інший. Писати про це в чат —
+      лише якщо ввімкнете. Розіграш не переживає перезапуск.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="chatbot-new">Новачки й імена для TTS</h3>
+  <ul>
+    <li>Хто пише у вашому чаті вперше, позначається в Активності й рахується в підсумку. <span class="ui">Вітати тих, хто пише вперше</span>
+      (спершу вимкнено) ще й вітає в чаті вашим текстом, не частіше ніж раз на 30 секунд і не одразу після рейду. Хто новий —
+      каже сам Twitch, тож той, хто писав кілька місяців тому, за новачка не вважається.</li>
+    <li><code>!ttsname</code> (спершу вимкнено) — глядач задає, як TTS читає його ім’я (<code>!ttsname Олекса</code>); модератор — будь-чиє
+      (<code>!ttsname @глядач Олекса</code>). <code>-</code> повертає логін. Ім’я з посиланням чи ігнорованим словом відхиляється, до 40 символів.</li>
+    <li>Привітання рейдерів — на сторінці <a href="#events-more">Події › Рейд</a>.</li>
+  </ul>
+  </div>
+</article>
+
+<!-- ============================================================ overlays -->
+<article id="overlays">
+  <h2>Оверлеї в OBS</h2>
+  <p>Оверлеї — вебсторінки, які OBS показує як джерела <b>Браузер</b>. На сторінці <span class="ui">Оверлеї</span> вони всі разом:
+    ліворуч список і чи є кожен в OBS потрібного розміру, праворуч — адреса з кнопкою <b>+</b> (додати в поточну сцену потрібного
+    розміру), перегляд і налаштування.</p>
+  <figure><img src="overlays.png" alt="Сторінка Оверлеї" loading="lazy"><figcaption>Вибрано оверлей сповіщень</figcaption></figure>
+  <div class="topic">
+  <h3 id="overlays-list">Які є оверлеї</h3>
+  <div class="table"><table>
+    <tr><th>Адреса</th><th>Що показує</th></tr>
+    <tr><td><code>alerts</code></td><td class="wrap">фоловери, підписки, біти, рейди — по одній картці (вигляд тут, тексти й звуки — на сторінці Події)</td></tr>
+    <tr><td><code>chat</code></td><td class="wrap">останні повідомлення чату з емоціями й значками</td></tr>
+    <tr><td><code>redeems</code></td><td class="wrap">картинки, GIF, відео й ефекти з нагород</td></tr>
+    <tr><td><code>player</code>, <code>queue</code></td><td class="wrap">обкладинка, назва, хто замовив, прогрес; наступні пісні</td></tr>
+    <tr><td><code>countdown</code></td><td class="wrap">«Скоро почнемо» / «Скоро повернусь» / «Скоро завершуємо» з часом</td></tr>
+    <tr><td><code>hype</code></td><td class="wrap">хайп-потяг і цілі автора смугами</td></tr>
+    <tr><td><code>counters</code></td><td class="wrap">лічильники, по рядку на кожен, у кутку</td></tr>
+    <tr><td><code>music</code></td><td class="wrap">нічого не видно: пісні плеєра для звуку стріму</td></tr>
+  </table></div>
+  <p>Сповіщення, чат, нагороди, відлік, хайп-потяг і лічильники вкривають увесь кадр і розміщуються самі, тож їхнє джерело —
+    розміру полотна. Плеєр і черга — картки зі своїм розміром: <b>+</b> ставить їх у лівий верхній кут, далі пересувайте в OBS.
+    Кнопка з ключем біля адреси підганяє розмір джерела, не рухаючи його.</p>
+  </div>
+  <div class="topic">
+  <h3 id="overlays-settings">Налаштування оверлеїв</h3>
+  <ul>
+    <li><b>Перегляд</b> — оверлей, як його малює OBS, приблизно раз на секунду, на шахівниці там, де прозоро;
+      <span class="ui">Тестове сповіщення</span> і <span class="ui">Тестовий рядок</span> щось на нього ставлять. Для схованого — «Відкрити в браузері».</li>
+    <li><b>Сповіщення</b> — позиція, анімація, тло, розмір, рамка, шрифт (будь-який, встановлений на ПК з OBS), колір і обведення.
+      Зберігається в поточному пресеті сповіщень.</li>
+    <li><b>Чат</b> — кут, ширина, розмір тексту, скільки рядків, чи зникають, тло й значки; що не показувати: <code>!команди</code>, що пише
+      сам Гомін, боти за іменем (Nightbot, StreamElements та інші вже в списку). Видалені повідомлення зникають і звідси.</li>
+    <li><b>Нагороди</b> — межі безпеки: скільки відео, ефектів і частинок одночасно, найбільший файл, найдовше відео.</li>
+    <li><b>Зараз грає</b> й <b>Черга</b> — стиль (картка, лише текст, компактний), розмір, колір акценту, тло й прозорість; Гомін сам
+      змінює розмір джерел в OBS. <span class="ui">Показувати відео пісні</span> (спершу вимкнено) ставить відео YouTube угорі картки —
+      без звуку, синхронно з піснею.</li>
+    <li><b>Відлік</b>, <b>Хайп-потяг і цілі</b>, <b>Лічильники</b> — де стоять, розмір, текст; беруть шрифт і кольори сповіщень.</li>
+    <li><b>Музика</b> — див. <a href="#player-browser">Музика через браузерне джерело</a>.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="overlays-style">Стиль і демо</h3>
+  <ul>
+    <li><span class="ui">Стиль</span> (під списком) задає кольори всіх оверлеїв разом: <span class="ui">Темні картки</span> (як спершу),
+      <span class="ui">Світлі картки</span>, <span class="ui">Лише текст</span> (біле з темним обведенням) і <span class="ui">Неон</span>.
+      «Скасувати» повертає попередні. Шрифти, розміри й позиції лишаються; кожен оверлей потім можна змінити окремо.</li>
+    <li><span class="ui">Демо</span> заповнює всі оверлеї зразками одночасно (сповіщення кожного виду без звуку, чат, нагорода, пісня з
+      чергою, відлік) — і в OBS теж, показуючи сховані й додаючи ті, що є лише в інших сценах. Коли демо закінчується, усе
+      повертається як було — навіть після збою, під час наступного підключення до OBS. Поки воно триває, справжні сповіщення й
+      нагороди чекають. Вимикається саме, коли починається стрім.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="overlays-manual">Додати вручну й параметри адреси</h3>
+  <p>В OBS додайте джерело <b>Браузер</b>, вставте адресу (наприклад <code>http://127.0.0.1:9863/overlay/alerts</code>) і задайте
+    ширину й висоту полотна (для плеєра й черги — розмір зі сторінки Оверлеї). Параметри в кінці адреси діють лише для цього джерела:</p>
+  <div class="table"><table>
+    <tr><th>Параметр</th><th>Що робить</th></tr>
+    <tr><td><code>?theme=minimal</code>, <code>?theme=compact</code></td><td class="wrap">стиль плеєра й черги</td></tr>
+    <tr><td><code>&amp;queue=0</code></td><td class="wrap">ховає «далі» в плеєрі</td></tr>
+    <tr><td><code>?position=top|center|bottom</code></td><td class="wrap">де сповіщення</td></tr>
+    <tr><td><code>?position=bottom_left</code>…</td><td class="wrap">кут чату чи лічильників (<code>bottom_right</code>, <code>top_left</code>, <code>top_right</code>)</td></tr>
+    <tr><td><code>?position=top|bottom</code>, <code>?size=150</code></td><td class="wrap">де й якого розміру відлік чи смуга хайп-потяга</td></tr>
+    <tr><td><code>?debug=1</code></td><td class="wrap">показує, чи оверлей підключено до Гоміна</td></tr>
+  </table></div>
+  <p>OBS на іншому комп’ютері? Увімкніть <span class="ui">Дозволити доступ з локальної мережі</span> (картка сервера оверлеїв) і
+    копіюйте адресу з ключем <code>?key=…</code>, як її показує сторінка Оверлеї. На цьому ПК звичайні адреси
+    <code>127.0.0.1</code> працюють і без ключа.</p>
+  </div>
+</article>
+
+<!-- ============================================================ discord -->
+<article id="discord">
+  <h2>Discord</h2>
+  <p>Ліворуч — що публікує Гомін, куди (чи що вимкнено) і голосове підключення; посередині — вибране; праворуч — останні публікації.
+    Спершу <a href="#connect-discord">підключіть вебхуки</a>.</p>
+  <figure><img src="discord.png" alt="Сторінка Discord" loading="lazy"><figcaption>Оголошення про ефір з переглядом того, як воно виглядатиме</figcaption></figure>
+  <div class="topic">
+  <h3 id="discord-golive">Оголошення про ефір</h3>
+  <p>Одне повідомлення на початку стріму: канал, текст, згадка (нікого, усіх, here або роль) і картка з назвою, категорією й
+    картинкою. Воно оновлюється, коли змінюється назва чи категорія, і позначається завершеним з тривалістю після стріму.
+    Стрім, що обірвався й повернувся за десять хвилин, лишає те саме повідомлення — нікого не пінгують двічі. Якщо Discord
+    недоступний, Гомін пробує ще через 30 с, 1 і 2 хвилини. <span class="ui">Надіслати тестове оголошення</span> публікує без згадок.</p>
+  </div>
+  <div class="topic">
+  <h3 id="discord-more">Кліпи, підсумок, нагороди, голос</h3>
+  <ul>
+    <li><b>Кліпи</b> — виберіть канал: кліп іде туди, коли його зроблено (чи позначено «Готово») у вікні <a href="#clips">Кліпи</a>.
+      Текст може назвати кліп через <code>{clip}</code>.</li>
+    <li><b>Підсумок трансляції</b> — трансляція в цифрах, за кілька хвилин після кінця ефіру (на випадок, якщо стрім повернеться).</li>
+    <li><b>Нагороди</b> — дія «Повідомлення в Discord» (канал, текст зі змінними, картинка). Текст глядача ніколи нікого не пінгує.</li>
+    <li><b>Голос</b> — чи підключено застосунок Discord на цьому ПК, голосовий канал і <span class="ui">Вийти</span>.</li>
+  </ul>
+  </div>
+</article>
+
+<!-- ============================================================ remote + deck -->
+<article id="remote">
+  <h2>Пульт на телефоні та Stream Deck</h2>
+  <div class="topic">
+  <h3 id="remote-phone">Пульт на телефоні</h3>
+  <p>Налаштування › Підключення › <span class="ui">Пульт на телефоні</span> (спершу вимкнено): увімкніть, натисніть
+    <span class="ui">Показати код</span> і відскануйте його камерою телефона в тій самій мережі. Відкриються кнопки стріму зі станом
+    наживо: старт і зупинка стріму (два дотики), сцени, камера, мікрофон і Discord з «У трансляції», пісня й гучність музики (зі
+    зведенням — і що чуєте ви), пауза TTS чи пропуск повідомлення, лічильники − / +, маркер, кліп, очищення сповіщень, а ще чи ви
+    в ефірі, час і глядачі.</p>
+  <ul>
+    <li>Адреса має власний ключ (не той, що в оверлеїв); <span class="ui">Новий ключ</span> відключає загублений телефон.</li>
+    <li>Працює лише в тій самій мережі, через звичайний HTTP — користуйтеся в мережі, якій довіряєте.</li>
+  </ul>
+  <div class="note"><b>Телефон не відкриває адресу</b>
+    Брандмауер цього ПК може блокувати порт (типово 9863). З firewalld (Arch, Fedora…) картка сама це перевіряє й показує дві
+    команди, що відкривають порт; сам Гомін брандмауер не змінює. Windows спитає дозвіл під час першого підключення.</div>
+  </div>
+  <div class="topic">
+  <h3 id="remote-opendeck">Stream Deck через OpenDeck</h3>
+  <figure><img src="deck-keys.svg" alt="Кнопки Гоміна в OpenDeck" loading="lazy" style="max-width:520px;aspect-ratio:auto;margin:0 auto;cursor:default;box-shadow:none;border:0"></figure>
+  <ol class="steps">
+    <li>Встановіть <b>OpenDeck</b> і запустіть його один раз.</li>
+    <li>Налаштування › Підключення › <span class="ui">Stream Deck</span>: увімкніть API і натисніть <span class="ui">Встановити в OpenDeck</span>,
+      потім перезапустіть OpenDeck.</li>
+    <li>В OpenDeck кнопки й регулятори — у розділі <b>Homin</b>. Вставте токен з картки в будь-яку — решта візьмуть той самий.</li>
+  </ol>
+  <ul>
+    <li><b>Кнопки:</b> стан ефіру з часом і глядачами, маркер, кліп, очистити сповіщення, реклама (коли наступна; відкласти чи
+      запустити), TTS, музика, лічильник (+1 чи −1, з числом), режим захисту, відліки сцен, перемикач «У трансляції» (червоний,
+      коли вимкнено), Discord (мікрофон, навушники, рація, вийти) і режим чату.</li>
+    <li><b>Регулятори:</b> музика з обкладинкою (поворот — наступна чи попередня, натиск — пауза), гучність музики (натиск — без звуку;
+      зі зведенням — «Чуєте ви»), гучність TTS (натиск — пропустити), позиція пісні, час відліку сцени.</li>
+    <li>Кнопки мають колір акценту й мову застосунку. Потрібен Node.js (як і всім Node-плагінам OpenDeck).</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="remote-api">API для власних програм</h3>
+  <p>API працює лише для програм на цьому ПК і лише з токеном картки (окремим від ключа телефона); вебсторінки не пускає.
+    Годиться для Bitfocus Companion чи власного скрипту. <span class="ui">Новий токен</span> відключає старий.</p>
+  <pre><code>curl -H "Authorization: Bearer ТОКЕН" -d '{"id":"marker"}' http://127.0.0.1:9863/api/deck/press
+curl -H "Authorization: Bearer ТОКЕН" http://127.0.0.1:9863/api/deck/state
+# ws://127.0.0.1:9863/ws/deck надсилає стан щоразу, як він змінюється</code></pre>
+  </div>
+</article>
+
+<!-- ============================================================ bring -->
+<article id="bring">
+  <h2>Перенесення з інших застосунків</h2>
+  <p>Налаштування › Дані › <span class="ui">Перенесення з інших застосунків</span> (кнопка <span class="ui">Перенести…</span> для
+    кожного розділу; і крок «Ще» в майстрі). Усе приходить вимкненим, щоб два боти не відповідали разом; коли інший бот уже пішов
+    з вашого чату, «Увімкнути» вмикає те, що було ввімкнене там.</p>
+  <div class="topic">
+  <h3 id="bring-chat">Чат-бот</h3>
+  <div class="table"><table>
+    <tr><th>Звідки</th><th>Як</th></tr>
+    <tr><td>StreamElements, Nightbot, Streamlabs, Fossabot, Moobot</td><td class="wrap">назва вашого каналу (їхні списки команд публічні). З JWT-токеном StreamElements — ще таймери й цитати (токен використовується раз і не зберігається).</td></tr>
+    <tr><td>Streamer.bot</td><td class="wrap">експорт (вставлений чи файлом)</td></tr>
+    <tr><td>Firebot</td><td class="wrap">його тека на цьому ПК: команди, таймери, лічильники з числами, цитати</td></tr>
+  </table></div>
+  <p>Змінні перекладаються (<code>$(user)</code>, <code>${user}</code> → <code>{user}</code>, <code>$(touser)</code> → <code>{target}</code>,
+    <code>$(query)</code> → <code>{args}</code>, <code>$(game)</code> → <code>{category}</code>…), <code>/timeout</code> стає тайм-аутом,
+    <code>${count deaths}</code> — командою лічильника. Команда з тим, чого Гомін не вміє (<code>$(urlfetch …)</code>), лишається вимкненою,
+    а кожен рядок каже, що не перенеслося.</p>
+  </div>
+  <div class="topic">
+  <h3 id="bring-alerts">Сповіщення й нагороди</h3>
+  <ul>
+    <li><b>Сповіщення</b> зі Streamlabs (з токеном API, раз): Alert Box — тексти, картинки чи відео, звуки й гучність, мінімум бітів і
+      рейду, варіації «щонайменше N» як більші сповіщення — новим пресетом «Streamlabs». Розкладки, анімації, шрифти й TTS сповіщень не переносяться.</li>
+    <li><b>Нагороди</b>: звуки <b>SoundAlerts</b> за назвою каналу (з паузами й лімітами), дії нагород <b>Streamer.bot</b> (Play Sound,
+      чат, Delay, сцени й джерела OBS) і <b>Firebot</b> (звук, картинка, відео, TTS, чат, Delay).</li>
+    <li>Звуки, картинки й відео за посиланнями можна зберегти в медіатеку (спершу ввімкнено), щоб грали без інтернету.</li>
+    <li>Бали за нагороди іншого застосунку Гомін повертати не може — <a href="#redeems-twitch">перенесіть їх у Гомін</a>.</li>
+  </ul>
+  </div>
+</article>
+
+<!-- ============================================================ settings -->
+<article id="settings">
+  <h2>Налаштування</h2>
+  <div class="topic">
+  <h3 id="settings-tabs">Вкладки</h3>
+  <div class="cards">
+    <div><b>Підключення</b>сервіси, сервер оверлеїв, пульт, Stream Deck і два фонові процеси (плеєр і TTS) з кнопкою перезапуску</div>
+    <div><b>Загальні</b>мова, тема (Темна, Чорна для OLED, Світла, Як у системі), розмір, акцент, запуск із системою, трей, сповіщення, перевірка перед ефіром, оновлення, «Про програму»</div>
+    <div><b>Дані</b>перенесення з інших застосунків, експорт та імпорт, тека даних і де зберігаються секрети, «Налаштувати знову»</div>
+    <div><b>Гарячі клавіші й Журнал</b>клавіші, що відбувалося, <span class="ui">Звіт про проблему…</span></div>
+  </div>
+  </div>
+  <div class="topic">
+  <h3 id="settings-updates">Оновлення</h3>
+  <p>Під час кожного запуску й раз на день встановлений Гомін питає сайт, чи вийшла новіша версія
+    (<span class="ui">Також кандидати в реліз</span> увімкнено, поки у вас кандидат). Уперше знайшовши, відкриває вікно
+    <span class="ui">Що нового</span> з примітками до кожної версії (українською в українському інтерфейсі) і кнопкою
+    завантаження того самого виду файлу, який ви встановили. Під час стріму — ніколи: чекає кінця. Нічого не завантажує й не
+    встановлює сам; файл, який він читає, підписаний, тож змінений сайт нікуди його не перенаправить. Клік по версії під меню —
+    «Про програму» з <span class="ui">Перевіряти оновлення</span>.</p>
+  </div>
+  <div class="topic">
+  <h3 id="settings-export">Експорт та імпорт</h3>
+  <p><span class="ui">Експорт…</span> зберігає налаштування в один zip — резервна копія чи перенесення на інший комп’ютер (файли з
+    Windows і Linux взаємозамінні). Ви вибираєте частини:</p>
+  <div class="table"><table>
+    <tr><th>Частина</th><th>Що в ній</th></tr>
+    <tr><td>Загальні</td><td class="wrap">поведінка, вигляд, гарячі клавіші, параметри чату й перегляду</td></tr>
+    <tr><td>Дані підключень</td><td class="wrap">Client ID Twitch і Spotify, канал, адреси OBS і оверлеїв</td></tr>
+    <tr><td>Сповіщення</td><td class="wrap">тексти, звуки, картинки, вигляд картки, пресети</td></tr>
+    <tr><td>Озвучення</td><td class="wrap">голос, фільтри, оголошення подій, заміни слів і імен</td></tr>
+    <tr><td>Нагороди</td><td class="wrap">нагороди з діями й умовами, межі оверлею</td></tr>
+    <tr><td>Музика</td><td class="wrap">плеєр і правила замовлень, плейлисти, заблоковані пісні й виконавці</td></tr>
+    <tr><td>Медіафайли</td><td class="wrap">картинки, GIF, відео й звуки медіатеки</td></tr>
+  </table></div>
+  <p><span class="ui">Імпорт…</span> показує, що є у файлі, і дає вибрати частини. Вибрані <b>замінюють</b> ваші (медіафайли лише
+    додаються). Перед імпортом Гомін зберігає поточні налаштування в <code>backups/</code> (останні п’ять), тож імпорт можна скасувати.
+    Нагороди лишаються пов’язаними з Twitch на тому самому каналі.</p>
+  <div class="note"><b>Чого немає у файлі</b>
+    Паролів, входів і вебхуків Discord (їх треба ввести знову), тек, що є лише на цьому комп’ютері (теки голосів, StyleTTS2,
+    автозапуск), історій і скриптів.</div>
+  </div>
+</article>
+
+<!-- ============================================================ hotkeys -->
+<article id="hotkeys">
+  <h2>Гарячі клавіші</h2>
+  <div class="topic">
+  <div class="table"><table>
+    <tr><th>Клавіші</th><th>Що роблять</th></tr>
+    <tr><td><kbd>Ctrl+1</kbd> … <kbd>Ctrl+0</kbd></td><td class="wrap">перемкнути сторінку в порядку меню (Налаштування — <kbd>Ctrl+0</kbd>)</td></tr>
+    <tr><td><kbd>Ctrl+Alt+Shift+T</kbd></td><td class="wrap">пауза або продовження TTS</td></tr>
+    <tr><td><kbd>Ctrl+Alt+S</kbd></td><td class="wrap">пропустити повідомлення TTS</td></tr>
+    <tr><td><kbd>Ctrl+Alt+N</kbd></td><td class="wrap">пропустити пісню</td></tr>
+    <tr><td><kbd>Ctrl+Alt+P</kbd></td><td class="wrap">пауза або відтворення музики</td></tr>
+    <tr><td><kbd>Ctrl+Alt+X</kbd></td><td class="wrap">очистити сповіщення</td></tr>
+    <tr><td>(не задано)</td><td class="wrap">старт / зупинка трансляції (зупинка — двічі за 3 секунди)</td></tr>
+    <tr><td>(не задано)</td><td class="wrap">вибраний лічильник +1 / −1</td></tr>
+  </table></div>
+  <p>Змінюються в Налаштування › Гарячі клавіші. Працюють, поки вікно Гоміна у фокусі; з <span class="ui">Працювати, коли застосунок у фоні</span> —
+    у будь-якому вікні, і в грі. На Linux робочий стіл один раз просить їх підтвердити (KDE, GNOME 48+ та інші з порталом
+    GlobalShortcuts) і далі тримає сам: змінюйте в його налаштуваннях (<span class="ui">Змінити в налаштуваннях робочого столу</span>).
+    На Windows клавіша, яку вже зайняла інша програма, лишається їй.</p>
+  </div>
+</article>
+
+<!-- ============================================================ troubleshooting -->
+<article id="trouble">
+  <h2>Якщо щось не працює</h2>
+  <div class="topic">
+  <h3 id="trouble-sound">Глядачі не чують TTS або музику</h3>
+  <p>Гомін грає звук на вашому комп’ютері, а OBS має його захопити. Найпростіше — <span class="ui">Додати в OBS</span> на сторінці
+    TTS (Відтворення › В OBS) і в Плеєр › Відтворення. Вручну:</p>
+  <ul>
+    <li><b>Linux (PipeWire):</b> джерело «Захоплення звуку програми» в OBS: <i>Homin TTS</i> для мовлення й <i>Homin Music</i> для
+      музики. Тримайте ввімкненим «Завжди показувати в OBS» на сторінці TTS.</li>
+    <li><b>Windows:</b> так само «Захоплення звуку програми», вікна <i>Homin Music</i> і <i>Homin TTS</i> (обидва під
+      <code>homin-worker.exe</code>), по джерелу на кожне. Не беріть головне вікно <i>Homin</i> — тоді музика й мовлення будуть разом.</li>
+    <li>Звуки сповіщень і нагород ідуть з браузерних джерел: у властивостях джерела увімкніть <b>Керувати звуком через OBS</b>.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="trouble-quiet">Хочу музику тихіше для себе, але не для глядачів</h3>
+  <p>На Linux — <a href="#player-mix">зведення музики</a>: «Чуєте ви» змінює лише вашу гучність. Деінде —
+    <a href="#player-browser">музика через браузерне джерело</a>.</p>
+  </div>
+  <div class="topic">
+  <h3 id="trouble-refund">Бали не повертаються</h3>
+  <p>Twitch повертає бали лише за нагороди, створені цим застосунком. Створіть нагороду наново кнопкою
+    <span class="ui">Створити на Twitch</span> або заберіть чужу: <span class="ui">Нагороди на Twitch</span> ›
+    <span class="ui">Перенести в Гомін</span>.</p>
+  </div>
+  <div class="topic">
+  <h3 id="trouble-overlay">Оверлей обрізаний, крихітний чи порожній</h3>
+  <p>Розмір джерела-браузера неправильний — натисніть кнопку з ключем біля адреси оверлею. Порожній після запуску OBS раніше за
+    Гомін оновиться сам приблизно за десять секунд після підключення; <code>?debug=1</code> в адресі покаже, чи він підключений.</p>
+  </div>
+  <div class="topic">
+  <h3 id="trouble-youtube">YouTube просить увійти</h3>
+  <p>Іноді YouTube перевіряє, що запит не від бота — і відмовляє всій мережі, а не одній пісні. Плеєр зупиняється на першій такій
+    (замовлення в черзі чекають, нові повертають бали), і Гомін 15 хвилин нічого не питає в YouTube (довше, якщо повториться), щоб не
+    продовжувати блок. Зазвичай минає за кілька годин. Якщо ні — Плеєр › Відтворення › <span class="ui">Мій вхід у YouTube із браузера</span>:
+    виберіть браузер, де ви ввійшли в YouTube. Копії входу Гомін не тримає. YouTube може позначити обліковий запис, яким так
+    користуються, тож запасний безпечніший. Найкраще працює Firefox.</p>
+  </div>
+  <div class="topic">
+  <h3 id="trouble-rescope">Функція пише «увійдіть ще раз»</h3>
+  <p>Їй потрібен новий дозвіл Twitch, якого немає в старому вході: Налаштування › Підключення › Twitch ›
+    <span class="ui">Увійти повторно</span>.</p>
+  </div>
+  <div class="topic">
+  <h3 id="trouble-other">Щось інше</h3>
+  <p>Налаштування › <span class="ui">Журнал</span> показує, що відбувалося. Файл журналу:</p>
+  <div class="table"><table>
+    <tr><th>Система</th><th>Де журнал</th></tr>
+    <tr><td>Linux</td><td class="wrap"><code>~/.local/state/homin/logs/companion.jsonl</code></td></tr>
+    <tr><td>Windows</td><td class="wrap"><code>%LOCALAPPDATA%\homin\logs</code></td></tr>
+  </table></div>
+  <p><span class="ui">Звіт про проблему…</span> (Налаштування › Журнал) зберігає один zip для того, хто допомагає: версія, система,
+    останні збої й кінець журналу. Входи, ключі, адреси вебхуків і donatik та ім’я вашої домашньої теки вирізано; можете зазирнути
+    всередину перед надсиланням. Гомін нікуди його не надсилає. Після збою наступний запуск сам запропонує звіт.</p>
+  <p>Гомін до жовтня 2026 називався Twitch Companion. Перший запуск після оновлення переносить теки з <code>twitch-companion</code> у
+    <code>homin</code>, входи — під нове ім’я, оновлює автозапуск і захоплення звуку в OBS. Фонові гарячі клавіші на KDE треба задати знову.</p>
+  </div>
+</article>
+
+<!-- ============================================================ limits + privacy -->
+<article id="limits">
+  <h2>Обмеження й приватність</h2>
+  <div class="topic">
+  <h3 id="limits-list">Що варто знати</h3>
+  <ul>
+    <li><b>Повернення балів</b> — лише за нагороди, створені Гоміном (правило Twitch).</li>
+    <li><b>Компаньйони й партнери:</b> опитування, прогнози, реклама, бали каналу, хайп-потяг і цілі Twitch дає лише їм.</li>
+    <li><b>Spotify</b> грає у вашому застосунку Spotify (Premium); Гомін не захоплює його звук сам.</li>
+    <li><b>Спільна трансляція</b> не має відкритого API — кнопка відкриває сторінку Twitch.</li>
+    <li><b>Перегляд Twitch</b> — послідовність кадрів (20 за секунду, кілька секунд позаду), потрібен ffmpeg чи mpv; качає ваш стрім,
+      поки грає (близько 1,5 Мбіт/с при 480p). Рекламу Twitch він чекає, а не показує.</li>
+    <li><b>Трясіння екрана</b> рухає лише вміст оверлею нагород: браузерне джерело не може рухати інші джерела OBS.</li>
+    <li><b>Пульт на телефоні</b> — лише в тій самій мережі, звичайний HTTP.</li>
+    <li><b>Windows:</b> інсталятор не підписаний; «Завжди показувати в OBS» для TTS — лише Linux; зведення музики — лише Linux.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="limits-privacy">Ваші дані</h3>
+  <ul>
+    <li>Усе працює на вашому комп’ютері. Входи в Twitch, OBS, Spotify, вебхуки Discord і посилання donatik — у сховищі ключів системи
+      (Secret Service / KWallet на Linux, Диспетчер облікових даних на Windows), а не у файлі, і ніколи не потрапляють в експорт.</li>
+    <li>Текст глядачів нікого не пінгує в Discord і не ламає оверлеї: оверлеї показують його як звичайний текст.</li>
+    <li>Нам Гомін нічого не надсилає; іншим сервісам — лише те, чого потребують увімкнені вами функції. Перевірка оновлень лише читає
+      підписаний файл на цьому сайті.</li>
+  </ul>
+  </div>
+</article>
+
+    <div class="empty" id="empty">Нічого не знайшлося. Спробуйте інше слово — наприклад, «OBS», «бали» чи «скрипт».</div>
+  </main>
+</div>
+
+<footer><div class="wrap"><span>Гомін (Homin) · вікі · <a href="index.html">на головну</a></span><span>Знімки екрана зроблено з тестовими даними</span></div></footer>
+
+<button class="totop" id="totop" type="button" aria-label="Нагору">↑</button>
+<div class="zoom" id="zoom" role="dialog" aria-label="Знімок екрана"><img alt=""></div>
+
+<script>
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const articles = [...document.querySelectorAll("main article")];
+
+// ---------- the contents, from the headings; each heading also gets its own # link
+const toc = $("#toc"), list = document.createElement("ol");
+articles.forEach((art, i) => {
+  const h2 = $("h2", art);
+  h2.insertAdjacentHTML("afterbegin", `<span class="n">${i + 1}</span>`);
+  const li = document.createElement("li");
+  li.dataset.for = art.id;
+  const a = Object.assign(document.createElement("a"), { href: "#" + art.id });
+  a.innerHTML = `<span class="n">${i + 1}</span><span></span>`;
+  a.lastChild.textContent = h2.lastChild.textContent.trim() || h2.textContent;
+  li.append(a);
+  const subs = [...art.querySelectorAll("h3[id]")];
+  if (subs.length) {
+    const ol = document.createElement("ol");
+    for (const h3 of subs) {
+      const sub = document.createElement("li");
+      sub.dataset.for = h3.id;
+      sub.append(Object.assign(document.createElement("a"), { href: "#" + h3.id, textContent: h3.textContent }));
+      ol.append(sub);
+    }
+    li.append(ol);
+  }
+  list.append(li);
+});
+toc.append(list);
+for (const h of document.querySelectorAll("article h2, article h3[id]")) {
+  const id = h.id || h.closest("article").id;
+  h.insertAdjacentHTML("beforeend", ` <a class="anchor" href="#${id}" aria-label="Посилання на розділ">#</a>`);
+}
+
+// ---------- which section is on screen
+const links = new Map([...toc.querySelectorAll("a")].map(a => [a.getAttribute("href").slice(1), a]));
+const marks = [...document.querySelectorAll("main article, article h3[id]")];
+function spy() {
+  const y = scrollY + 120;
+  let art = null, sub = null;
+  for (const el of marks) {
+    if (el.offsetParent === null) continue;          // hidden by the search
+    const top = el.getBoundingClientRect().top + scrollY;
+    if (top > y) break;
+    if (el.tagName === "ARTICLE") { art = el; sub = null; } else sub = el;
+  }
+  toc.querySelectorAll("a.on").forEach(a => a.classList.remove("on"));
+  toc.querySelectorAll("li.open").forEach(li => li.classList.remove("open"));
+  if (!art) return;
+  const a = links.get(art.id);
+  a.classList.add("on");
+  a.parentElement.classList.add("open");
+  if (sub && links.get(sub.id)) links.get(sub.id).classList.add("on");
+  $("#totop").classList.toggle("show", scrollY > 900);
+}
+let ticking = false;
+addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { spy(); ticking = false; }); } }, { passive: true });
+spy();
+
+// ---------- search: shows only the parts that have every word, and marks them
+const q = $("#q"), count = $("#qCount");
+const topics = articles.map(art => ({ art, parts: [...art.querySelectorAll(":scope > .topic")], lead: [...art.children].filter(c => !c.classList.contains("topic") && c.tagName !== "H2") }));
+const plain = el => el.textContent.toLowerCase().replace(/’/g, "'");
+function unmark() {
+  for (const m of document.querySelectorAll("main mark")) m.replaceWith(m.textContent);
+  document.querySelectorAll("main article").forEach(a => a.normalize());
+}
+function mark(root, words) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode: n => n.parentElement.closest("pre, .anchor, h2 .n") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  const re = new RegExp("(" + words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/'/g, "['’]")).join("|") + ")", "gi");
+  for (const n of nodes) {
+    if (!re.test(n.data)) continue;
+    re.lastIndex = 0;
+    const frag = document.createDocumentFragment();
+    let last = 0;
+    n.data.replace(re, (m, _g, at) => {
+      frag.append(n.data.slice(last, at), Object.assign(document.createElement("mark"), { textContent: m }));
+      last = at + m.length;
+    });
+    frag.append(n.data.slice(last));
+    n.replaceWith(frag);
+  }
+}
+let searchTimer;
+function search() {
+  unmark();
+  const words = q.value.toLowerCase().replace(/’/g, "'").split(/\s+/).filter(w => w.length > 1);
+  let shown = 0;
+  for (const { art, parts, lead } of topics) {
+    if (!words.length) { art.classList.remove("hidden"); parts.forEach(p => p.classList.remove("hidden")); continue; }
+    const title = plain($("h2", art));
+    const whole = words.every(w => plain(art).includes(w));
+    let any = false;
+    if (whole && words.every(w => title.includes(w))) {
+      parts.forEach(p => p.classList.remove("hidden")); any = true;
+    } else {
+      for (const p of parts) {
+        const hit = words.every(w => (plain(p) + " " + title).includes(w));
+        p.classList.toggle("hidden", !hit);
+        any ||= hit;
+      }
+      if (!any && whole) { parts.forEach(p => p.classList.remove("hidden")); any = true; }
+    }
+    art.classList.toggle("hidden", !any);
+    if (any) { shown += parts.filter(p => !p.classList.contains("hidden")).length || 1; mark(art, words); }
+  }
+  for (const li of toc.querySelectorAll("li[data-for]")) {
+    const el = document.getElementById(li.dataset.for);
+    li.classList.toggle("hidden", !!words.length && (el.closest(".hidden") !== null || el.classList.contains("hidden")));
+  }
+  count.textContent = words.length ? (shown ? `Знайдено: ${shown}` : "") : "";
+  $("#empty").classList.toggle("show", !!words.length && !shown);
+  spy();
+}
+q.addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { search(); if (q.value) scrollTo({ top: 0 }); }, 150); });
+addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); }
+  if (e.key === "Escape") { if (zoom.classList.contains("show")) zoom.classList.remove("show"); else if (q.value) { q.value = ""; search(); } }
+});
+
+// a link into a part the search hid clears the search first
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const el = document.getElementById(a.getAttribute("href").slice(1));
+  if (el && (el.closest(".hidden") || el.classList.contains("hidden"))) { q.value = ""; search(); }
+  if (aside.classList.contains("open")) toggleMenu(false);
+});
+
+// ---------- the contents as a drawer on narrow screens
+const aside = $("#aside"), menuBtn = $("#menuBtn");
+function toggleMenu(open) { aside.classList.toggle("open", open); menuBtn.setAttribute("aria-expanded", String(open)); }
+menuBtn.onclick = () => toggleMenu(!aside.classList.contains("open"));
+
+// ---------- a screenshot, large
+const zoom = $("#zoom");
+document.querySelectorAll("figure img").forEach(img => {
+  if (img.src.endsWith(".svg")) return;
+  img.addEventListener("click", () => { zoom.querySelector("img").src = img.src; zoom.querySelector("img").alt = img.alt; zoom.classList.add("show"); });
+});
+zoom.onclick = () => zoom.classList.remove("show");
+$("#totop").onclick = () => scrollTo({ top: 0 });
+</script>
+</body>
+</html>
