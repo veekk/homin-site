@@ -495,6 +495,17 @@ sudo modprobe v4l2loopback</code></pre>
   <figure><img src="control.png" alt="Control Center" loading="lazy"><figcaption>Chat, the OBS preview, the Stream Controls and Twitch cards, On Stream and Activity</figcaption></figure>
 
   <div class="topic">
+  <h3 id="control-layout">Arranging the cards</h3>
+  <ul>
+    <li>Drag a card by its title to another place or another of the three columns.</li>
+    <li>Drag the gap between two cards to make one taller (On Stream scrolls when it's shorter than its buttons), and the
+      gap between columns to make one wider. A double-click on a gap gives the size back.</li>
+    <li>The button by the page's title hides or shows each card (the chat, the preview, Stream Controls, Twitch, On Stream,
+      Activity) and has <span class="ui">Reset the layout</span>.</li>
+  </ul>
+  </div>
+
+  <div class="topic">
   <h3 id="control-chat">Chat</h3>
   <ul>
     <li>Emotes, GIFs, links, replies, mentions, highlighted announcements and Twitch's badges as pictures (or as the words HOST, MOD, VIP,
@@ -502,7 +513,17 @@ sudo modprobe v4l2loopback</code></pre>
     <li>Right-click a message: reply, pin, copy, send to TTS, <span class="ui">TTS name…</span>,
       moderate, <span class="ui">Viewer card</span>.</li>
     <li>The broadcast button in the chat's header shows events between the messages, as Twitch's chat does (off at first).</li>
+    <li><b>Aa</b> in the header (a slider), or Ctrl+wheel over the chat, sets the chat's text size (80–200%), badges and
+      emotes with it. The raid browser's chat follows.</li>
   </ul>
+  </div>
+
+  <div class="topic">
+  <h3 id="control-chatters">Who is in the chat</h3>
+  <p>The people button in the chat's header (or Ctrl+K › <span class="ui">Who is in the chat</span>): who is in your chat,
+    the quiet ones too. Whoever wrote lately comes first, with their badges, then everyone by name. Find a name, show or
+    hide chat bots, and click someone for their viewer card. Twitch lists only signed-in viewers with the chat open, a few
+    minutes late; after updating, sign in to Twitch again once.</p>
   </div>
 
   <div class="topic">
@@ -951,7 +972,8 @@ sudo modprobe v4l2loopback</code></pre>
       button opens Now Playing.</li>
     <li><span class="ui">Playlists</span> — your lists; mark one or more as <b>fallback</b>: it plays when there are no requests.</li>
     <li><b>YouTube / Spotify / Local Files</b> — search and add by hand; Spotify also has its <a href="#player-spotify">Home</a>.</li>
-    <li><span class="ui">History</span> — what played: copy the link, save to a playlist, queue it again.</li>
+    <li><span class="ui">History</span> — what played: copy the link, save to a playlist, queue it again.
+      <span class="ui">Clear history</span> empties the list (and Played recently under an empty queue).</li>
     <li><span class="ui">Song requests</span> — the rules for viewers and the chat replies (<a href="#songs">below</a>).</li>
     <li><span class="ui">Player settings</span> — three tabs: <span class="ui">Playback</span> (what the fallback
       playlist does when a request comes, the sound engine, media keys), <span class="ui">Spotify &amp; YouTube</span>

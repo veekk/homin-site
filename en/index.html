@@ -475,20 +475,20 @@
   </div>
 </section>
 
-<!-- ============================================================ new: discord voice -->
-<section id="discord-voice">
+<!-- ============================================================ new: control center -->
+<section id="control-layout">
   <div class="wrap">
     <div class="kicker reveal">New</div>
-    <h2 class="reveal d1">Discord: who's talking — <span class="grad">on stream and over your game</span></h2>
-    <p class="lead2 reveal d2" style="margin-bottom:28px">Viewers see which of your friends in the voice channel is talking right now,
-      and so do you — over your game, without switching to Discord.</p>
+    <h2 class="reveal d1">The Control Center — <span class="grad">the way you like it</span></h2>
+    <p class="lead2 reveal d2" style="margin-bottom:28px">Arrange the cards for your stream and see who is sitting in your chat,
+      the quiet ones too.</p>
     <ul class="bullets">
-      <li class="reveal d1"><i>🎙</i><div><b>An overlay for OBS</b><span>Pictures with names, whoever's talking in a green frame. Everyone in the channel or only who's talking; anyone can be left out.</span></div></li>
-      <li class="reveal d2"><i>🎮</i><div><b>Over your game — just for you</b><span>Shows up when a game is full screen. Clicks go through it, and nothing is put into the game.</span></div></li>
-      <li class="reveal d3"><i>🔗</i><div><b>Channels without webhooks</b><span>Pick in Discord — choose the server and channel in your browser, and Homin connects the rest itself.</span></div></li>
-      <li class="reveal d1"><i>🪪</i><div><b>In your name</b><span>Announcements and clips posted with your Twitch channel's name and picture, or any name you like.</span></div></li>
+      <li class="reveal d1"><i>🧱</i><div><b>Your cards, your way</b><span>Drag a card by its title into any of three columns, and the gaps to resize. Hide what you don't need.</span></div></li>
+      <li class="reveal d2"><i>👥</i><div><b>Who is in the chat</b><span>Everyone in your chat right now: who wrote first, then the rest by name. Hide the bots; a click opens the viewer card.</span></div></li>
+      <li class="reveal d3"><i>🔠</i><div><b>Your own text size</b><span>The Aa button or Ctrl+wheel makes the chat bigger or smaller, badges and emotes with it.</span></div></li>
+      <li class="reveal d1"><i>🧹</i><div><b>A clean player history</b><span>Clear history empties the list of songs played in one click.</span></div></li>
     </ul>
-    <p class="reveal d2" style="margin-top:28px"><a class="btn ghost" href="wiki.html#discord-voice">How it works — in the wiki →</a></p>
+    <p class="reveal d2" style="margin-top:28px"><a class="btn ghost" href="wiki.html#control-layout">How it works — in the wiki →</a></p>
   </div>
 </section>
 
@@ -653,7 +653,7 @@ new IntersectionObserver((es, o) => es.forEach(e => {
 
 // ---------- the tour
 const tour = [
-  ["control", "i-control", "Control Center", "The whole stream in front of you", ["Chat with AutoMod", "Stream health", "Hotkeys, in games too"]],
+  ["control", "i-control", "Control Center", "The whole stream in front of you", ["Cards where you want them", "Chat with AutoMod", "Stream health"]],
   ["tts", "i-voice", "Text to speech", "A chat that talks", ["English and Ukrainian in one voice", "Smart filters", "Names said the way people say them"]],
   ["player", "i-music", "Music", "Viewers pick the soundtrack", ["YouTube, Spotify, files", "Fair rules", "Your Spotify music in one click"]],
   ["redeems", "i-gift", "Redeems", "Points that really do something", ["Sound, GIFs, video", "Placed with the mouse", "Steps in OBS"]],
@@ -839,7 +839,7 @@ document.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => events[b.d
 
 // ---------- the feature grid, lit where the pointer is
 const feats = [
-  ["i-control", "Control Center", "Chat, the stream preview, OBS buttons and events on one screen."],
+  ["i-control", "Control Center", "Chat, the stream preview, OBS buttons and events on one screen, arranged your way."],
   ["i-voice", "Text to speech", "Chat and redeems read aloud, in English or Ukrainian."],
   ["i-music", "Music", "YouTube, Spotify and files in one queue."],
   ["i-gift", "Redeems", "Sounds, GIFs, videos and full-screen effects."],
