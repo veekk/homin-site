@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Homin — your whole stream in one window</title>
+<meta name="description" content="Your whole stream in one window: chat, alerts, text to speech, music, redeems, OBS and Discord.">
+<!-- the public site's English page (veekk/homin-site en/index.html), written by scripts/make_guide.py --doc promo --site DIR;
+     its English screenshots, deck pictures and icon are next to it there, the overlay demo's files one folder up.
+     The same as docs/guide/site-uk.html, in English -->
+<meta property="og:title" content="Homin — your whole stream in one window">
+<meta property="og:description" content="Chat, alerts, text to speech, music with viewers' requests, redeems, OBS and Discord.">
+<meta property="og:image" content="https://veekk.github.io/homin-site/en/control.png">
+<meta property="og:url" content="https://veekk.github.io/homin-site/en/">
+<link rel="alternate" hreflang="uk" href="https://veekk.github.io/homin-site/">
+<link rel="alternate" hreflang="en" href="https://veekk.github.io/homin-site/en/">
+<meta name="theme-color" content="#0b0f24">
+<link rel="icon" href="app-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Manrope:wght@400;500;700&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --night: #0b0f24; --deep: #151a3a; --violet: #2d1a5e; --ink: #eef1ff; --muted: #a3acd0; --line: rgba(255,255,255,.1);
+          --c1: #c04dff; --c2: #ff4040; --c3: #4d8bff; --c4: #3de6ff; --c5: #3dff8b; --teal: #19c7d6;
+          --ring: linear-gradient(90deg, #c04dff, #ff4040, #4d8bff, #3de6ff, #3dff8b);
+          --display: "Unbounded", "Noto Sans", sans-serif; --body: "Manrope", "Noto Sans", sans-serif; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--night); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.55;
+         overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.12; letter-spacing: -.01em; }
+  .wrap { width: min(1180px, 100% - 32px); margin: 0 auto; }
+  .grad { background: var(--ring); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+          animation: slide 8s linear infinite; }
+  @keyframes slide { to { background-position: 200% 0; } }
+
+  /* ---------- top bar */
+  nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .3s, backdrop-filter .3s; }
+  nav.solid { background: rgba(11,15,36,.72); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; gap: 24px; height: 64px; }
+  nav .brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; text-decoration: none; font-size: 18px; }
+  nav .brand img { width: 32px; height: 32px; }
+  nav .links { display: flex; align-items: center; gap: 22px; margin-left: auto; font-size: 15px; }
+  nav .links a { text-decoration: none; color: var(--muted); transition: color .2s; }
+  nav .links a:hover { color: #fff; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 999px; font-weight: 700;
+         text-decoration: none; border: 0; cursor: pointer; font: 700 15px var(--body); color: #fff; position: relative;
+         background: linear-gradient(120deg, #6d3fe0, #0d8597); box-shadow: 0 6px 24px rgba(109,63,224,.35); transition: transform .2s, box-shadow .2s; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(25,199,214,.35); }
+  .btn.ghost { background: rgba(255,255,255,.06); box-shadow: none; border: 1px solid var(--line); }
+
+  /* ---------- hero */
+  .hero { position: relative; padding: 130px 0 80px; overflow: hidden; }
+  .aurora { position: absolute; inset: -20% -10% auto; height: 120%; pointer-events: none; filter: blur(70px); opacity: .7; }
+  .aurora i { position: absolute; border-radius: 50%; animation: drift 18s ease-in-out infinite alternate; }
+  .aurora i:nth-child(1) { width: 46vw; height: 46vw; left: 55%; top: 0; background: rgba(25,199,214,.35); }
+  .aurora i:nth-child(2) { width: 50vw; height: 50vw; left: -10%; top: 30%; background: rgba(192,77,255,.32); animation-duration: 22s; }
+  .aurora i:nth-child(3) { width: 34vw; height: 34vw; left: 35%; top: 45%; background: rgba(255,64,64,.18); animation-duration: 26s; }
+  @keyframes drift { to { transform: translate(-8vw, 6vh) scale(1.15); } }
+  .hero .wrap { position: relative; display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: center; }
+  .logo-spin { width: 92px; height: 92px; position: relative; margin-bottom: 26px; }
+  .logo-spin img { width: 100%; height: 100%; position: relative; animation: float 6s ease-in-out infinite; }
+  .logo-spin::before { content: ""; position: absolute; inset: -14px; border-radius: 40%; background: conic-gradient(#c04dff, #ff4040, #4d8bff, #3de6ff, #3dff8b, #c04dff);
+                       filter: blur(22px); opacity: .55; animation: spin 9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes float { 50% { transform: translateY(-8px); } }
+  .hero h1 { font-size: clamp(54px, 8vw, 104px); font-weight: 800; }
+  .hero .sub { font-family: var(--display); font-weight: 500; font-size: clamp(20px, 2.4vw, 28px); margin: 10px 0 22px; }
+  .rotator { display: inline-grid; vertical-align: bottom; height: 1.25em; overflow: hidden; }
+  .rotator span { grid-area: 1/1; color: #9ff4ff; transform: translateY(110%); opacity: 0; transition: transform .55s cubic-bezier(.2,.8,.2,1), opacity .55s; }
+  .rotator span.on { transform: none; opacity: 1; }
+  .rotator span.off { transform: translateY(-110%); opacity: 0; }
+  .hero p.lead { color: var(--muted); font-size: 18px; max-width: 30em; margin: 0 0 28px; }
+  .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .tag { border: 1px solid rgba(159,244,255,.3); color: #d7f9ff; border-radius: 999px; padding: 5px 13px; font-size: 13.5px; background: rgba(159,244,255,.05); }
+
+  .stage3d { perspective: 1400px; position: relative; }
+  .window { border-radius: 14px; overflow: hidden; background: #10142c; border: 1px solid #2c3560; transform-style: preserve-3d;
+            box-shadow: 0 40px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04) inset; transition: transform .25s ease-out;
+            transform: rotateY(-12deg) rotateX(6deg); }
+  .window .bar { height: 30px; display: flex; align-items: center; gap: 7px; padding: 0 12px; background: #181d3d; }
+  .window .bar i { width: 11px; height: 11px; border-radius: 50%; background: #3a4170; }
+  .window .bar i:nth-child(1) { background: #ff5f57; } .window .bar i:nth-child(2) { background: #febc2e; } .window .bar i:nth-child(3) { background: #28c840; }
+  .window .bar span { margin-left: 10px; font-size: 12px; color: var(--muted); }
+  .window img { width: 100%; aspect-ratio: 5 / 3; object-fit: cover; }
+  .toast { position: absolute; z-index: 3; display: flex; align-items: center; gap: 10px; padding: 10px 16px 10px 10px; border-radius: 14px;
+           background: rgba(21,26,58,.86); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.12); font-size: 14px; white-space: nowrap;
+           box-shadow: 0 14px 34px rgba(0,0,0,.45); opacity: 0; transform: translateY(14px) scale(.92); transition: opacity .45s, transform .45s cubic-bezier(.2,1.4,.4,1); }
+  .toast.show { opacity: 1; transform: none; }
+  .toast .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 18px; background: var(--c, var(--c1)); }
+  .toast b { display: block; font-size: 14px; } .toast small { color: var(--muted); font-size: 12.5px; }
+
+  /* ---------- sections */
+  section { position: relative; padding: 110px 0; overflow-x: clip; }   /* the orbiting tiles start outside a phone's width */
+  .kicker { font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--teal);
+            display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .kicker::before { content: ""; width: 30px; height: 4px; border-radius: 4px; background: var(--ring); }
+  h2 { font-size: clamp(30px, 4.4vw, 52px); font-weight: 700; margin-bottom: 18px; }
+  .lead2 { color: var(--muted); font-size: 18px; max-width: 36em; margin: 0 0 44px; }
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity .8s, transform .8s cubic-bezier(.2,.8,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal.d1 { transition-delay: .1s; } .reveal.d2 { transition-delay: .2s; } .reveal.d3 { transition-delay: .3s; }
+
+  /* ---------- one window instead of five: the apps fly in and then circle the one window */
+  .merge { position: relative; height: 520px; --r0: 330px; --r1: 200px; --size: 112px; }
+  .orbit { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: spin 50s linear infinite paused; }
+  .merge.in .orbit, .merge.in .app > div { animation-play-state: running; }
+  .app { position: absolute; width: var(--size); height: var(--size); left: calc(var(--size) / -2); top: calc(var(--size) / -2);
+         border-radius: 22px; border: 1px solid var(--line); background: rgba(21,26,58,.9); display: grid; place-items: center;
+         text-align: center; font-size: 13px; color: var(--muted); padding: 8px;
+         transform: rotate(var(--a)) translate(var(--r0)) rotate(calc(-1 * var(--a)));
+         transition: transform 1.3s cubic-bezier(.6,0,.2,1), border-color 1s, box-shadow 1s; }
+  .app > div { animation: spin 50s linear infinite reverse paused; }
+  .app svg { width: 30px; height: 30px; margin: 0 auto 6px; stroke: var(--c, #fff); display: block; }
+  .orbit > :nth-child(1) { --c: var(--c1); } .orbit > :nth-child(2) { --c: var(--c4); } .orbit > :nth-child(3) { --c: var(--c3); }
+  .orbit > :nth-child(4) { --c: var(--c5); } .orbit > :nth-child(5) { --c: var(--c2); } .orbit > :nth-child(6) { --c: #febc2e; }
+  .merge.in .app { transform: rotate(var(--a)) translate(var(--r1)) rotate(calc(-1 * var(--a))) scale(.78);
+                   border-color: color-mix(in srgb, var(--c) 55%, transparent); box-shadow: 0 0 28px color-mix(in srgb, var(--c) 30%, transparent); }
+  .merge .one { position: absolute; left: 50%; top: 50%; width: 230px; margin: -115px 0 0 -115px; border-radius: 30px; padding: 26px 20px; text-align: center;
+                background: linear-gradient(140deg, var(--violet), var(--deep)); border: 1px solid rgba(159,244,255,.25);
+                transform: scale(.4); opacity: 0; transition: transform .9s .9s cubic-bezier(.2,1.4,.4,1), opacity .6s .9s; }
+  .merge.in .one { transform: none; opacity: 1; box-shadow: 0 0 80px rgba(109,63,224,.45); }
+  .merge .one img { width: 96px; margin: 0 auto 12px; }
+  .merge .one b { font-family: var(--display); font-size: 22px; display: block; }
+  .merge .one span { color: var(--muted); font-size: 14px; }
+
+  /* ---------- tour */
+  .tour { display: grid; grid-template-columns: 300px 1fr; gap: 36px; align-items: start; }
+  .tabs { display: flex; flex-direction: column; gap: 4px; }
+  .tabs button { all: unset; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 12px;
+                 color: var(--muted); font-weight: 600; position: relative; overflow: hidden; transition: background .25s, color .25s; }
+  .tabs button svg { width: 22px; height: 22px; stroke: currentColor; flex: none; }
+  .tabs button:hover { color: #fff; background: rgba(255,255,255,.04); }
+  .tabs button.on { color: #fff; background: rgba(255,255,255,.07); }
+  .tabs button.on svg { stroke: var(--teal); }
+  .tabs button .prog { position: absolute; left: 0; bottom: 0; height: 2px; width: 0; background: var(--ring); }
+  .tabs button.on .prog.run { animation: prog 7s linear forwards; }
+  @keyframes prog { to { width: 100%; } }
+  .tabs button:focus-visible { outline: 2px solid var(--teal); }
+  .shot { position: relative; }
+  .shot .window { transform: none; }
+  .shot .frame { position: relative; aspect-ratio: 5 / 3; }
+  .shot .frame img { position: absolute; inset: 0; height: 100%; opacity: 0; transform: scale(1.03); transition: opacity .5s, transform .7s; }
+  .shot .frame img.on { opacity: 1; transform: none; }
+  .shot h3 { font-size: 24px; margin: 26px 0 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { padding: 8px 14px; border-radius: 12px; background: rgba(255,255,255,.05); border: 1px solid var(--line); font-size: 15px;
+          animation: pop .5s cubic-bezier(.2,1.4,.4,1) both; }
+  .chip:nth-child(2) { animation-delay: .08s; } .chip:nth-child(3) { animation-delay: .16s; }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.9); } }
+
+  /* ---------- live demo: the app's own overlays (overlays/alerts, chat, player, counters, redeems)
+     with their default look, drawn on a 1920x1080 layer that is scaled to the screen like OBS does */
+  .demo { display: flex; flex-direction: column; gap: 18px; }
+  .screen { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; border: 1px solid #2c3560;
+            background: #10142c; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+  .screen .game { position: absolute; inset: 0; background:
+      linear-gradient(transparent 60%, rgba(0,0,0,.35)),
+      radial-gradient(ellipse at 70% 120%, #1b6b5b 0, transparent 60%),
+      radial-gradient(circle at 80% 22%, #ffd57a 0, #ff9a5a 4%, transparent 9%),
+      linear-gradient(#2a2f6b, #6b3b7a 55%, #c96a5a); }
+  .screen .hills { position: absolute; inset: auto 0 0; height: 40%; background: radial-gradient(ellipse at 20% 100%, #16213f 0 55%, transparent 56%),
+      radial-gradient(ellipse at 75% 110%, #0f1730 0 60%, transparent 61%); }
+  .ov { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; transform: scale(var(--k, .5));
+        font-family: "Inter", "Segoe UI", "Noto Sans", sans-serif; color: #fff; line-height: normal; }
+  .ov canvas { position: absolute; inset: 0; }
+  /* alerts.css (vh = 10.8px) */
+  .ov .stage { position: absolute; inset: 0; display: flex; justify-content: center; align-items: flex-start; padding-top: 65px; pointer-events: none; }
+  .ov .alert { display: flex; flex-direction: column; align-items: center; gap: 13px; max-width: 1152px; padding: 24px 35px; border-radius: 22px;
+               background: rgba(18, 18, 24, .82); box-shadow: 0 11px 43px rgba(0, 0, 0, .45); border: 3px solid var(--accent, #9147ff);
+               opacity: 0; transform: translateY(-32px) scale(.92); transition: opacity .35s ease, transform .35s ease; }
+  .ov .alert.visible { opacity: 1; transform: none; }
+  .ov .alert img { max-height: 216px; max-width: 614px; object-fit: contain; }
+  .ov .alert .title { font-weight: 800; font-size: 45px; text-align: center; text-shadow: var(--shadow); }
+  .ov .alert .message { opacity: .92; font-size: 28px; text-align: center; max-width: 1056px; text-shadow: var(--shadow); }
+  .ov .alert.follow { --accent: #3b9eff; } .ov .alert.subscription { --accent: #9147ff; } .ov .alert.gift { --accent: #ff7eb6; }
+  .ov .alert.cheer { --accent: #f5a623; } .ov .alert.raid { --accent: #2fbf71; }
+  /* chat.css */
+  .ov .chat { position: absolute; left: 22px; bottom: 32px; width: 576px; display: flex; flex-direction: column; justify-content: flex-end; gap: 9px; }
+  .ov .line { max-width: 100%; padding: 9px 15px; border-radius: 13px; background: rgba(18, 18, 24, .6); color: #f1f1f6;
+              font-size: 26px; line-height: 1.35; overflow-wrap: anywhere; text-shadow: 0 1.6px 4.3px rgba(0, 0, 0, .9);
+              opacity: 0; transform: translateX(-22px); transition: opacity .3s ease, transform .3s ease; }
+  .ov .line.visible { opacity: 1; transform: none; }
+  .ov .badge { display: inline-block; margin-right: .5em; padding: .05em .4em; border-radius: .3em; font-size: .68em; font-weight: 800;
+               vertical-align: .12em; color: #fff; text-shadow: none; background: #9147ff; }
+  .ov .badge.moderator { background: #00ad03; } .ov .badge.vip { background: #e005b9; }
+  .ov .name { font-weight: 800; }
+  /* player.css, the default theme */
+  .ov .np { position: absolute; left: 24px; top: 24px; width: 520px; display: flex; gap: 16px; align-items: center; padding: 14px; border-radius: 16px;
+            background: rgba(18, 18, 24, .96); box-shadow: 0 8px 30px rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.06); color: #f2f2f7;
+            transition: opacity .4s ease, transform .4s ease; }
+  .ov .np.hidden { opacity: 0; transform: translateY(-8px); }
+  .ov .artwrap { position: relative; flex: none; }
+  .ov .art { width: 96px; height: 96px; border-radius: 12px; display: grid; place-items: center; font-size: 40px; font-weight: 800; color: rgba(255,255,255,.9); }
+  .ov .src { position: absolute; right: -6px; bottom: -6px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+             border: 3px solid rgb(18, 18, 24); background: #1db954; }
+  .ov .meta { flex: 1; min-width: 0; }
+  .ov .label { font-size: 11px; letter-spacing: .14em; color: #9147ff; font-weight: 700; }
+  .ov .ttl { font-size: 22px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ov .artist { font-size: 16px; color: #a8a8b8; }
+  .ov .requester { font-size: 13px; color: #9147ff; margin-top: 2px; }
+  .ov .progress { margin-top: 8px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; }
+  .ov .bar { height: 100%; width: 0; background: #9147ff; }
+  .ov .times { display: flex; justify-content: space-between; font-size: 12px; color: #a8a8b8; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  /* counters.css, top right */
+  .ov .counters { position: absolute; right: 32px; top: 32px; text-align: right; font-size: 39px; font-weight: 800; text-shadow: var(--shadow); }
+  .ov .counters .name { opacity: .9; font-weight: 800; }
+  .ov .num { display: inline-block; font-variant-numeric: tabular-nums; }
+  .ov .num.pulse { animation: pulse .6s ease; }
+  @keyframes pulse { 40% { transform: scale(1.35); } }
+  /* redeems.css: a picture with its caption in the middle */
+  .ov .media { position: absolute; left: 50%; top: 50%; width: 260px; transform: translate(-50%, -50%); opacity: 0; transition: opacity .4s ease; }
+  .ov .media.visible { opacity: 1; }
+  .ov .media img { width: 100%; display: block; }
+  .ov .caption { position: absolute; left: 50%; transform: translateX(-50%); bottom: -1.6em; white-space: nowrap; font-weight: 800; font-size: 28px;
+                 text-shadow: 0 2px 6px #000, 0 0 2px #000; }
+  .controls { display: grid; grid-template-columns: repeat(8, 1fr) auto; gap: 8px; }
+  .controls button { all: unset; cursor: pointer; text-align: center; padding: 12px 6px; border-radius: 12px; font-size: 13.5px; font-weight: 700;
+                     background: rgba(255,255,255,.05); border: 1px solid var(--line); transition: transform .15s, background .2s, border-color .2s; }
+  .controls button span { display: block; font-size: 22px; margin-bottom: 3px; }
+  .controls button:hover { background: rgba(255,255,255,.1); border-color: rgba(159,244,255,.35); }
+  .controls button:active { transform: scale(.94); }
+  .controls button:focus-visible { outline: 2px solid var(--teal); }
+  .controls .mute { padding: 12px 16px; min-width: 92px; }
+  .controls .mute[aria-pressed="true"] { background: rgba(25,199,214,.18); border-color: var(--teal); color: #fff; }
+  .hint { color: var(--muted); font-size: 13.5px; text-align: center; }
+
+  /* ---------- feature grid */
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .feat { position: relative; border-radius: 18px; padding: 22px 20px; min-height: 150px; background: rgba(255,255,255,.035); border: 1px solid var(--line);
+          overflow: hidden; transition: transform .3s, border-color .3s; cursor: default; }
+  .feat::before { content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity .35s;
+                  background: radial-gradient(circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--c) 30%, transparent), transparent 65%); }
+  .feat:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--c) 50%, transparent); }
+  .feat:hover::before { opacity: 1; }
+  .feat svg { width: 30px; height: 30px; stroke: var(--c); position: relative; }
+  .feat h3 { font-size: 16px; margin: 14px 0 6px; position: relative; }
+  .feat p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; position: relative; }
+  .grid > :nth-child(5n+1) { --c: var(--c1); } .grid > :nth-child(5n+2) { --c: var(--c4); } .grid > :nth-child(5n+3) { --c: var(--c3); }
+  .grid > :nth-child(5n+4) { --c: var(--c5); } .grid > :nth-child(5n+5) { --c: var(--c2); }
+
+  /* ---------- deck */
+  .deck { display: grid; grid-template-columns: 1.3fr 1fr; gap: 50px; align-items: center; }
+  .decks { position: relative; aspect-ratio: 4 / 3; }
+  .decks img { position: absolute; filter: drop-shadow(0 24px 40px rgba(0,0,0,.6)); transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+  .decks .d1 { width: 72%; left: 0; top: 4%; transform: rotate(-4deg); animation: float 7s ease-in-out infinite; }
+  .decks .d2 { width: 64%; right: 0; bottom: 4%; transform: rotate(3deg); animation: float 8s ease-in-out 1s infinite; }
+  .decks:hover .d1 { transform: rotate(-1deg) translateX(-12px); }
+  .decks:hover .d2 { transform: rotate(0) translateX(12px); }
+  .bullets { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .bullets li { display: flex; gap: 14px; align-items: flex-start; font-size: 16px; }
+  .bullets li i { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-style: normal; font-size: 18px;
+                  background: rgba(255,255,255,.06); }
+  .bullets b { display: block; }
+  .bullets span { color: var(--muted); font-size: 15px; }
+
+  /* ---------- values + closing */
+  .values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .value { border-radius: 20px; padding: 30px 26px; background: linear-gradient(140deg, rgba(45,26,94,.8), rgba(21,26,58,.8)); border: 1px solid var(--line); }
+  .value .big { font-size: 40px; display: block; margin-bottom: 12px; }
+  .value b { font-family: var(--display); font-size: 20px; display: block; margin-bottom: 6px; }
+  .value span { color: var(--muted); font-size: 15px; }
+  .closing { text-align: center; overflow: hidden; }
+  .closing .ringline { width: 140px; height: 5px; border-radius: 5px; background: var(--ring); margin: 0 auto 30px; }
+  .closing h2 { font-size: clamp(32px, 5vw, 60px); }
+  .closing p { color: var(--muted); max-width: 34em; margin: 0 auto 30px; }
+  .closing .req { margin-top: 44px; font-size: 14px; color: var(--muted); max-width: 46em; margin-left: auto; margin-right: auto; }
+  footer { padding: 30px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  /* ---------- narrow screens */
+  /* ---------- download */
+  .dl { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .os { border-radius: 20px; padding: 28px 26px; background: rgba(255,255,255,.035); border: 1px solid var(--line);
+        display: flex; flex-direction: column; gap: 14px; }
+  .os h3 { font-size: 22px; display: flex; align-items: center; gap: 12px; }
+  .os h3 .big { font-size: 30px; }
+  .os .files { display: flex; flex-direction: column; gap: 10px; }
+  .os .files a { justify-content: space-between; }
+  .os .files small { font-weight: 400; opacity: .75; }
+  .os p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .os code { font-size: 13px; background: rgba(255,255,255,.07); padding: 2px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+  .dl-note { margin-top: 22px; color: var(--muted); font-size: 15px; }
+  .dl-note a { color: var(--ink); }
+  @media (max-width: 960px) {
+    .hero .wrap, .tour, .demo, .deck, .dl { grid-template-columns: 1fr; }
+    .hero { padding-top: 100px; }
+    .window { transform: none; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .tabs { flex-direction: row; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+    .tabs button { white-space: nowrap; flex: none; }   /* overflow: hidden would let them shrink to the icon */
+    .values { grid-template-columns: 1fr; }
+    .merge { height: 440px; --r0: 240px; --r1: 160px; --size: 92px; }
+    .app { font-size: 11.5px; }
+    section { padding: 80px 0; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    nav .links a:not(.btn) { display: none; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .feat { padding: 16px 14px; min-height: 0; }
+    .feat p { display: none; }
+    .toast { transform: scale(.85); font-size: 12px; }
+    .toast.show { transform: scale(.85); }
+    .controls { grid-template-columns: repeat(4, 1fr); }
+    .controls .mute { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- the icons, drawn once and used by <use href="#i-…"> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-control" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 9l3 2-3 2M13 13h4"/></symbol>
+    <symbol id="i-voice" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13M12 8S10 3 7.5 4 9 8 12 8zM12 8s2-5 4.5-4S15 8 12 8z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></symbol>
+    <symbol id="i-obs" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="7.5" r="2.3"/><circle cx="8" cy="14.5" r="2.3"/><circle cx="16" cy="14.5" r="2.3"/></symbol>
+    <symbol id="i-discord" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7c-2 .4-3 1-3 1s-2 3-2 9c2 2 5 2 5 2l1-2M16 7c2 .4 3 1 3 1s2 3 2 9c-2 2-5 2-5 2l-1-2M7 16c3 1.5 7 1.5 10 0M9 7.5c2-.6 4-.6 6 0"/><circle cx="9" cy="12.5" r="1"/><circle cx="15" cy="12.5" r="1"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M9 13v1M15 13v1M9 17h6"/><circle cx="12" cy="3.5" r="1"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 11-11M14 4v3M19 9h-3M17.5 5.5l-2 2M9 3v2M3 9h2"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+    <symbol id="i-deck" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h2M11 9h2M16 9h2M6 14h2M11 14h2M16 14h2"/></symbol>
+    <symbol id="i-move" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h13M13 7l5 5-5 5M20 4v16"/></symbol>
+    <symbol id="i-train" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 4-6 5 4"/><path d="M15 4h6v6"/></symbol>
+    <symbol id="i-count" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 9v6M6 12h4M14 10l2-1v6"/></symbol>
+  </defs>
+</svg>
+
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="app-icon.svg" alt="">Homin</a>
+    <div class="links">
+      <a href="#tour">Tour</a><a href="#demo">Try it</a><a href="#deck">Deck</a><a href="#all">Everything</a><a href="wiki.html">Wiki</a>
+      <a href="../" hreflang="uk" lang="uk" title="Українською">УКР</a>
+      <a class="btn ghost" href="#download">Download ↓</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================ hero -->
+<header class="hero" id="top">
+  <div class="aurora"><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <div>
+      <div class="logo-spin"><img src="app-icon.svg" alt=""></div>
+      <h1>Homin</h1>
+      <div class="sub">Your whole stream in one window.<br>
+        <span class="rotator" id="rotator"><span class="on">Chat</span><span>Text to speech</span><span>Music</span><span>Redeems</span><span>Alerts</span><span>OBS</span><span>Discord</span></span></div>
+      <p class="lead">Fewer tabs, fewer bots, less fuss — more attention for your viewers.</p>
+      <div class="cta">
+        <a class="btn" href="#demo">▶ Try it here</a>
+        <a class="btn ghost" href="#download">Download ↓</a>
+      </div>
+      <div class="tags">
+        <span class="tag">English and Ukrainian</span><span class="tag">Windows and Linux</span>
+        <span class="tag">Runs on your PC</span><span class="tag">Natural voices</span>
+      </div>
+    </div>
+    <div class="stage3d" id="heroStage">
+      <div class="window" id="heroWindow">
+        <div class="bar"><i></i><i></i><i></i><span>Homin — Control Center</span></div>
+        <img src="control.png" alt="Homin's Control Center: chat, the stream preview, OBS buttons and the event feed">
+      </div>
+      <div class="toast" id="toast"><div class="ic"></div><div><b></b><small></small></div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================ one window -->
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">What's inside</div>
+    <h2 class="reveal d1">Six apps — <span class="grad">one window</span></h2>
+    <p class="lead2 reveal d2">The bot, alerts, player, text to speech and the OBS panel work together and know about each other.</p>
+    <div class="merge" id="merge">
+      <div class="orbit">
+        <div class="app"><div><svg><use href="#i-bot"/></svg>Chat bot</div></div>
+        <div class="app"><div><svg><use href="#i-bell"/></svg>Alerts</div></div>
+        <div class="app"><div><svg><use href="#i-music"/></svg>Player</div></div>
+        <div class="app"><div><svg><use href="#i-voice"/></svg>Text to speech</div></div>
+        <div class="app"><div><svg><use href="#i-obs"/></svg>OBS panel</div></div>
+        <div class="app"><div><svg><use href="#i-discord"/></svg>Discord</div></div>
+      </div>
+      <div class="one"><img src="app-icon.svg" alt=""><b>Homin</b><span>all together, no clashes</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ tour -->
+<section id="tour">
+  <div class="wrap">
+    <div class="kicker reveal">Tour</div>
+    <h2 class="reveal d1">Click — and <span class="grad">have a look</span></h2>
+    <p class="lead2 reveal d2">The app's real screens. The data is test data; the artists and channels are made up.</p>
+    <div class="tour reveal d2">
+      <div class="tabs" id="tabs" role="tablist"></div>
+      <div class="shot">
+        <div class="window"><div class="bar"><i></i><i></i><i></i><span id="shotTitle"></span></div>
+          <div class="frame" id="frame"></div></div>
+        <h3 id="tourHead"></h3>
+        <div class="chips" id="chips"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ live demo -->
+<section id="demo">
+  <div class="wrap">
+    <div class="kicker reveal">Try it</div>
+    <h2 class="reveal d1">Make some <span class="grad">noise</span> on stream</h2>
+    <p class="lead2 reveal d2">Homin's real overlays with their default settings — the way viewers see them in OBS.</p>
+    <div class="demo reveal d2">
+      <div class="screen" id="screen">
+        <div class="game"></div><div class="hills"></div>
+        <div class="ov" id="ov">
+          <canvas id="fx" width="1920" height="1080"></canvas>
+          <div class="np" id="np">
+            <div class="artwrap"><div class="art" id="art"></div><span class="src"><svg viewBox="0 0 24 24" width="17" height="17"><path d="M10 17V6l8-2v11M10 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM18 15a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="meta"><div class="label">NOW PLAYING</div><div class="ttl" id="npTitle"></div><div class="artist" id="npArtist"></div>
+              <div class="requester" id="npBy"></div><div class="progress"><div class="bar" id="npBar"></div></div>
+              <div class="times"><span id="npAt">0:00</span><span id="npLen">0:00</span></div></div>
+          </div>
+          <div class="counters"><span class="name">Deaths:</span> <span class="num" id="deaths">3</span></div>
+          <div class="chat" id="chat"></div>
+          <div class="stage" id="stage"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <button type="button" data-ev="follow"><span>💙</span>Follow</button>
+        <button type="button" data-ev="subscription"><span>⭐</span>Sub</button>
+        <button type="button" data-ev="gift"><span>🎁</span>Gift</button>
+        <button type="button" data-ev="cheer"><span>💎</span>Bits</button>
+        <button type="button" data-ev="raid"><span>🚀</span>Raid</button>
+        <button type="button" data-ev="redeem"><span>💧</span>Redeem</button>
+        <button type="button" data-ev="song"><span>🎵</span>Song</button>
+        <button type="button" data-ev="death"><span>💀</span>Death</button>
+        <button type="button" class="mute" id="mute" aria-pressed="false" title="Alert sounds"><span>🔇</span><b>Sound off</b></button>
+      </div>
+      <div class="hint">Alerts, chat, Now playing, a counter and a redeem — five overlays, each added to OBS with one button.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ deck -->
+<section id="deck">
+  <div class="wrap deck">
+    <div class="decks reveal">
+      <img class="d1" src="deck-dials.svg" alt="A deck with knobs: volume, music, countdown">
+      <img class="d2" src="deck-keys.svg" alt="A deck with keys: live, mic, scenes">
+    </div>
+    <div>
+      <div class="kicker reveal">Deck and phone</div>
+      <h2 class="reveal d1">Keys that <span class="grad">come alive</span></h2>
+      <p class="lead2 reveal d2" style="margin-bottom:28px">A plugin for OpenDeck: the keys show what's happening on stream.</p>
+      <ul class="bullets">
+        <li class="reveal d1"><i>⏱</i><div><b>Time live, viewers, the song</b><span>Right on the keys, as it happens.</span></div></li>
+        <li class="reveal d2"><i>🎛</i><div><b>Knobs</b><span>Volume, seeking, the countdown — with a turn.</span></div></li>
+        <li class="reveal d3"><i>📱</i><div><b>Your phone is a deck too</b><span>The same buttons in a browser, no app needed.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ new: discord voice -->
+<section id="discord-voice">
+  <div class="wrap">
+    <div class="kicker reveal">New</div>
+    <h2 class="reveal d1">Discord: who's talking — <span class="grad">on stream and over your game</span></h2>
+    <p class="lead2 reveal d2" style="margin-bottom:28px">Viewers see which of your friends in the voice channel is talking right now,
+      and so do you — over your game, without switching to Discord.</p>
+    <ul class="bullets">
+      <li class="reveal d1"><i>🎙</i><div><b>An overlay for OBS</b><span>Pictures with names, whoever's talking in a green frame. Everyone in the channel or only who's talking; anyone can be left out.</span></div></li>
+      <li class="reveal d2"><i>🎮</i><div><b>Over your game — just for you</b><span>Shows up when a game is full screen. Clicks go through it, and nothing is put into the game.</span></div></li>
+      <li class="reveal d3"><i>🔗</i><div><b>Channels without webhooks</b><span>Pick in Discord — choose the server and channel in your browser, and Homin connects the rest itself.</span></div></li>
+      <li class="reveal d1"><i>🪪</i><div><b>In your name</b><span>Announcements and clips posted with your Twitch channel's name and picture, or any name you like.</span></div></li>
+    </ul>
+    <p class="reveal d2" style="margin-top:28px"><a class="btn ghost" href="wiki.html#discord-voice">How it works — in the wiki →</a></p>
+  </div>
+</section>
+
+<!-- ============================================================ everything -->
+<section id="all">
+  <div class="wrap">
+    <div class="kicker reveal">Everything</div>
+    <h2 class="reveal d1">And a <span class="grad">whole lot more</span></h2>
+    <p class="lead2 reveal d2">Every feature is here because it was missed during a real stream.</p>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<!-- ============================================================ values -->
+<section style="padding-top:20px">
+  <div class="wrap values">
+    <div class="value reveal"><span class="big">🔒</span><b>Private</b><span>Everything runs locally. Sign-ins and keys are kept in your system's password store.</span></div>
+    <div class="value reveal d1"><span class="big">🌐</span><b>English and Ukrainian</b><span>The whole interface in either language, and voices that speak both.</span></div>
+    <div class="value reveal d2"><span class="big">🛡️</span><b>Safe for chat</b><span>Viewers' text never pings anyone on Discord and never breaks an overlay.</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ download -->
+<!-- the files and the version come from latest.json (scripts/publish_release.py), so a new release
+     shows here without rebuilding the page; without it the links go to the releases page -->
+<section id="download">
+  <div class="wrap">
+    <div class="kicker reveal">Download</div>
+    <h2 class="reveal d1">Homin <span class="grad" id="dlVersion">for your PC</span></h2>
+    <p class="lead2 reveal d2" id="dlLead">A free download for Windows and Linux. For Homin to work you need a licence key for your Twitch channel.</p>
+    <div class="dl">
+      <div class="os reveal">
+        <h3><span class="big">🪟</span>Windows 10 and 11</h3>
+        <div class="files">
+          <a class="btn" data-kind="windows-setup" href="https://github.com/veekk/homin-site/releases">Installer <small>.exe</small></a>
+          <a class="btn ghost" data-kind="windows-portable" href="https://github.com/veekk/homin-site/releases">Portable <small>.zip</small></a>
+        </div>
+        <p>The installer isn't signed, so Windows warns about an unknown publisher: click
+          “More info” › “Run anyway”. Install a new version over the old one — your settings stay.</p>
+      </div>
+      <div class="os reveal d1">
+        <h3><span class="big">🐧</span>Linux</h3>
+        <div class="files">
+          <a class="btn" data-kind="linux-appimage" href="https://github.com/veekk/homin-site/releases">AppImage <small>x86_64</small></a>
+          <a class="btn ghost" data-kind="linux-tar" href="https://github.com/veekk/homin-site/releases">Folder archive <small>.tar.gz</small></a>
+        </div>
+        <p>The AppImage runs right away: <code>chmod +x Homin-*.AppImage</code>, then open it.
+          Unpack the archive anywhere and run <code>homin</code>.</p>
+      </div>
+    </div>
+    <p class="dl-note reveal">Homin tells you itself when a new version is out (Settings › Updates).
+      Every version, what's new and the SHA-256 checksums are on the <a href="https://github.com/veekk/homin-site/releases">releases page</a>.</p>
+  </div>
+</section>
+
+<!-- ============================================================ closing -->
+<section class="closing">
+  <div class="aurora" style="top:10%;opacity:.45"><i></i><i></i></div>
+  <div class="wrap" style="position:relative">
+    <div class="ringline reveal"></div>
+    <h2 class="reveal d1">Made by a streamer —<br><span class="grad">for streamers</span></h2>
+    <p class="reveal d2">A dark, OLED or light theme, the tray, moving your settings over, and a wizard that walks you through Twitch, OBS, overlays and text to speech.</p>
+    <div class="reveal d3" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a class="btn" href="wiki.html">Wiki: all the details →</a>
+      <a class="btn ghost" href="#top">↑ Back to top</a>
+    </div>
+    <div class="req reveal">You need: Windows or Linux, OBS Studio, a Twitch account. Spotify Premium for songs from Spotify.
+      Polls, predictions, ads and channel points are given by Twitch to affiliates and partners.</div>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>Homin · your whole stream in one window · <a href="wiki.html">wiki</a> · <a href="../" hreflang="uk" lang="uk">українською</a></span><span>Screenshots taken with test data</span></div></footer>
+
+<script>
+"use strict";
+// the download section: the newest release from latest.json (its payload is base64url JSON; the
+// app checks the signature, the page only shows the links)
+fetch("../latest.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).then(file => {
+  if (!file) return;
+  const b64 = file.payload.replace(/-/g, "+").replace(/_/g, "/");
+  const bytes = Uint8Array.from(atob(b64 + "=".repeat((4 - b64.length % 4) % 4)), c => c.charCodeAt(0));
+  const releases = JSON.parse(new TextDecoder().decode(bytes)).releases || [];
+  const newest = releases[releases.length - 1];
+  if (!newest) return;
+  const rc = /rc\d+$/.test(newest.version);
+  document.getElementById("dlVersion").textContent = newest.version;
+  const lead = document.getElementById("dlLead");
+  lead.textContent = (rc ? "A release candidate — a test version before the release. " : "")
+    + (newest.date ? "Released " + newest.date + ". " : "") + lead.textContent;
+  for (const a of document.querySelectorAll("[data-kind]")) {
+    const f = (newest.files || {})[a.dataset.kind];
+    if (!f || !/^https:\/\//.test(f.url)) continue;
+    a.href = f.url;
+    a.setAttribute("download", "");
+    if (f.size) a.querySelector("small").textContent += " · " + Math.round(f.size / 1e6) + " MB";
+  }
+}).catch(() => {});
+const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = (s, el = document) => el.querySelector(s);
+
+// the bar gets a background once the page scrolls
+const nav = $("#nav");
+addEventListener("scroll", () => nav.classList.toggle("solid", scrollY > 30), { passive: true });
+
+// sections slide in as they come into view
+const seen = new IntersectionObserver(entries => entries.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); seen.unobserve(e.target); }
+}), { threshold: .15 });
+document.querySelectorAll(".reveal").forEach(el => seen.observe(el));
+
+// ---------- hero: the rotating word, the tilting window, the toasts
+const words = [...$("#rotator").children];
+let w = 0;
+setInterval(() => {
+  words[w].className = "off";
+  const old = w; setTimeout(() => { words[old].className = ""; }, 600);
+  w = (w + 1) % words.length; words[w].className = "on";
+}, 2000);
+
+const stage = $("#heroStage"), win = $("#heroWindow");
+if (!calm && matchMedia("(hover: hover)").matches) {
+  stage.addEventListener("mousemove", e => {
+    const r = stage.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+    win.style.transform = `rotateY(${x * 14}deg) rotateX(${-y * 10}deg)`;
+  });
+  stage.addEventListener("mouseleave", () => { win.style.transform = ""; });
+}
+
+const toasts = [
+  ["⭐", "#c04dff", "olia_draws subscribed", "3 months in a row"],
+  ["🚀", "#ff4040", "Raid from nightowl_ua", "42 viewers"],
+  ["🎵", "#3dff8b", "Now playing", "The Tides — Night Over the City"],
+  ["💎", "#4d8bff", "500 bits from max_k", "“Here, have a coffee!”"],
+  ["🔊", "#3de6ff", "Read aloud", "“Hi everyone from Kyiv!”"],
+  ["🎁", "#febc2e", "Redeem: Hydrate", "Drink some water 💧"],
+];
+const spots = [[-4, 8], [62, -6], [70, 78], [-6, 70], [40, 88]];
+const toast = $("#toast");
+let t = 0;
+function nextToast() {
+  toast.classList.remove("show");
+  setTimeout(() => {
+    const [ic, c, title, sub] = toasts[t % toasts.length], [x, y] = spots[t % spots.length];
+    toast.querySelector(".ic").textContent = ic; toast.style.setProperty("--c", c);
+    toast.querySelector("b").textContent = title; toast.querySelector("small").textContent = sub;
+    toast.style.left = x + "%"; toast.style.top = y + "%";
+    toast.classList.add("show"); t++;
+  }, 450);
+}
+nextToast(); setInterval(nextToast, 2800);
+
+// ---------- six apps fly into one
+const merge = $("#merge");
+merge.querySelectorAll(".app").forEach((a, i) => {
+  a.style.setProperty("--a", `${i * 60 - 90}deg`);
+  a.style.transitionDelay = `${i * .08}s`;
+});
+new IntersectionObserver((es, o) => es.forEach(e => {
+  if (e.isIntersecting) { setTimeout(() => merge.classList.add("in"), 400); o.disconnect(); }
+}), { threshold: .5 }).observe(merge);
+
+// ---------- the tour
+const tour = [
+  ["control", "i-control", "Control Center", "The whole stream in front of you", ["Chat with AutoMod", "Stream health", "Hotkeys, in games too"]],
+  ["tts", "i-voice", "Text to speech", "A chat that talks", ["English and Ukrainian in one voice", "Smart filters", "Names said the way people say them"]],
+  ["player", "i-music", "Music", "Viewers pick the soundtrack", ["YouTube, Spotify, files", "Fair rules", "Your Spotify music in one click"]],
+  ["redeems", "i-gift", "Redeems", "Points that really do something", ["Sound, GIFs, video", "Placed with the mouse", "Steps in OBS"]],
+  ["events", "i-bell", "Channel events", "Every bit of support gets noticed", ["Your style", "Presets for games", "Voice and script"]],
+  ["overlays", "i-layers", "Overlays", "A good-looking stream without a designer", ["Into OBS with one button", "Live preview", "Demo mode"]],
+  ["obs", "i-obs", "OBS", "OBS at hand", ["Sources with the mouse, as in OBS", "Stream scenes in one click", "Live preview"]],
+  ["discord", "i-discord", "Discord", "Your community hears first", ["Go-live announcements", "Who's talking — in OBS and over your game", "Channels without webhooks"]],
+  ["chatbot", "i-bot", "Chat bot", "A bot that knows your stream", ["Commands and timers", "Quotes and giveaways", "Welcoming raiders"]],
+  ["setup-2", "i-wand", "Setup wizard", "From install to going live", ["Step by step", "Checks it by itself", "At your own pace"]],
+];
+const tabs = $("#tabs"), frame = $("#frame");
+let cur = -1, auto = true, timer;
+tour.forEach(([img, icon, name], i) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.setAttribute("role", "tab");
+  b.innerHTML = `<svg><use href="#${icon}"/></svg><span></span><i class="prog"></i>`;
+  b.querySelector("span").textContent = name;
+  b.onclick = () => { auto = false; show(i); };
+  tabs.append(b);
+  const im = new Image(); im.src = img + ".png"; im.alt = name; im.loading = i ? "lazy" : "eager";
+  frame.append(im);
+});
+function show(i) {
+  if (i === cur) return;
+  cur = i;
+  const [, , name, head, chips] = tour[i];
+  [...tabs.children].forEach((b, k) => { b.classList.toggle("on", k === i); b.setAttribute("aria-selected", k === i); });
+  [...frame.children].forEach((im, k) => im.classList.toggle("on", k === i));
+  $("#shotTitle").textContent = "Homin — " + name;
+  $("#tourHead").textContent = head;
+  $("#chips").replaceChildren(...chips.map(c => Object.assign(document.createElement("span"), { className: "chip", textContent: c })));
+  const prog = tabs.children[i].querySelector(".prog");
+  tabs.querySelectorAll(".prog").forEach(p => p.classList.remove("run"));
+  if (auto && !calm) { void prog.offsetWidth; prog.classList.add("run"); }
+  if (matchMedia("(max-width: 960px)").matches)
+    tabs.scrollTo({ left: tabs.children[i].offsetLeft - 16, behavior: "smooth" });
+  clearTimeout(timer);
+  if (auto && !calm) timer = setTimeout(() => show((cur + 1) % tour.length), 7000);
+}
+show(0);
+
+// ---------- the live demo: the overlays' own markup and timings (overlays/*/), driven by the buttons
+const ov = $("#ov"), screenEl = $("#screen");
+new ResizeObserver(() => ov.style.setProperty("--k", screenEl.clientWidth / 1920)).observe(screenEl);
+// the alerts' default text: white with a 2px black outline (TC.applyText)
+ov.style.setProperty("--shadow", Array.from({ length: 16 }, (_, i) => {
+  const a = i / 16 * 2 * Math.PI;
+  return `${(Math.cos(a) * 2).toFixed(2)}px ${(Math.sin(a) * 2).toFixed(2)}px 0 #000`;
+}).join(", "));
+
+// off until the visitor turns it on; turning it on plays the follow chime, so it's clear it works
+let sound = false;
+const mute = $("#mute");
+mute.onclick = () => {
+  sound = !sound; mute.setAttribute("aria-pressed", String(sound));
+  mute.querySelector("span").textContent = sound ? "🔊" : "🔇";
+  mute.querySelector("b").textContent = sound ? "Sound on" : "Sound off";
+  play("chime.wav");
+};
+function play(file) {
+  if (!sound) return;
+  const a = new Audio("../overlay/" + file); a.volume = .5; a.play().catch(() => {});
+}
+
+const names = ["sonya_plays", "max_k", "olia_draws", "taras_ua", "nightowl_ua", "kotyk228", "ira_mp3", "bogdan_live"];
+const lines = ["hi everyone!", "gg", "great music", "one more time", "anyone from Lviv?", "what a jump", "hahaha", "oh, this song!"];
+const nameColors = ["#ff7eb6", "#7ee0ff", "#b6ff7e", "#ffcf7e", "#c9a6ff", "#7effc4", "#ff9a7e", "#9ab8ff"];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const color = n => nameColors[[...n].reduce((h, c) => h + c.charCodeAt(0), 0) % nameColors.length];
+
+// chat overlay: up to eight lines in the bottom-left corner
+const chat = $("#chat");
+function say(name, text, badge) {
+  const line = document.createElement("div");
+  line.className = "line";
+  if (badge) { const b = document.createElement("span"); b.className = "badge " + badge[0]; b.textContent = badge[1]; line.append(b); }
+  const n = document.createElement("span"); n.className = "name"; n.style.color = color(name); n.textContent = name;
+  line.append(n, ": " + text);
+  chat.append(line);
+  requestAnimationFrame(() => requestAnimationFrame(() => line.classList.add("visible")));
+  while (chat.children.length > 8) chat.firstChild.remove();
+}
+const badges = [null, null, null, ["moderator", "MOD"], ["vip", "VIP"], ["sub", "SUB"]];
+setInterval(() => { if (!document.hidden) say(pick(names), pick(lines), pick(badges)); }, 2600);
+say("max_k", "hi everyone!"); say("ira_mp3", "great music", ["sub", "SUB"]);
+
+// alerts overlay: one at a time, the next after the last one fades out
+const alertStage = $("#stage"), queue = [];
+let showing = false;
+function alertNow(a) { queue.push(a); if (!showing) nextAlert(); }
+function nextAlert() {
+  const a = queue.shift();
+  if (!a) { showing = false; return; }
+  showing = true;
+  const el = document.createElement("div");
+  el.className = "alert " + a.kind;
+  const img = new Image(); img.src = `../overlay/alert-${a.kind}.png`; img.alt = "";
+  const title = document.createElement("div"); title.className = "title"; title.textContent = a.title;
+  el.append(img, title);
+  if (a.message) { const m = document.createElement("div"); m.className = "message"; m.textContent = a.message; el.append(m); }
+  alertStage.append(el);
+  play(a.sound);
+  setTimeout(() => el.classList.add("visible"), 30);
+  setTimeout(() => {
+    el.classList.remove("visible");
+    setTimeout(() => { el.remove(); nextAlert(); }, 450);
+  }, 4500);
+}
+
+// redeems overlay: a picture with a caption, and the same picture falling from the top (image_rain)
+const fx = $("#fx").getContext("2d"), drops = [];
+const water = new Image(); water.src = "../overlay/water.svg";
+let raf = 0, last = 0;
+function rain() {
+  for (let i = 0; i < 40; i++) drops.push({ x: Math.random() * 1920, y: -Math.random() * 540 - 40, vx: (Math.random() - .5) * 90,
+    vy: 90 + Math.random() * 270, r: Math.random() * 6.28, vr: (Math.random() - .5) * 8, s: .5 + Math.random() * .8, life: 4 });
+  if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); }
+}
+function step(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  fx.clearRect(0, 0, 1920, 1080);
+  for (let i = drops.length - 1; i >= 0; i--) {
+    const d = drops[i];
+    d.vy += 1400 * dt; d.x += d.vx * dt; d.y += d.vy * dt; d.r += d.vr * dt; d.life -= dt;
+    if (d.y > 1080 - 40 * d.s && d.vy > 0) { d.y = 1080 - 40 * d.s; d.vy *= -.35; }
+    if (d.life <= 0) { drops.splice(i, 1); continue; }
+    fx.save(); fx.globalAlpha = Math.min(1, d.life); fx.translate(d.x, d.y); fx.rotate(d.r);
+    fx.drawImage(water, -40 * d.s, -40 * d.s, 80 * d.s, 80 * d.s); fx.restore();
+  }
+  raf = drops.length ? requestAnimationFrame(step) : 0;
+  if (!raf) fx.clearRect(0, 0, 1920, 1080);
+}
+function redeem(user) {
+  const m = document.createElement("div"); m.className = "media";
+  const img = new Image(); img.src = "../overlay/water.svg"; img.alt = "";
+  const c = document.createElement("div"); c.className = "caption"; c.textContent = `💧 ${user} reminds everyone to drink some water!`;
+  m.append(img, c); ov.append(m);
+  setTimeout(() => m.classList.add("visible"), 30);
+  setTimeout(() => { m.classList.remove("visible"); setTimeout(() => m.remove(), 500); }, 4000);
+  play("pop.wav");
+  if (!calm) rain();
+}
+
+// player overlay: the Now playing card with its progress
+const songs = [["Night Over the City", "The Tides", "7c3aed", 214], ["Summer in Sneakers", "Sunny Bunnies", "e5484d", 187],
+               ["Neon Heart", "Lady Flower", "0d8597", 241], ["8 Bit", "Smoke over the River", "f5a623", 199]];
+let song = 0, songStart = performance.now() - 52000;
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+function showSong(by) {
+  const [title, artist, hue, len] = songs[song];
+  $("#npTitle").textContent = title; $("#npArtist").textContent = artist;
+  $("#npBy").textContent = "requested by @" + by; $("#npLen").textContent = fmt(len);
+  const art = $("#art"); art.textContent = artist[0]; art.style.background = `linear-gradient(135deg, #${hue}, #1b1b24)`;
+}
+showSong("sonya_plays");
+setInterval(() => {
+  const at = Math.min((performance.now() - songStart) / 1000, songs[song][3]);
+  $("#npAt").textContent = fmt(at); $("#npBar").style.width = (100 * at / songs[song][3]) + "%";
+}, 250);
+
+let deaths = 3;
+const events = {
+  follow: u => alertNow({ kind: "follow", title: `${u} followed!`, sound: "chime.wav" }),
+  subscription: u => alertNow({ kind: "subscription", title: `${u} subscribed!`, message: "Thanks for the streams!", sound: "sparkle.wav" }),
+  gift: u => alertNow({ kind: "gift", title: `${u} gifted 5 subs!`, sound: "sparkle.wav" }),
+  cheer: u => alertNow({ kind: "cheer", title: `${u} cheered 500 bits!`, message: "Here, have a coffee!", sound: "marimba.wav" }),
+  raid: u => { alertNow({ kind: "raid", title: `${u} is raiding with 42 viewers!`, sound: "harp.wav" });
+               setTimeout(() => say(u, "RAID! 💜💜💜", ["vip", "VIP"]), 900); },
+  redeem: u => redeem(u),
+  song: u => {
+    say(u, "!sr " + songs[(song + 1) % songs.length].slice(0, 2).reverse().join(" — "));
+    const np = $("#np");
+    setTimeout(() => np.classList.add("hidden"), 600);
+    setTimeout(() => { song = (song + 1) % songs.length; songStart = performance.now(); showSong(u); np.classList.remove("hidden"); }, 1100);
+  },
+  death: () => {
+    const v = $("#deaths"); v.textContent = ++deaths;
+    v.classList.remove("pulse"); void v.offsetWidth; v.classList.add("pulse");
+    say(pick(names), pick(["F", "again?!", "RIP", "😭"]));
+  },
+};
+document.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => events[b.dataset.ev](pick(names)));
+
+// ---------- the feature grid, lit where the pointer is
+const feats = [
+  ["i-control", "Control Center", "Chat, the stream preview, OBS buttons and events on one screen."],
+  ["i-voice", "Text to speech", "Chat and redeems read aloud, in English or Ukrainian."],
+  ["i-music", "Music", "YouTube, Spotify and files in one queue."],
+  ["i-gift", "Redeems", "Sounds, GIFs, videos and full-screen effects."],
+  ["i-bell", "Channel events", "An alert, a voice and a script for each event."],
+  ["i-layers", "Overlays", "Chat, music, the queue, a countdown — into OBS in one click."],
+  ["i-obs", "OBS control", "Scenes, sources with the mouse, filters, the mixer, recording."],
+  ["i-discord", "Discord", "Announcements, clips, a voice overlay, mic and headphones."],
+  ["i-bot", "Chat bot", "Commands, timers, quotes, giveaways."],
+  ["i-clip", "Clips and raids", "A moment in one click. Finding a channel to raid."],
+  ["i-code", "Scripts", "Your own code on a redeem, command or event."],
+  ["i-wand", "Setup wizard", "Twitch, OBS, overlays and voice — step by step."],
+  ["i-deck", "Deck and phone", "OpenDeck and a phone on the same network."],
+  ["i-move", "Bring from other apps", "Commands and redeems from other bots in a few clicks."],
+  ["i-train", "Hype Train and goals", "The level and contributions on an overlay."],
+  ["i-count", "Counters", "Deaths, cups of tea — from a key or from chat."],
+];
+const grid = $("#grid");
+feats.forEach(([icon, h, p], i) => {
+  const d = document.createElement("div");
+  d.className = "feat reveal" + (i % 4 ? " d" + (i % 4) : "");
+  d.innerHTML = `<svg><use href="#${icon}"/></svg><h3></h3><p></p>`;
+  d.querySelector("h3").textContent = h; d.querySelector("p").textContent = p;
+  d.addEventListener("pointermove", e => {
+    const r = d.getBoundingClientRect();
+    d.style.setProperty("--mx", e.clientX - r.left + "px"); d.style.setProperty("--my", e.clientY - r.top + "px");
+  });
+  grid.append(d); seen.observe(d);
+});
+</script>
+</body>
+</html>
