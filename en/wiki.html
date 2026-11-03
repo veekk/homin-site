@@ -1463,6 +1463,68 @@ sudo modprobe v4l2loopback</code></pre>
   </div>
 </article>
 
+<!-- ============================================================ game overlay -->
+<article id="game-overlay">
+  <h2>Game overlay</h2>
+  <p>Your stream on your own screen, over the game: whether you're live, chat, Activity, the song, the countdown and who's
+    speaking in Discord — small windows that clicks go through, that viewers don't see, and nothing is put into the game.
+    Handy when you stream from one monitor and don't want to leave the game. Settings: <span class="ui">Overlays › Game overlay</span>
+    (under <span class="ui">On this screen</span>); it can be switched off on its own in <span class="ui">Settings › Features</span>.</p>
+  <div class="topic">
+  <h3 id="game-overlay-parts">Parts</h3>
+  <p>Each part is switched on by itself; click a part in the <span class="ui">Parts</span> list to see its settings.</p>
+  <div class="table"><table>
+    <tr><th>Part</th><th>What it shows</th></tr>
+    <tr><td>Status</td><td class="wrap">whether you're live and for how long, viewers, your Discord mic muted in red, and stream health's warnings (dropped frames, bitrate)</td></tr>
+    <tr><td>Countdown</td><td class="wrap">Starting soon, Be right back or Ending soon with the time left, while one runs</td></tr>
+    <tr><td>Now playing</td><td class="wrap">the cover, the song and who asked for it — when a song starts, or all the time</td></tr>
+    <tr><td>Activity</td><td class="wrap">follows, subs, cheers, raids and redeems, each for a few seconds</td></tr>
+    <tr><td>Chat</td><td class="wrap">the newest lines (how many is up to you), each two rows at most, fading after a while or kept</td></tr>
+    <tr><td>Discord voice</td><td class="wrap">who's in your voice channel and who's speaking; at most as many as you set, then "and N more"; needs the <a href="#connect-discord-voice">voice controls</a></td></tr>
+  </table></div>
+  <p>For each part: its size, opacity and which way it grows — <span class="ui">Grows sideways</span> and
+    <span class="ui">Grows up or down</span>. "Auto, by where it is" goes by where the part is on the screen; "To the right" keeps
+    its left edge where you put it, however long the song's title.</p>
+  </div>
+  <div class="topic">
+  <h3 id="game-overlay-place">Placing the parts</h3>
+  <ul>
+    <li><span class="ui">Move on screen</span> (or <span class="ui">Move parts</span> on the control panel, right from the game)
+      shows every part that's on, with samples, where it will be, in a frame with its name. Drag it where it should go: it
+      snaps to a grid and the screen's edges, with Shift it goes anywhere. A dot on the frame marks the edge that stays put.
+      <span class="ui">Done</span> or Esc ends it; meanwhile it holds the keyboard, and it ends by itself after ten minutes.</li>
+    <li><span class="ui">Placement</span> on the page is the game's screen in small with the same parts: they can be dragged there too.</li>
+    <li><span class="ui">Samples</span> fills every part that's on with made-up content while you arrange them (each part's frame
+      is the most room it can take); <span class="ui">Show now</span> shows what's really there for a few seconds.</li>
+    <li><span class="ui">Layout</span> at the top keeps an arrangement under a name — one for each game; <span class="ui">+</span> saves
+      a copy, the list switches, <span class="ui">Reset to default</span> puts the one you're on back as Homin starts.</li>
+  </ul>
+  </div>
+  <div class="topic">
+  <h3 id="game-overlay-panel">Control panel</h3>
+  <p>The panel's key opens, over the game, your Discord mic and sound, TTS, the Be right back countdown, a marker, a clip,
+    skip TTS, clear alerts, start or stop the stream (asks twice), the scenes, the music with its volume, and the chat with a box
+    to write in. While it's open it holds the keyboard and the mouse — nothing you type reaches the game; Esc, a click beside it
+    or switching windows gives them back. With "Show over" › "Fullscreen app" it opens only over the game you're in. Opened
+    while you hold the game's right button (turning the camera), the game may miss its first click after it closes.</p>
+  </div>
+  <div class="topic">
+  <h3 id="game-overlay-keys">Keys, and where it shows</h3>
+  <ul>
+    <li><span class="ui">Settings › Hotkeys › Game overlay</span>: show or hide it, <span class="ui">Peek</span> (every part for a
+      few seconds, lines that already faded too) and the control panel.</li>
+    <li><span class="ui">Show over</span> › <span class="ui">Fullscreen app</span> (the default) hides the parts when another window
+      or the desktop is in front of the game on its own screen; working on another monitor doesn't hide them.
+      <span class="ui">Desktop</span> shows them everywhere.</li>
+    <li>On Linux with Wayland it's a separate window of the system's Qt (<code>qml6</code> with layer-shell-qt; on Arch
+      <code>qt6-declarative</code>, <code>layer-shell-qt</code>, <code>qt6-websockets</code>), which KDE Plasma keeps above
+      full-screen games; GNOME doesn't allow that. On Windows and X11 it stays above a game in borderless window mode, not in
+      exclusive full screen.</li>
+    <li>A whole-screen capture in OBS shows the overlay on stream too; a game or window capture doesn't.</li>
+  </ul>
+  </div>
+</article>
+
 <!-- ============================================================ discord -->
 <article id="discord">
   <h2>Discord</h2>
@@ -1497,15 +1559,8 @@ sudo modprobe v4l2loopback</code></pre>
       speaking; pictures with names as a list or side by side; the corner and size. You aren't shown until you turn on
       <span class="ui">Show me too</span>. Anyone can be switched off in the list of who's in the channel now: they won't show up
       on stream in any channel until you switch them back on.</li>
-    <li><b>Over a game, only on your screen</b> (the Discord page › <span class="ui">In-game overlay</span>; viewers don't
-      see it) — only who's speaking, top right by default, with its own size and opacity. By default it shows only
-      when the window in front is full screen, like a game; it can show always too. Clicks go through it, it doesn't take the keyboard,
-      and nothing is put into the game.</li>
-    <li>On Linux with Wayland it's a separate window of the system's Qt (<code>qml6</code> with layer-shell-qt; on Arch <code>qt6-declarative</code>,
-      <code>layer-shell-qt</code>, <code>qt6-websockets</code>), which KDE keeps above full-screen games; GNOME doesn't allow that.
-      On Windows and X11 it stays above a game in borderless window mode, not in exclusive full screen.</li>
-    <li>The show/hide key is in Settings › Hotkeys › Discord. A whole-screen capture in OBS shows it on
-      stream too; a game or window capture doesn't.</li>
+    <li><b>Over a game, only on your screen</b> — the <a href="#game-overlay">game overlay</a>'s
+      Discord voice part: viewers don't see it, clicks go through it.</li>
   </ul>
   </div>
 </article>
