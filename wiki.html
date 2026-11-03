@@ -1677,6 +1677,14 @@ curl -H "Authorization: Bearer ТОКЕН" http://127.0.0.1:9863/api/deck/state
     <span class="ui">Увійти повторно</span>.</p>
   </div>
   <div class="topic">
+  <h3 id="trouble-afterburner">Над Гоміном показуються цифри Afterburner (Windows)</h3>
+  <p>Екранні показники MSI Afterburner малює RivaTuner Statistics Server (RTSS) поверх кожної програми, що працює з Direct3D, —
+    і вікно Гоміна теж. Програма сама відмовитися не може, тож скажіть це RTSS: відкрийте RivaTuner Statistics Server (значок у треї),
+    натисніть <span class="ui">Add</span> унизу ліворуч, виберіть <code>Homin.exe</code> у теці, куди встановлено Гомін, і, коли
+    його виділено, поставте <span class="ui">Application detection level</span> на <span class="ui">None</span>. Те саме для
+    <code>homin-worker.exe</code>, якщо цифри з’являються ще в якомусь вікні Гоміна.</p>
+  </div>
+  <div class="topic">
   <h3 id="trouble-other">Щось інше</h3>
   <p>Налаштування › <span class="ui">Журнал</span> показує, що відбувалося. Файл журналу:</p>
   <div class="table"><table>
