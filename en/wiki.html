@@ -302,7 +302,7 @@ sudo modprobe v4l2loopback</code></pre>
       Your own Twitch app is under <span class="ui">Advanced</span>.</li>
     <li><b>OBS</b> — the WebSocket server, the password and connecting; when it fails, the wizard says why.</li>
     <li><b>Overlays</b> — pick a scene and the overlays, and <span class="ui">Add to the scene</span> adds them to OBS at the right size.</li>
-    <li><b>Text to speech</b> — the engine (Piper, StyleTTS2, the system's voices or “Not now”), installing it, the voice, a test and the sound for
+    <li><b>Text to speech</b> — the engine (Supertonic 3, suggested, Piper, StyleTTS2, RAD-TTS++, the system's voices or “Not now”), installing it, the voice, a test and the sound for
       OBS. The wizard checks by itself whether OBS hears the speech.</li>
     <li><b>More</b> — Discord, Spotify, donatik.ua and bringing things over from other apps (all optional).</li>
     <li><b>Done</b> — how Homin starts and closes, and what's ready.</li>
@@ -1098,8 +1098,8 @@ sudo modprobe v4l2loopback</code></pre>
   <div class="topic">
   <h3 id="tts-engines">Engines and voices</h3>
   <p>The Engine list holds only the engines ready to speak, and <span class="ui">Off</span> (nothing is read). The
-    <span class="ui">Engines</span> button next to it opens a window: the engines already on the PC (the one in use first) apart from those
-    that can be installed, each in two lines — what it is and how much room it takes on the disk and in memory. Installing is one button,
+    <span class="ui">Engines</span> button next to it opens a window: the engines already on the PC (in the Engine list's order) apart from those
+    that can be installed, each in three lines — what it is good at (✓), what to know before choosing it (–) and how much room it takes on the disk and in memory. Installing is one button,
     no Git; a freshly installed engine becomes the current one at once (StyleTTS2, once it has voices). Reinstalling, another StyleTTS2
     build and <span class="ui">Remove</span> are under <span class="ui">Details</span>; the current one can be removed too, and then
     Homin moves to another ready one. Only one engine is in memory: the one you switched from frees it at once.</p>
@@ -1117,10 +1117,17 @@ sudo modprobe v4l2loopback</code></pre>
     <tr><td><b>StyleTTS2</b></td><td class="wrap">The most natural Ukrainian, in one button; several GB (mostly PyTorch), <span class="ui">Remove</span>
       frees the room. It comes without voices: under <b>Voices</b> paste a Hugging Face link to <code>.pt</code> presets,
       <span class="ui">Find voices</span> shows them with their author's licence, tick and download them; <span class="ui">From files…</span> adds
-      your own. On NVIDIA it takes about 1.15 GB of video memory, with <span class="ui">Half precision on the GPU</span> about 0.85 GB.</td></tr>
+      your own. For example, the <a href="https://huggingface.co/spaces/patriotyk/styletts2-ukrainian">styletts2-ukrainian</a>
+      page (MIT) holds over thirty Ukrainian voices: paste its address. On NVIDIA it takes about 1.15 GB of video memory, with <span class="ui">Half precision on the GPU</span> about 0.85 GB.</td></tr>
     <tr><td><b>RAD-TTS++</b></td><td class="wrap">Ukrainian, in one button, on the CPU: three voices — Tetiana, Mykyta and Lada (a newer model of
       Piper's <code>uk_UA-ukrainian_tts</code> voice, 44.1 kHz). A chat line in well under a second; about 2.5 GB. It reads
       Ukrainian letters (English <a href="#tts-engines">in Ukrainian letters</a>) and evens out the volume. <code>+</code> after a vowel in an alias marks the stress: <code>замо+к</code>.</td></tr>
+    <tr><td><b>Online services</b></td><td class="wrap"><b>Azure Speech</b>, <b>ElevenLabs</b>, <b>Google Cloud</b> and <b>OpenAI</b>, under
+      <span class="ui">Online services</span> in the Engines window. Each uses your own account: paste its API key (and Azure's
+      region), kept in the OS keyring; <span class="ui">Save</span> checks it with the service and says if it was refused. Then
+      <span class="ui">Use</span> it like any other engine. What it reads is sent to that service, which bills you; none is used
+      until you pick it, and none reads ahead. Ukrainian voices: Azure's Polina and Ostap and its multilingual voices,
+      ElevenLabs' (Flash v2.5), Google's Chirp 3 HD, OpenAI's.</td></tr>
     <tr><td><b>System voices</b></td><td class="wrap">What's already on your system.</td></tr>
   </table></div>
   <p><b>English in Ukrainian letters.</b> Piper's, RAD-TTS++'s and StyleTTS2's Ukrainian voices speak only Ukrainian, so
