@@ -226,6 +226,34 @@
   </div>
 
   <div class="topic">
+  <h3 id="install-blocked">If Windows Defender or your browser blocks Homin</h3>
+  <p>Homin isn't code-signed yet, and antivirus software sometimes guesses wrong about unsigned programs.
+    It has happened with Windows Defender (<code>Trojan:Win32/Bearfoos.A!ml</code>, where <code>!ml</code>
+    means a machine-learning guess, not a match with known malware) and with Firefox. It can come and go:
+    the same version may pass on another PC or on a second try. Microsoft reviewed a flagged
+    <code>Homin.exe</code> from 1.0.0rc22 and found it isn't malware.</p>
+  <p>That doesn't prove your copy is fine, so check it first:</p>
+  <ol class="steps">
+    <li>Download only from the <a href="https://github.com/veekk/homin-site/releases">releases page</a>.</li>
+    <li>In PowerShell, in the folder with the file, get its fingerprint (use your file's name):
+      <pre><code>Get-FileHash .\Homin-1.0.0rc22-setup.exe -Algorithm SHA256</code></pre></li>
+    <li>Compare it with the <code>sha256</code> shown next to that file on the releases page. If they
+      differ, delete the file and download it again.</li>
+  </ol>
+  <p>If they match:</p>
+  <ul>
+    <li><b>Browser:</b> open its list of downloads and allow the file (Firefox: <b>Allow download</b>).</li>
+    <li><b>Windows Defender removed the installer:</b> in <b>Windows Security › Virus &amp; threat protection ›
+      Protection history</b>, open the item and choose <b>Actions › Restore</b>.</li>
+    <li><b>Windows Defender removed the installed <code>Homin.exe</code>:</b> run the checked installer again.</li>
+  </ul>
+  <p>You can help by sending the file to Microsoft as a false positive through its
+    <a href="https://www.microsoft.com/wdsi/filesubmission">file submission page</a>, and by telling the author the
+    detection's name, which file it hit and what you were doing.</p>
+  <div class="note warn">Please don't switch Windows Defender off or exclude a whole folder from it for Homin.</div>
+  </div>
+
+  <div class="topic">
   <h3 id="install-linux">Linux</h3>
   <p>The easiest is the AppImage:</p>
   <pre><code>chmod +x Homin-*-x86_64.AppImage
