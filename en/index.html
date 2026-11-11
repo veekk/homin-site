@@ -285,6 +285,13 @@
   .os code { font-size: 13px; background: rgba(255,255,255,.07); padding: 2px 6px; border-radius: 6px; overflow-wrap: anywhere; }
   .dl-note { margin-top: 22px; color: var(--muted); font-size: 15px; }
   .dl-note a { color: var(--ink); }
+  .exp { margin-top: 18px; border-radius: 20px; padding: 24px 26px; border: 1px dashed var(--line);
+         background: rgba(255,255,255,.02); display: flex; flex-direction: column; gap: 12px; }
+  .exp[hidden] { display: none; }
+  .exp h3 { font-size: 19px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .exp p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .exp .files { display: flex; flex-wrap: wrap; gap: 10px; }
+  .exp .files small { font-weight: 400; opacity: .75; }
   @media (max-width: 960px) {
     .hero .wrap, .tour, .demo, .deck, .dl { grid-template-columns: 1fr; }
     .hero { padding-top: 100px; }
@@ -475,18 +482,18 @@
   </div>
 </section>
 
-<!-- ============================================================ new: online voices -->
+<!-- ============================================================ new: voices and effects -->
 <section id="voices">
   <div class="wrap">
     <div class="kicker reveal">New</div>
     <h2 class="reveal d1">Text to speech — <span class="grad">a voice you like</span></h2>
-    <p class="lead2 reveal d2" style="margin-bottom:28px">Voices on your PC or online services with your own key — and an
-      honest line on what each is good at.</p>
+    <p class="lead2 reveal d2" style="margin-bottom:28px">A new Ukrainian engine with voices of your own, voice effects
+      chat asks for, and an honest word on what each engine is good at.</p>
     <ul class="bullets">
       <li class="reveal d1"><i>☁️</i><div><b>Online voices</b><span>Azure Speech, ElevenLabs, Google Cloud and OpenAI, with your own key kept in the OS keyring. Used only when you pick them.</span></div></li>
-      <li class="reveal d2"><i>🇺🇦</i><div><b>Ukrainian and English</b><span>Supertonic 3 reads both in one voice, and now above Speed 1 too, without losing words.</span></div></li>
+      <li class="reveal d2"><i>🇺🇦</i><div><b>HolosTTS</b><span>26 Ukrainian voices on the processor — and your own: from a few recordings made right in Homin, or by mixing two voices. Share a voice as a file.</span></div></li>
       <li class="reveal d3"><i>⚖️</i><div><b>Honest about each engine</b><span>In the Engines window each one says what it's good at and what to know before choosing it.</span></div></li>
-      <li class="reveal d1"><i>🧭</i><div><b>The wizard suggests one</b><span>A new streamer gets a pick straight away: Supertonic 3, about 0.5 GB, ten voices.</span></div></li>
+      <li class="reveal d1"><i>😈</i><div><b>Voice effects</b><span>Demon, ghost, robot, chipmunk… Viewers write <code>(demon)</code> before their words, a redeem curses someone in chat, and <code>(bonk)</code> drops in a sound.</span></div></li>
     </ul>
     <p class="reveal d2" style="margin-top:28px"><a class="btn ghost" href="wiki.html#tts-engines">How it works — in the wiki →</a></p>
   </div>
@@ -562,6 +569,16 @@
           Unpack the archive anywhere and run <code>homin</code>.</p>
       </div>
     </div>
+    <div class="exp reveal" id="dlExperimental" hidden>
+      <h3>🧪 Experimental version <span class="grad" id="expVersion"></span></h3>
+      <p>A newer build, still being tried on real PCs and waiting for Microsoft's review for Windows Defender. For those who want the new things first and will say in <a href="https://discord.gg/DeR2tQT5Mc" rel="noopener">Discord</a> when something is wrong. To keep getting them, pick Settings › Updates › Updates channel › Experimental in Homin.</p>
+      <div class="files">
+        <a class="btn ghost" data-exp="windows-setup" href="https://github.com/veekk/homin-site/releases">Windows: installer <small>.exe</small></a>
+        <a class="btn ghost" data-exp="windows-portable" href="https://github.com/veekk/homin-site/releases">Windows, portable <small>.zip</small></a>
+        <a class="btn ghost" data-exp="linux-appimage" href="https://github.com/veekk/homin-site/releases">Linux: AppImage <small>x86_64</small></a>
+        <a class="btn ghost" data-exp="linux-tar" href="https://github.com/veekk/homin-site/releases">Linux: folder archive <small>.tar.gz</small></a>
+      </div>
+    </div>
     <p class="dl-note reveal">Homin tells you itself when a new version is out (Settings › Updates).
       Every version, what's new and the SHA-256 checksums are on the <a href="https://github.com/veekk/homin-site/releases">releases page</a>.</p>
   </div>
@@ -593,7 +610,8 @@ fetch("../latest.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null)
   if (!file) return;
   const b64 = file.payload.replace(/-/g, "+").replace(/_/g, "/");
   const bytes = Uint8Array.from(atob(b64 + "=".repeat((4 - b64.length % 4) % 4)), c => c.charCodeAt(0));
-  const releases = JSON.parse(new TextDecoder().decode(bytes)).releases || [];
+  const payload = JSON.parse(new TextDecoder().decode(bytes));
+  const releases = payload.releases || [];
   const newest = releases[releases.length - 1];
   if (!newest) return;
   const rc = /rc\d+$/.test(newest.version);
@@ -608,6 +626,27 @@ fetch("../latest.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null)
     a.setAttribute("download", "");
     if (f.size) a.querySelector("small").textContent += " · " + Math.round(f.size / 1e6) + " MB";
   }
+  // 1.0.0a1 < 1.0.0rc5 < 1.0.0 < 1.0.1, as the app compares them
+  const key = v => {
+    const m = /^(\d+)\.(\d+)\.(\d+)(?:(a|b|rc)(\d+))?$/.exec(v || "");
+    return m ? [+m[1], +m[2], +m[3], {a: 0, b: 1, rc: 2}[m[4]] ?? 3, +(m[5] || 0)] : null;
+  };
+  const newer = (x, y) => {
+    for (let i = 0; i < 5; i++) if (x[i] !== y[i]) return x[i] > y[i];
+    return false;
+  };
+  const exp = (payload.experimental || []).filter(r => key(r.version))
+    .sort((x, y) => newer(key(x.version), key(y.version)) ? -1 : 1)[0];
+  if (!exp || !newer(key(exp.version), key(newest.version))) return;
+  document.getElementById("expVersion").textContent = exp.version;
+  for (const a of document.querySelectorAll("[data-exp]")) {
+    const f = (exp.files || {})[a.dataset.exp];
+    if (!f || !/^https:\/\//.test(f.url)) { a.remove(); continue; }
+    a.href = f.url;
+    a.setAttribute("download", "");
+    if (f.size) a.querySelector("small").textContent += " · " + Math.round(f.size / 1e6) + " MB";
+  }
+  document.getElementById("dlExperimental").hidden = false;
 }).catch(() => {});
 const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = (s, el = document) => el.querySelector(s);
@@ -863,7 +902,7 @@ document.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => events[b.d
 // ---------- the feature grid, lit where the pointer is
 const feats = [
   ["i-control", "Control Center", "Chat, the stream preview, OBS buttons and events on one screen, arranged your way."],
-  ["i-voice", "Text to speech", "Chat and redeems read aloud, in English or Ukrainian."],
+  ["i-voice", "Text to speech", "Chat and redeems read aloud, in English or Ukrainian, with effects."],
   ["i-music", "Music", "YouTube, Spotify and files in one queue."],
   ["i-gift", "Redeems", "Sounds, GIFs, videos and full-screen effects."],
   ["i-bell", "Channel events", "An alert, a voice and a script for each event."],
@@ -879,6 +918,7 @@ const feats = [
   ["i-move", "Bring from other apps", "Commands and redeems from other bots in a few clicks."],
   ["i-train", "Hype Train and goals", "The level and contributions on an overlay."],
   ["i-count", "Counters", "Deaths, cups of tea — from a key or from chat."],
+  ["i-wand", "Set up for the game (Linux)", "A game starts — its category, title and layout in one click."],
 ];
 const grid = $("#grid");
 feats.forEach(([icon, h, p], i) => {

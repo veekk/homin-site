@@ -223,6 +223,10 @@
       On Windows 10 also the small 7-Zip unpacker (0.6 MB).</li>
   </ol>
   <p>Install a new version over the old one — your settings and data stay.</p>
+  <p><b>The experimental version.</b> A new build comes out as experimental first: it is still being tried on real PCs and waits
+    for Microsoft's review for Windows Defender. When there is one, the <a href="index.html#download">Download section</a> shows it
+    apart, under the stable one. To keep getting them, pick Settings › Updates › <span class="ui">Updates channel</span> ›
+    <span class="ui">Experimental</span> (<a href="#settings-updates">more</a>).</p>
   </div>
 
   <div class="topic">
@@ -556,8 +560,8 @@ sudo modprobe v4l2loopback</code></pre>
   <ul>
     <li>Emotes, GIFs, links, replies, mentions, highlighted announcements and Twitch's badges as pictures (or as the words HOST, MOD, VIP,
       SUB: right-click › <span class="ui">Badges as pictures</span>).</li>
-    <li>Right-click a message: reply, pin, copy, send to TTS, <span class="ui">TTS name…</span>,
-      moderate, <span class="ui">Viewer card</span>.</li>
+    <li>Right-click a message: reply, pin, copy, send to TTS, <span class="ui">TTS for this viewer…</span>
+      (<a href="#tts-aliases">name, voice and effect</a>), <span class="ui">Shoutout @viewer</span>, moderate, <span class="ui">Viewer card</span>.</li>
     <li>The broadcast button in the chat's header shows events between the messages, as Twitch's chat does (off at first).</li>
     <li><b>Aa</b> in the header (a slider), or Ctrl+wheel over the chat, sets the chat's text size (80–200%), badges and
       emotes with it. The raid browser's chat follows.</li>
@@ -576,7 +580,8 @@ sudo modprobe v4l2loopback</code></pre>
   <h3 id="control-viewer">The viewer card</h3>
   <p>When the account was made (with a warning if it's less than a week old), whether and since when they follow, their sub tier, their last
     lines in chat, their redeems and song requests, when Homin first saw them and how many messages. From there too:
-    a shoutout, a timeout, a ban (it asks first and offers a 10-minute timeout next to it), “TTS skips their messages” and a link to their Twitch page.</p>
+    a shoutout, a timeout, a ban (it asks first and offers a 10-minute timeout next to it), <span class="ui">TTS…</span> (their name,
+    voice, effect and whether to skip them) and a link to their Twitch page.</p>
   </div>
 
   <div class="topic">
@@ -659,6 +664,22 @@ sudo modprobe v4l2loopback</code></pre>
       <span class="ui">Wins</span> on what happened, or cancel it with the points refunded.</li>
   </ul>
   <div class="note">Hype Train, goals, polls, predictions, ads and channel points are given by Twitch to affiliates and partners only.</div>
+  </div>
+
+  <div class="topic">
+  <h3 id="control-game">The game and the stream set up for it (Linux)</h3>
+  <p>Homin sees a game start from Steam (native or through Proton) or from Faugus Launcher, and Activity says
+    <b>Playing …</b>, then <b>Stopped playing …</b> with how long. A game Battle.net or another launcher in Faugus starts is named
+    by its folder (World of Warcraft). Homin only looks at which programs are running; it sends the game nothing.</p>
+  <ul>
+    <li><b>A card</b> (and a desktop notification while the window is behind the game) offers the Twitch category found by the game's
+      name. <span class="ui">Change…</span> picks another category, a title and a <a href="#layouts">layout</a>; what you apply is
+      remembered for that game and offered next time. <span class="ui">Not for this game</span> stops asking.</li>
+    <li>The game being played shows in the top bar; a click on it brings its card back.</li>
+    <li>Settings › Behaviour › <span class="ui">When a game starts</span>: no card, apply remembered choices without asking, or forget
+      the games. To switch it off entirely: Settings › Features › <span class="ui">Game detection</span>.</li>
+    <li>A rule on the Redeems page can start with a game too (<a href="#redeems-rules">below</a>).</li>
+  </ul>
   </div>
 </article>
 
@@ -1106,12 +1127,21 @@ sudo modprobe v4l2loopback</code></pre>
     explicit lyrics, Russian songs (<a href="#songs-russian">below</a>) and, on the <span class="ui">Chat replies</span> tab, the replies — when a song is queued, when it plays at once, when it's refused, when a requested one starts
     playing later. Each reply has its own switch; one that's off writes nothing, but the request works and points are refunded.</p>
   <ul>
+    <li><span class="ui">Requests without a link</span> › <span class="ui">Links only</span>: a viewer who types a song's name instead
+      of a link is told to send a link and gets the points back.</li>
     <li><span class="ui">Priority Song Request</span> puts the song at the front of the requests without cutting off the one playing.</li>
     <li><span class="ui">Skip Song</span> skips the current one and says who skipped what and whose it was. The action fills in
       <code>{song}</code>, <code>{artist}</code> and <code>{requester}</code> for the next steps. When nothing plays, the points go back.</li>
     <li>Moderators have <code>!sr &lt;link or name&gt;</code> (the song rules apply, the viewer limits don't) and
       <code>!skip</code> (skips a paid one too). Both are on the Chat Bot page, off at first.</li>
   </ul>
+  </div>
+  <div class="topic">
+  <h3 id="songs-spotify">Requests while your Spotify plays</h3>
+  <p>Requests interrupt your Spotify song and play one after another; only the next one goes into Spotify's queue each time, about
+    10 seconds before the one playing ends, so until then a priority request or a new order in the queue simply applies. After the
+    last request your song comes back once, where it stopped, inside its playlist or album. Songs not available in your country
+    Spotify won't play: such a request is refused and the points go back.</p>
   </div>
   <div class="topic">
   <h3 id="songs-russian">Russian songs</h3>
@@ -1168,6 +1198,12 @@ sudo modprobe v4l2loopback</code></pre>
     <tr><td><b>RAD-TTS++</b></td><td class="wrap">Ukrainian, in one button, on the CPU: three voices — Tetiana, Mykyta and Lada (a newer model of
       Piper's <code>uk_UA-ukrainian_tts</code> voice, 44.1 kHz). A chat line in well under a second; about 2.5 GB. It reads
       Ukrainian letters (English <a href="#tts-engines">in Ukrainian letters</a>) and evens out the volume. <code>+</code> after a vowel in an alias marks the stress: <code>замо+к</code>.</td></tr>
+    <tr><td><b>HolosTTS</b></td><td class="wrap">Ukrainian, one button, on the processor: 26 voices (Female 1–10, Male 1–16). Your own
+      voices are under Voices: from one or more recordings of a person (several are averaged, which often sounds best) or by mixing
+      two voices. <span class="ui">Record</span> records right there, with a level meter; the take is deleted once the voice is made.
+      Save a voice as a file from its row, and someone else adds it with <span class="ui">Add a voice file…</span> (Supertonic's voices
+      too). The model's author says the voices were taken without their owners' consent, and that commercial use needs their
+      agreement.</td></tr>
     <tr><td><b>Online services</b></td><td class="wrap"><b>Azure Speech</b>, <b>ElevenLabs</b>, <b>Google Cloud</b> and <b>OpenAI</b>, under
       <span class="ui">Online services</span> in the Engines window. Each uses your own account: paste its API key (and Azure's
       region), kept in the OS keyring; <span class="ui">Save</span> checks it with the service and says if it was refused. Then
@@ -1201,13 +1237,34 @@ sudo modprobe v4l2loopback</code></pre>
   </ul>
   </div>
   <div class="topic">
+  <h3 id="tts-effects">Voice effects</h3>
+  <p>Demon, Ghost, Giant, Chipmunk, Robot, Radio, Cave and AI — in every engine. The effect a voice always has is the
+    <span class="ui">Effect</span> under the voice; the rest is on the <span class="ui">Effects</span> tab:</p>
+  <ul>
+    <li><span class="ui">Right now</span> — the effect for everyone that a redeem, the Stream Deck, the phone, the Hype Train or a
+      layout put on (with <span class="ui">Switch off</span>), and the curses that are on, each with a button to lift it.</li>
+    <li><span class="ui">Effect tags</span> — viewers write <code>(demon) words</code>, and those words are said with the effect;
+      <code>(none)</code> ends the tag before it. The rules: who may (everyone, subscribers, VIPs or moderators), a cooldown per
+      viewer, how many tags one message may have and a tick per effect. Outside the rules the tags are taken out and the words read in
+      the usual voice. The <code>!effects</code> and <code>!sounds</code> commands (Chat Bot) tell chat which tags there are.</li>
+    <li><span class="ui">Sound tags</span> — <code>(bonk)</code> plays a sound you added between the words, through the TTS source in OBS.</li>
+    <li>Redeems: the <span class="ui">TTS Message</span> action has its own effect (or <span class="ui">Random</span>) and a
+      <span class="ui">Read effect tags</span> switch; the <span class="ui">TTS Voice Effect</span> action puts all of TTS, the viewer who
+      redeemed it, or the <code>@viewer</code> named in the message (a curse) in an effect for 1–60 minutes. Redeems are paid for with
+      points, so who and the cooldown don't apply to them.</li>
+  </ul>
+  </div>
+  <div class="topic">
   <h3 id="tts-aliases">Aliases, users and words</h3>
   <ul>
     <li><span class="ui">Aliases</span> — separate lists for words and names: search, add, change, <span class="ui">Hear it</span>,
       delete; <span class="ui">Edit as text</span> — lines of <code>original = how to read it</code>, to paste many.
       Name aliases apply to <code>@name</code> in mentions and replies too.</li>
-    <li>A name can be set from chat too: right-click › <span class="ui">TTS name…</span> (and on the viewer card), or viewers set it themselves
-      with the <code>!ttsname</code> command (Chat Bot).</li>
+    <li><b>One viewer:</b> right-click in chat › <span class="ui">TTS for this viewer…</span> (or <span class="ui">TTS…</span> on the
+      viewer card) — how their name is said, their own voice, their effect (or <span class="ui">Random</span>) and whether to skip
+      them; <span class="ui">Hear it</span> plays all of it before you save. Their effect reads their chat and the TTS redeems they pay
+      for; a tag in the message or a curse still wins. Viewers can set their name themselves with the <code>!ttsname</code> command
+      (Chat Bot).</li>
     <li><span class="ui">Users &amp; Words</span> — who and what never to read (bots are already on the list).</li>
   </ul>
   <div class="note"><b>For viewers to hear the speech</b>
@@ -1230,6 +1287,8 @@ sudo modprobe v4l2loopback</code></pre>
       <span class="ui">Overlay link &amp; look</span> opens the alerts overlay on the Overlays page.</li>
     <li><b>Presets</b> — saved copies of the alert settings, the overlay's look and each event, for each game, say.
       Name the stream categories in a preset — and it turns on by itself when the category changes. Changes are saved into the current preset.</li>
+    <li>Want Twitch's own alerts? General says how: their link from the Twitch dashboard goes into an OBS browser source, with
+      Homin's alerts switched off.</li>
   </ul>
   </div>
   <div class="topic">
@@ -1271,8 +1330,13 @@ sudo modprobe v4l2loopback</code></pre>
       <span class="ui">Create on Twitch</span>) and <span class="ui">Conditions</span> (cooldowns, limits per stream, required text,
       refunds) sections are folded into a summary line — “500 points · Song Request · on Twitch”.
       <span class="ui">Test Redeem</span> runs it without spending points.</li>
+    <li><span class="ui">Started by</span> — what else starts the rule besides a reward: a chat command, a channel event, the stream
+      starting or ending, a key of its own, or (Linux) <span class="ui">A game starts or closes</span> — any game, or one picked from the
+      installed and played ones; <code>{game}</code> is its name, <code>{minutes}</code> how long it was played. A rule without a reward
+      is an automation.</li>
     <li><b>On the right</b> — the actions: sounds, pictures, GIFs, videos, full-screen effects, TTS, messages to chat and Discord, webhooks,
-      scripts, steps in OBS and the player. <span class="ui">Media</span> is the file library, <span class="ui">History</span> who picked what.</li>
+      scripts, steps in OBS and the player. <span class="ui">Set Category / Title</span> sets the Twitch category (searched, or the game's
+      own) and the title, with variables. <span class="ui">Media</span> is the file library, <span class="ui">History</span> who picked what.</li>
   </ul>
   </div>
   <div class="topic">
@@ -1381,8 +1445,11 @@ sudo modprobe v4l2loopback</code></pre>
   <figure><img src="chatbot.png" alt="The Chat Bot page" loading="lazy"><figcaption>Commands, timers and ad breaks</figcaption></figure>
   <div class="topic">
   <h3 id="chatbot-commands">Commands</h3>
-  <p><code>!name</code> and a reply. You can give it other names, who may use it (everyone, subscribers, VIPs, moderators, only you) and a cooldown — for
-    everyone and for each viewer. A command on cooldown stays quiet; moderators don't wait. A command can also:</p>
+  <p><code>!name</code> and a reply. You can give it other names, who may use it (everyone, followers and up, subscribers, VIPs, moderators,
+    only you) and a cooldown — for everyone and for each viewer. A command on cooldown stays quiet; moderators don't wait. Chat doesn't
+    show who follows, so for <span class="ui">Followers and up</span> Homin asks Twitch the first time a viewer without a badge uses it.
+    A command's or a timer's answer can be <span class="ui">Posted as</span> a Twitch announcement (highlighted, in the channel's colour
+    or blue, green, orange, purple; sign in to Twitch again once for it). A command can also:</p>
   <ul>
     <li>give a Twitch <b>shoutout</b> (<code>!so @channel</code>; the text takes that channel's <code>{login}</code> and <code>{game}</code>);</li>
     <li>run a <b>redeem's actions</b> without spending points (<code>!hydrate</code>); <code>{message}</code> is what's written after the command;</li>
@@ -1677,6 +1744,7 @@ curl -H "Authorization: Bearer TOKEN" http://127.0.0.1:9863/api/deck/state
     <tr><td>StreamElements, Nightbot, Streamlabs, Fossabot, Moobot</td><td class="wrap">your channel's name (their command lists are public). With a StreamElements JWT token, timers and quotes too (the token is used once and not kept).</td></tr>
     <tr><td>Streamer.bot</td><td class="wrap">an export (pasted or as a file)</td></tr>
     <tr><td>Firebot</td><td class="wrap">its folder on this PC: commands, timers, counters with their numbers, quotes</td></tr>
+    <tr><td>Mix It Up</td><td class="wrap">its Settings folder on this PC or a <code>.miubackup</code> file (Settings › Backup &amp; Restore): commands, timers, quotes</td></tr>
   </table></div>
   <p>Variables are translated (<code>$(user)</code>, <code>${user}</code> → <code>{user}</code>, <code>$(touser)</code> → <code>{target}</code>,
     <code>$(query)</code> → <code>{args}</code>, <code>$(game)</code> → <code>{category}</code>…), <code>/timeout</code> becomes a timeout,
@@ -1689,7 +1757,8 @@ curl -H "Authorization: Bearer TOKEN" http://127.0.0.1:9863/api/deck/state
     <li><b>Alerts</b> from Streamlabs (with an API token, once): the Alert Box — texts, pictures or videos, sounds and volume, the minimum bits and
       raid, “at least N” variations as bigger alerts — as a new “Streamlabs” preset. Layouts, animations, fonts and the alerts' TTS don't come over.</li>
     <li><b>Redeems</b>: <b>SoundAlerts</b> sounds by channel name (with cooldowns and limits), <b>Streamer.bot</b> reward actions (Play Sound,
-      chat, Delay, OBS scenes and sources) and <b>Firebot</b> ones (sound, picture, video, TTS, chat, Delay).</li>
+      chat, Delay, OBS scenes and sources) and <b>Firebot</b> ones (sound, picture, video, TTS, chat, Delay), <b>Mix It Up</b>'s Channel Points commands (chat, speech,
+      sounds, waits) and the <b>SAMMI</b> deck buttons a reward presses (Copy Deck, pasted or as a file: Play Sound with its delay).</li>
     <li>Sounds, pictures and videos behind links can be saved into the media library (on at first), so they play without the internet.</li>
     <li>Homin can't refund points for another app's rewards — <a href="#redeems-twitch">move them to Homin</a>.</li>
   </ul>
@@ -1712,12 +1781,22 @@ curl -H "Authorization: Bearer TOKEN" http://127.0.0.1:9863/api/deck/state
   </div>
   <div class="topic">
   <h3 id="settings-updates">Updates</h3>
-  <p>At every start and once a day an installed Homin asks the site whether a newer version is out
-    (<span class="ui">Include release candidates</span> is on while you have a candidate). The first time it finds one, it opens the
-    <span class="ui">What's new</span> window with notes for each version (in Ukrainian in the Ukrainian interface) and a button to
-    download the same kind of file you installed. Never during a stream: it waits for the end. It downloads and installs
-    nothing by itself; the file it reads is signed, so a changed site can't send it anywhere else. A click on the version under the menu opens
-    About with <span class="ui">Check for updates</span>.</p>
+  <p>At every start and once a day an installed Homin asks the site whether a newer version is out. The first time it finds one, it
+    opens the <span class="ui">What's new</span> window with notes for each version (in Ukrainian in the Ukrainian interface). Never
+    during a stream: it waits for the end. It installs nothing by itself; the file it reads is signed, so a changed site can't send it
+    anywhere else. A click on the version under the menu opens About with <span class="ui">Check for updates</span> and
+    <span class="ui">Check again</span>.</p>
+  <ul>
+    <li><b>Windows:</b> <span class="ui">Download and install</span> fetches the new version in the background (with its progress and
+      <span class="ui">Cancel</span>) and keeps it only when its checksum matches the signed file. <span class="ui">Restart and
+      install</span> then closes Homin, puts the new version in place (settings and data stay) and opens it again; a portable copy swaps
+      its folder and puts the old one back if anything fails. During a stream it asks first: the stream goes on in OBS, but chat, alerts
+      and TTS pause for the minute Homin is away. Linux has <span class="ui">Download</span>.</li>
+    <li><span class="ui">Updates channel</span>: <span class="ui">Stable</span> (the default) gets a build only after it was tried on
+      real PCs and cleared by Microsoft's review for Windows Defender; <span class="ui">Experimental</span> gets each one as soon as it is
+      out. Copies running a withdrawn build say so. Going back to Stable never installs an older version by itself: wait for a newer
+      stable one. If you do start an older version, Homin first keeps a copy of the newer one's settings.</li>
+  </ul>
   </div>
   <div class="topic">
   <h3 id="settings-export">Export and import</h3>
@@ -1795,6 +1874,13 @@ curl -H "Authorization: Bearer TOKEN" http://127.0.0.1:9863/api/deck/state
   <h3 id="trouble-overlay">An overlay is cut off, tiny or empty</h3>
   <p>The browser source's size is wrong — click the wrench button by the overlay's address. One left empty because OBS started before
     Homin refreshes by itself about ten seconds after connecting; <code>?debug=1</code> in the address shows whether it's connected.</p>
+  </div>
+  <div class="topic">
+  <h3 id="trouble-scene-blank">An overlay is blank when its scene comes back</h3>
+  <p>It shows again after <span class="ui">Refresh cache of current page</span> or after saving the source's properties. Since OBS 33 a
+    browser source that stays loaded while hidden may not be redrawn when its scene shows again, though Homin keeps sending it
+    everything. In the source's properties turn on <span class="ui">Shutdown source when not visible</span>: OBS then loads the page
+    each time the scene shows, and Homin hands it the current countdown and song as it connects.</p>
   </div>
   <div class="topic">
   <h3 id="trouble-youtube">YouTube wants a sign-in</h3>

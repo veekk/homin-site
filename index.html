@@ -284,6 +284,13 @@
   .os code { font-size: 13px; background: rgba(255,255,255,.07); padding: 2px 6px; border-radius: 6px; overflow-wrap: anywhere; }
   .dl-note { margin-top: 22px; color: var(--muted); font-size: 15px; }
   .dl-note a { color: var(--ink); }
+  .exp { margin-top: 18px; border-radius: 20px; padding: 24px 26px; border: 1px dashed var(--line);
+         background: rgba(255,255,255,.02); display: flex; flex-direction: column; gap: 12px; }
+  .exp[hidden] { display: none; }
+  .exp h3 { font-size: 19px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .exp p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .exp .files { display: flex; flex-wrap: wrap; gap: 10px; }
+  .exp .files small { font-weight: 400; opacity: .75; }
   @media (max-width: 960px) {
     .hero .wrap, .tour, .demo, .deck, .dl { grid-template-columns: 1fr; }
     .hero { padding-top: 100px; }
@@ -473,18 +480,18 @@
   </div>
 </section>
 
-<!-- ============================================================ new: online voices -->
+<!-- ============================================================ new: voices and effects -->
 <section id="voices">
   <div class="wrap">
     <div class="kicker reveal">Нове</div>
     <h2 class="reveal d1">Озвучення — <span class="grad">голос, який вам до душі</span></h2>
-    <p class="lead2 reveal d2" style="margin-bottom:28px">Голоси на вашому ПК чи онлайн-сервіси з вашим ключем — і чесно
-      сказано, у чому кожен добрий.</p>
+    <p class="lead2 reveal d2" style="margin-bottom:28px">Новий український рушій зі своїми голосами, ефекти голосу,
+      які замовляє чат, і чесно сказано, у чому добрий кожен рушій.</p>
     <ul class="bullets">
       <li class="reveal d1"><i>☁️</i><div><b>Онлайн-голоси</b><span>Azure Speech, ElevenLabs, Google Cloud і OpenAI — з вашим власним ключем, що зберігається у сховищі паролів системи. Працюють, лише коли ви їх виберете.</span></div></li>
-      <li class="reveal d2"><i>🇺🇦</i><div><b>Українською й англійською</b><span>Supertonic 3 читає обидві мови одним голосом, а тепер і на швидкості понад 1 — без загублених слів.</span></div></li>
+      <li class="reveal d2"><i>🇺🇦</i><div><b>HolosTTS</b><span>26 українських голосів на процесорі — і ваші власні: з кількох записів просто в Гомоні або змішавши два голоси. Голос можна передати файлом.</span></div></li>
       <li class="reveal d3"><i>⚖️</i><div><b>Чесно про кожен рушій</b><span>У вікні «Рушії» кожен каже, у чому добрий і що варто знати, перш ніж обрати.</span></div></li>
-      <li class="reveal d1"><i>🧭</i><div><b>Майстер підкаже</b><span>Новий стример одразу отримує пораду: Supertonic 3, ≈0,5 ГБ, десять голосів.</span></div></li>
+      <li class="reveal d1"><i>😈</i><div><b>Ефекти голосу</b><span>Демон, привид, робот, бурундук… Глядачі пишуть <code>(демон)</code> перед словами, нагорода накладає прокляття на когось у чаті, а <code>(бонк)</code> вставляє звук.</span></div></li>
     </ul>
     <p class="reveal d2" style="margin-top:28px"><a class="btn ghost" href="wiki.html#tts-engines">Як це працює — у вікі →</a></p>
   </div>
@@ -560,6 +567,16 @@
           Архів розпакуйте будь-куди й запустіть <code>homin</code>.</p>
       </div>
     </div>
+    <div class="exp reveal" id="dlExperimental" hidden>
+      <h3>🧪 Експериментальна версія <span class="grad" id="expVersion"></span></h3>
+      <p>Новіша збірка, яку ще перевіряють на справжніх ПК і яка чекає перевірки Microsoft для Захисника Windows. Для тих, хто хоче нове першим і готовий розповісти про проблему в <a href="https://discord.gg/DeR2tQT5Mc" rel="noopener">Discord</a>. Щоб отримувати такі й далі, у Гомоні виберіть Налаштування › Оновлення › Канал оновлень › Експериментальний.</p>
+      <div class="files">
+        <a class="btn ghost" data-exp="windows-setup" href="https://github.com/veekk/homin-site/releases">Windows: інсталятор <small>.exe</small></a>
+        <a class="btn ghost" data-exp="windows-portable" href="https://github.com/veekk/homin-site/releases">Windows без встановлення <small>.zip</small></a>
+        <a class="btn ghost" data-exp="linux-appimage" href="https://github.com/veekk/homin-site/releases">Linux: AppImage <small>x86_64</small></a>
+        <a class="btn ghost" data-exp="linux-tar" href="https://github.com/veekk/homin-site/releases">Linux: архів теки <small>.tar.gz</small></a>
+      </div>
+    </div>
     <p class="dl-note reveal">Гомін сам скаже, коли вийде нова версія (Налаштування › Оновлення).
       Усі версії, що нового й контрольні суми SHA-256 — на <a href="https://github.com/veekk/homin-site/releases">сторінці випусків</a>.</p>
   </div>
@@ -592,7 +609,8 @@ fetch("latest.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).th
   if (!file) return;
   const b64 = file.payload.replace(/-/g, "+").replace(/_/g, "/");
   const bytes = Uint8Array.from(atob(b64 + "=".repeat((4 - b64.length % 4) % 4)), c => c.charCodeAt(0));
-  const releases = JSON.parse(new TextDecoder().decode(bytes)).releases || [];
+  const payload = JSON.parse(new TextDecoder().decode(bytes));
+  const releases = payload.releases || [];
   const newest = releases[releases.length - 1];
   if (!newest) return;
   const rc = /rc\d+$/.test(newest.version);
@@ -607,6 +625,27 @@ fetch("latest.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null).th
     a.setAttribute("download", "");
     if (f.size) a.querySelector("small").textContent += " · " + Math.round(f.size / 1e6) + " МБ";
   }
+  // 1.0.0a1 < 1.0.0rc5 < 1.0.0 < 1.0.1, as the app compares them
+  const key = v => {
+    const m = /^(\d+)\.(\d+)\.(\d+)(?:(a|b|rc)(\d+))?$/.exec(v || "");
+    return m ? [+m[1], +m[2], +m[3], {a: 0, b: 1, rc: 2}[m[4]] ?? 3, +(m[5] || 0)] : null;
+  };
+  const newer = (x, y) => {
+    for (let i = 0; i < 5; i++) if (x[i] !== y[i]) return x[i] > y[i];
+    return false;
+  };
+  const exp = (payload.experimental || []).filter(r => key(r.version))
+    .sort((x, y) => newer(key(x.version), key(y.version)) ? -1 : 1)[0];
+  if (!exp || !newer(key(exp.version), key(newest.version))) return;
+  document.getElementById("expVersion").textContent = exp.version;
+  for (const a of document.querySelectorAll("[data-exp]")) {
+    const f = (exp.files || {})[a.dataset.exp];
+    if (!f || !/^https:\/\//.test(f.url)) { a.remove(); continue; }
+    a.href = f.url;
+    a.setAttribute("download", "");
+    if (f.size) a.querySelector("small").textContent += " · " + Math.round(f.size / 1e6) + " МБ";
+  }
+  document.getElementById("dlExperimental").hidden = false;
 }).catch(() => {});
 const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = (s, el = document) => el.querySelector(s);
@@ -862,7 +901,7 @@ document.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => events[b.d
 // ---------- the feature grid, lit where the pointer is
 const feats = [
   ["i-control", "Центр керування", "Чат, перегляд стріму, кнопки OBS і події — на одному екрані, як вам зручно."],
-  ["i-voice", "Озвучення", "Чат і нагороди голосом, зокрема українським."],
+  ["i-voice", "Озвучення", "Чат і нагороди голосом, зокрема українським, з ефектами."],
   ["i-music", "Музика", "YouTube, Spotify і файли в одній черзі."],
   ["i-gift", "Нагороди", "Звуки, GIF, відео й ефекти на весь екран."],
   ["i-bell", "Події каналу", "Сповіщення, голос і скрипт для кожної події."],
@@ -878,6 +917,7 @@ const feats = [
   ["i-move", "Перенести з інших", "Команди й нагороди з інших ботів — кількома кліками."],
   ["i-train", "Хайп-потяг і цілі", "Рівень і внески — на оверлеї."],
   ["i-count", "Лічильники", "Смерті, чашки чаю — з клавіші чи чату."],
+  ["i-wand", "Під гру (Linux)", "Гра запустилася — категорія, назва й макет одним кліком."],
 ];
 const grid = $("#grid");
 feats.forEach(([icon, h, p], i) => {
